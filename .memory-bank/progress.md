@@ -1,0 +1,21 @@
+# Progress Checklist
+- [x] Memory Bank & Cursor Rules Setup
+- [x] Next.js Initialization & Dependencies
+- [x] Prisma Schema with `pgvector`
+- [x] URL Scraper & Context Embedding API (`/api/project/onboard`)
+- [x] Playwright Video Recording Service (`lib/media/video-recorder.ts`)
+- [x] Code Snippet to PNG Renderer (`lib/media/code-card.ts`)
+- [x] Media Test API Endpoint (`/api/media/generate`)
+- [x] Upstash QStash Cron Route (`app/api/cron/analytics/route.ts`)
+- [x] ERI Score Calculator (`lib/analytics/eri.ts`)
+- [x] High-ERI Vector Store Pipeline (`lib/ai/vector-store.ts`)
+- [x] Adaptive Dynamic Prompt Generator (`lib/ai/generator.ts`)
+- [x] AI Content Expander (`lib/seo/expander.ts`)
+- [x] Subpath Renderer (`app/changelog/[slug]/page.tsx`)
+- [x] Dynamic XML Sitemap (`app/sitemap.ts`)
+- [x] Search Engine Indexing Service (`lib/seo/google-index.ts`)
+- [ ] Command Center Dashboard UI (`app/dashboard/page.tsx`)
+- [ ] Onboarding Page UI (`app/onboard/page.tsx`)
+- [ ] Queue Studio UI (`app/dashboard/queue/page.tsx`)
+- [ ] Smart Reply Assistant UI (`app/dashboard/replies/page.tsx`)
+- [ ] Command Palette Component (`components/command-palette.tsx`)
