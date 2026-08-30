@@ -442,3 +442,52 @@ export const MOCK_GEO_CHECK = {
   recentMetrics: MOCK_GEO.recentMetrics,
   suggestions: MOCK_GEO.suggestions,
 };
+
+const diagExecutedAt = new Date().toISOString();
+
+const mockSuite = (
+  suite: string,
+  status: string,
+  score: number,
+  summary: string
+) => ({
+  id: `diag-${suite}`,
+  suite,
+  status,
+  score,
+  details: { summary, assertions: [], durationMs: 120 },
+  executedAt: diagExecutedAt,
+});
+
+export const MOCK_DIAGNOSTICS = {
+  projectId: MOCK_PROJECT.id,
+  projectName: MOCK_PROJECT.name,
+  overallScore: 82.5,
+  overallStatus: "passed",
+  runs: [
+    mockSuite("seo_audit", "passed", 90, "4/4 checks passed — SEO indexing readiness passed"),
+    mockSuite("feedback_loop", "warning", 75, "3/4 checks passed — vector reinforcement warning"),
+    mockSuite("media_render", "passed", 100, "5/5 checks passed — media integrity passed"),
+    mockSuite("geo_audit", "warning", 65, "4/6 checks passed — GEO citations warning"),
+  ],
+  history: [],
+};
+
+export const MOCK_DIAGNOSTICS_RUN = {
+  projectId: MOCK_PROJECT.id,
+  projectName: MOCK_PROJECT.name,
+  overallScore: 82.5,
+  overallStatus: "passed",
+  suites: MOCK_DIAGNOSTICS.runs.map((r) => ({
+    suite: r.suite,
+    status: r.status,
+    score: r.score,
+    details: r.details,
+  })),
+  executedAt: diagExecutedAt,
+};
+
+export const MOCK_DIAGNOSTICS_CRON = {
+  processed: 1,
+  results: [MOCK_DIAGNOSTICS_RUN],
+};

@@ -78,6 +78,7 @@ model Project {
   analytics   EriSnapshot[]
   changelog   ChangelogEntry[]
   geoMetrics  GeoMetric[]
+  testRuns    TestRun[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -203,4 +204,21 @@ model GeoMetric {
   @@index([projectId])
   @@index([llmProvider])
   @@index([checkedAt])
+}
+
+// ─── Phase 7: Autonomous Verification & Diagnostic Agent ───────────────────
+
+model TestRun {
+  id         String   @id @default(cuid())
+  projectId  String
+  suite      String
+  status     String
+  score      Float
+  details    Json
+  executedAt DateTime @default(now())
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([suite])
+  @@index([executedAt])
 }

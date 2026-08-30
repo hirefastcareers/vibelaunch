@@ -96,6 +96,26 @@ VibeLaunch is a full-stack platform for founders to launch products on X (Twitte
 - `GET /api/geo/metrics` — fetch citation analytics
 - `POST /api/geo/check` — trigger fresh LLM citation scan
 
+## Phase 7: Autonomous Verification & Diagnostic Agent
+
+### Prisma
+- `TestRun` model linked to `Project` — stores suite results, score, status, and assertion details (JSON)
+
+### Diagnostic Suites
+- `seo_audit` — changelog SEO metadata, Google indexing, JSON-LD schema readiness
+- `feedback_loop` — vector reinforcement for high-ERI posts, embedding sync, ERI snapshots
+- `media_render` — media URL validation, Sharp processing, code card render integrity
+- `geo_audit` — GEO citation score, per-provider coverage, check freshness
+
+### Agent & Cron
+- `src/lib/diagnostics/agent.ts` — `runAllDiagnostics()`, `runDiagnosticSuite()`, `runDiagnosticsForAllProjects()`
+- `POST /api/cron/diagnostics` — autonomous verification across all active projects
+- `GET /api/diagnostics/runs` — fetch latest test run results
+- `POST /api/diagnostics/run` — trigger manual diagnostic scan
+
+### Dashboard
+- `components/dashboard/diagnostic-card.tsx` — platform health score and per-suite status
+
 ## Environment Variables
 
 See `.env.example` for all required variables.
@@ -120,6 +140,7 @@ src/
     queue/       # QStash integration
     seo/         # SEO expander, sitemap, Google indexing
     geo/         # GEO citation tracker, LLM schema, analytics
+    diagnostics/ # Autonomous verification agent and audit suites
     vector/      # pgvector embeddings
     x/           # X/Twitter publish
 prisma/          # Database schema

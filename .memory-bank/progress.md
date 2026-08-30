@@ -12,3 +12,8 @@
 - [x] GEO AI Citation Scraper & Monitor (`lib/geo/citation-tracker.ts`)
 - [x] LLM-Optimized Schema Injector (`lib/geo/llm-schema.ts`)
 - [x] GEO Visibility Analytics Widget (`components/dashboard/geo-card.tsx`)
+- [x] TestRun Prisma model for diagnostic logs (`prisma/schema.prisma`)
+- [x] Autonomous Diagnostic Agent (`lib/diagnostics/agent.ts`)
+- [x] SEO / Vector / Media / GEO audit suites (`lib/diagnostics/suites/`)
+- [x] Diagnostic Dashboard Widget (`components/dashboard/diagnostic-card.tsx`)
+- [x] Diagnostics Cron Route (`app/api/cron/diagnostics/route.ts`)
