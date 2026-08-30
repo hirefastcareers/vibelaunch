@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Eye, TrendingUp, FileText, Users, ExternalLink } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
+import { GeoCard } from "@/components/dashboard/geo-card";
 
 interface DashboardStats {
   stats: {
@@ -133,6 +134,8 @@ export default function CommandCenterPage() {
           </CardContent>
         </Card>
       </div>
+
+      <GeoCard />
 
       <Card>
         <CardHeader>

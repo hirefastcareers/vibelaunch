@@ -77,6 +77,7 @@ model Project {
   posts       Post[]
   analytics   EriSnapshot[]
   changelog   ChangelogEntry[]
+  geoMetrics  GeoMetric[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -185,4 +186,21 @@ model ChangelogEntry {
 
   @@index([projectId])
   @@index([published])
+}
+
+// ─── Phase 6: GEO (Generative Engine Optimization) ─────────────────────────
+
+model GeoMetric {
+  id          String   @id @default(cuid())
+  projectId   String
+  queryPrompt String
+  cited       Boolean  @default(false)
+  citationUrl String?
+  llmProvider String
+  checkedAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([llmProvider])
+  @@index([checkedAt])
 }

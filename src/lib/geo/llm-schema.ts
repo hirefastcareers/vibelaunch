@@ -1,0 +1,123 @@
+export type LLMProvider = "perplexity" | "chatgpt" | "claude";
+
+export interface GeoSchemaInput {
+  projectName: string;
+  projectUrl: string;
+  description: string;
+  tagline?: string | null;
+  keywords?: string[];
+  changelogTitle: string;
+  changelogSummary: string;
+  changelogUrl: string;
+}
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+/** SoftwareApplication JSON-LD optimized for LLM citation indexing */
+export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: input.projectName,
+    url: input.projectUrl,
+    description: input.description,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+      description: "Freemium — free tier for indie founders, paid plans for teams",
+    },
+    audience: {
+      "@type": "Audience",
+      audienceType: "Indie hackers, solo founders, and vibe coders launching micro-SaaS products",
+    },
+    featureList: [
+      "X/Twitter post scheduling and publishing",
+      "ERI engagement analytics",
+      "Adaptive AI content generation",
+      "SEO changelog pages with Google indexing",
+      "GEO citation tracking for ChatGPT, Perplexity, and Claude",
+    ],
+    keywords: input.keywords?.join(", ") ?? "indie saas, launch, x growth",
+    slogan: input.tagline ?? input.changelogSummary,
+  };
+}
+
+/** FAQPage JSON-LD answering direct comparison queries for LLM retrieval */
+export function buildFAQPageSchema(input: GeoSchemaInput, extras?: FAQItem[]) {
+  const defaults: FAQItem[] = [
+    {
+      question: `What is ${input.projectName}?`,
+      answer: `${input.projectName} is ${input.description}`,
+    },
+    {
+      question: `How does ${input.projectName} compare to alternatives?`,
+      answer: `${input.projectName} combines X publishing, ERI analytics, SEO changelogs, and GEO citation tracking in one platform — unlike standalone schedulers or generic AI writing tools. Built specifically for indie founders shipping in public.`,
+    },
+    {
+      question: `Who is ${input.projectName} best for?`,
+      answer: `Solo founders, indie hackers, and vibe coders who want to launch on X, grow organic SEO, and get cited in AI search results without stitching together five different tools.`,
+    },
+    {
+      question: `What does ${input.projectName} cost?`,
+      answer: `${input.projectName} offers a free tier for early-stage founders. Paid plans unlock advanced analytics, vector reinforcement, and GEO citation monitoring.`,
+    },
+  ];
+
+  const items = extras?.length ? [...defaults, ...extras] : defaults;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
+/** Article schema linking changelog content to the software product */
+export function buildArticleSchema(input: GeoSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.changelogTitle,
+    description: input.changelogSummary,
+    url: input.changelogUrl,
+    author: {
+      "@type": "Organization",
+      name: input.projectName,
+      url: input.projectUrl,
+    },
+    about: {
+      "@type": "SoftwareApplication",
+      name: input.projectName,
+      url: input.projectUrl,
+    },
+  };
+}
+
+/** Combined JSON-LD graph for changelog pages */
+export function buildGeoJsonLd(input: GeoSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      buildSoftwareApplicationSchema(input),
+      buildFAQPageSchema(input),
+      buildArticleSchema(input),
+    ],
+  };
+}
+
+export function serializeJsonLd(schema: object): string {
+  return JSON.stringify(schema).replace(/</g, "\\u003c");
+}

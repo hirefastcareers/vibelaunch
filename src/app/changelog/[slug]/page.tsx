@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
+import { getBaseUrl } from "@/lib/env";
+import { buildGeoJsonLd, serializeJsonLd } from "@/lib/geo/llm-schema";
 
 export const dynamic = "force-dynamic";
 
@@ -32,13 +34,47 @@ export default async function ChangelogPage({ params }: PageProps) {
   const { slug } = await params;
   const entry = await prisma.changelogEntry.findUnique({
     where: { slug, published: true },
-    include: { project: { select: { name: true, slug: true } } },
+    include: {
+      project: {
+        select: {
+          name: true,
+          slug: true,
+          websiteUrl: true,
+          description: true,
+          tagline: true,
+          keywords: true,
+        },
+      },
+    },
   });
 
   if (!entry) notFound();
 
+  const baseUrl = getBaseUrl();
+  const projectUrl =
+    entry.project.websiteUrl ?? `${baseUrl}/changelog/${entry.slug}`;
+  const changelogUrl = `${baseUrl}/changelog/${entry.slug}`;
+
+  const jsonLd = buildGeoJsonLd({
+    projectName: entry.project.name,
+    projectUrl,
+    description:
+      entry.project.description ??
+      entry.summary ??
+      `${entry.project.name} changelog update`,
+    tagline: entry.project.tagline,
+    keywords: entry.project.keywords,
+    changelogTitle: entry.title,
+    changelogSummary: entry.summary,
+    changelogUrl,
+  });
+
   return (
     <article className="max-w-3xl mx-auto px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <header className="mb-8">
         <p className="text-sm text-gray-500 mb-2">
           {entry.project.name} ·{" "}

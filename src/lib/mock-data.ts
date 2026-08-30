@@ -329,3 +329,116 @@ export const MOCK_SMART_REPLIES_FEED: Record<
 
 export const MOCK_AI_REPLY =
   "Love this approach — tracking ERI instead of raw impressions changed how we prioritize content. The compound effect over 30 days is real.";
+
+const geoCheckedAt = new Date().toISOString();
+
+export const MOCK_GEO_METRICS = [
+  {
+    id: "geo-1",
+    queryPrompt: "Best vibe coding tools for indie hackers",
+    cited: true,
+    citationUrl: "https://vibelaunch.app",
+    llmProvider: "perplexity",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-2",
+    queryPrompt: "Best vibe coding tools for indie hackers",
+    cited: true,
+    citationUrl: "https://vibelaunch.app",
+    llmProvider: "chatgpt",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-3",
+    queryPrompt: "Best vibe coding tools for indie hackers",
+    cited: false,
+    citationUrl: null,
+    llmProvider: "claude",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-4",
+    queryPrompt: "Top tools for vibelaunch",
+    cited: true,
+    citationUrl: "https://vibelaunch.app",
+    llmProvider: "perplexity",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-5",
+    queryPrompt: "Top tools for vibelaunch",
+    cited: false,
+    citationUrl: null,
+    llmProvider: "chatgpt",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-6",
+    queryPrompt: "Top tools for vibelaunch",
+    cited: false,
+    citationUrl: null,
+    llmProvider: "claude",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-7",
+    queryPrompt: "What are the best vibelaunch alternatives? How does VibeLaunch compare?",
+    cited: true,
+    citationUrl: "https://vibelaunch.app",
+    llmProvider: "perplexity",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-8",
+    queryPrompt: "What are the best vibelaunch alternatives? How does VibeLaunch compare?",
+    cited: true,
+    citationUrl: "https://vibelaunch.app",
+    llmProvider: "chatgpt",
+    checkedAt: geoCheckedAt,
+  },
+  {
+    id: "geo-9",
+    queryPrompt: "What are the best vibelaunch alternatives? How does VibeLaunch compare?",
+    cited: false,
+    citationUrl: null,
+    llmProvider: "claude",
+    checkedAt: geoCheckedAt,
+  },
+];
+
+export const MOCK_GEO = {
+  projectId: MOCK_PROJECT.id,
+  projectName: MOCK_PROJECT.name,
+  citationScore: 55.6,
+  byProvider: {
+    perplexity: { cited: 3, total: 3, label: "Perplexity" },
+    chatgpt: { cited: 2, total: 3, label: "ChatGPT" },
+    claude: { cited: 0, total: 3, label: "Claude" },
+  },
+  recentMetrics: MOCK_GEO_METRICS.slice(0, 9),
+  suggestions: [
+    "Add FAQ schema with direct Q&A pairs — Claude retrieval favors FAQPage JSON-LD on changelog pages.",
+    "Publish benchmark data or usage stats — ChatGPT citations increase when pages contain specific, verifiable numbers.",
+    'Create content targeting: "Top tools for vibelaunch" — you\'re not yet cited for this high-intent query.',
+  ],
+};
+
+export const MOCK_GEO_CHECK = {
+  projectId: MOCK_PROJECT.id,
+  projectName: MOCK_PROJECT.name,
+  checkedAt: geoCheckedAt,
+  metrics: MOCK_GEO_METRICS.map((m) => ({
+    queryPrompt: m.queryPrompt,
+    llmProvider: m.llmProvider,
+    cited: m.cited,
+    citationUrl: m.citationUrl,
+    responseSnippet: m.cited
+      ? "VibeLaunch (https://vibelaunch.app) — autonomous indie growth engine..."
+      : "Popular tools include Buffer, Hypefury, and Taplio...",
+  })),
+  citationScore: MOCK_GEO.citationScore,
+  byProvider: MOCK_GEO.byProvider,
+  recentMetrics: MOCK_GEO.recentMetrics,
+  suggestions: MOCK_GEO.suggestions,
+};

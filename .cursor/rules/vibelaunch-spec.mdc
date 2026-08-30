@@ -78,6 +78,24 @@ VibeLaunch is a full-stack platform for founders to launch products on X (Twitte
 ### SEO Publish API
 - `POST /api/seo/publish` — create changelog, expand SEO, request indexing
 
+## Phase 6: GEO (Generative Engine Optimization)
+
+### Prisma
+- `GeoMetric` model linked to `Project` — tracks citation checks per LLM provider and query prompt
+
+### Citation Tracker
+- `src/lib/geo/citation-tracker.ts` — `checkLLMCitations(projectId)` queries Perplexity, ChatGPT, and Claude
+- `detectCitation()` parses responses for project name/domain mentions
+
+### LLM Schema Engine
+- `src/lib/geo/llm-schema.ts` — `SoftwareApplication`, `FAQPage`, and `Article` JSON-LD for changelog pages
+- Injected on `/changelog/[slug]` via `buildGeoJsonLd()`
+
+### GEO Dashboard
+- `components/dashboard/geo-card.tsx` — citation score, AI engine badges, content tweak suggestions
+- `GET /api/geo/metrics` — fetch citation analytics
+- `POST /api/geo/check` — trigger fresh LLM citation scan
+
 ## Environment Variables
 
 See `.env.example` for all required variables.
@@ -101,6 +119,7 @@ src/
     media/       # Image processing
     queue/       # QStash integration
     seo/         # SEO expander, sitemap, Google indexing
+    geo/         # GEO citation tracker, LLM schema, analytics
     vector/      # pgvector embeddings
     x/           # X/Twitter publish
 prisma/          # Database schema
