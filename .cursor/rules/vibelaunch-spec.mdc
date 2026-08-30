@@ -1,0 +1,108 @@
+# VibeLaunch Platform Specification
+
+## Overview
+
+VibeLaunch is a full-stack platform for founders to launch products on X (Twitter) with AI-powered content generation, engagement analytics (ERI), vector-based learning, and SEO changelog publishing.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router), TypeScript
+- **Database**: PostgreSQL with pgvector extension
+- **ORM**: Prisma
+- **Auth**: NextAuth.js with X OAuth 2.0
+- **Queue**: Upstash QStash
+- **AI**: OpenAI (embeddings + content generation)
+- **Media**: Sharp
+- **Styling**: Tailwind CSS
+
+## Phase 1: Foundation
+
+### Prisma + pgvector
+- Schema in `prisma/schema.prisma`
+- pgvector extension enabled for `PostEmbedding.embedding` (vector 1536)
+- Models: User, Account, Session, Project
+
+### X OAuth
+- NextAuth Twitter provider v2.0
+- Scopes: `tweet.read tweet.write users.read offline.access`
+- Stores `xUserId` and `xUsername` on User
+
+### Project CRUD
+- `GET/POST /api/projects` — list and create
+- `GET/PATCH/DELETE /api/projects/[id]` — read, update, delete
+- Dashboard UI at `/dashboard`
+
+## Phase 2: Publishing Pipeline
+
+### Media Engine
+- `src/lib/media/engine.ts` — Sharp-based image processing
+- Validates URLs, resizes to X constraints (4096px, 5MB)
+
+### QStash Post Queue
+- `src/lib/queue/qstash.ts` — enqueue with delay/scheduling
+- `POST /api/queue/process` — webhook handler with signature verification
+- `POST /api/posts/[id]/publish` — enqueue a post
+
+### X Publish
+- `src/lib/x/publish.ts` — publish tweets + media upload
+- Fetches engagement metrics via X API v2
+
+## Phase 3: Analytics & AI
+
+### ERI Analytics Cron
+- `POST /api/cron/eri` — fetches metrics, creates EriSnapshots
+- ERI formula: `(likes + retweets*2 + replies*1.5 + clicks*0.5) / impressions * 100`
+
+### Vector Reinforcement
+- `src/lib/vector/embeddings.ts` — OpenAI embeddings stored in pgvector
+- High-ERI posts (≥2.0) get reinforced embeddings
+
+### Adaptive Generator
+- `POST /api/generate` — generates content inspired by top-performing posts
+- `src/lib/generator/adaptive.ts` — uses vector similarity + OpenAI
+
+## Phase 4: SEO
+
+### SEO Expander
+- `src/lib/seo/expander.ts` — expands summaries into full SEO content
+
+### Changelog Pages
+- `/changelog/[slug]` — public changelog entries with metadata
+
+### Sitemap
+- `/sitemap.xml` — dynamic XML sitemap of published changelogs
+
+### Google Indexing
+- `src/lib/seo/google-indexing.ts` — Indexing API via service account JWT
+
+### SEO Publish API
+- `POST /api/seo/publish` — create changelog, expand SEO, request indexing
+
+## Environment Variables
+
+See `.env.example` for all required variables.
+
+## Testing
+
+```bash
+npm test          # vitest unit tests
+npm run build     # production build
+npx prisma generate
+```
+
+## Directory Structure
+
+```
+src/
+  app/           # Next.js pages and API routes
+  lib/
+    analytics/   # ERI calculations and cron
+    generator/   # Adaptive content generation
+    media/       # Image processing
+    queue/       # QStash integration
+    seo/         # SEO expander, sitemap, Google indexing
+    vector/      # pgvector embeddings
+    x/           # X/Twitter publish
+prisma/          # Database schema
+.memory-bank/    # Project context for agents
+```

@@ -1,0 +1,186 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+// ─── Auth (NextAuth) ───────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  xUserId       String?   @unique
+  xUsername     String?
+  accounts      Account[]
+  sessions      Session[]
+  projects      Project[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Phase 1: Projects ─────────────────────────────────────────────────────
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  slug        String   @unique
+  description String?
+  tagline     String?
+  websiteUrl  String?
+  status      ProjectStatus @default(DRAFT)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts       Post[]
+  analytics   EriSnapshot[]
+  changelog   ChangelogEntry[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  LAUNCHED
+  ARCHIVED
+}
+
+// ─── Phase 2: Posts & Media ──────────────────────────────────────────────────
+
+model Post {
+  id            String     @id @default(cuid())
+  projectId     String
+  content       String
+  mediaUrls     String[]   @default([])
+  status        PostStatus @default(DRAFT)
+  scheduledAt   DateTime?
+  publishedAt   DateTime?
+  xPostId       String?
+  xPostUrl      String?
+  queueJobId    String?
+  errorMessage  String?
+  project       Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  embedding     PostEmbedding?
+  analytics     PostAnalytics?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+  @@index([scheduledAt])
+}
+
+enum PostStatus {
+  DRAFT
+  QUEUED
+  SCHEDULED
+  PUBLISHING
+  PUBLISHED
+  FAILED
+}
+
+// ─── Phase 3: Vector reinforcement ─────────────────────────────────────────
+
+model PostEmbedding {
+  id        String                       @id @default(cuid())
+  postId    String                       @unique
+  embedding Unsupported("vector(1536)")?
+  eriScore  Float?
+  reinforced Boolean                     @default(false)
+  post      Post                         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime                     @default(now())
+  updatedAt DateTime                     @updatedAt
+}
+
+model PostAnalytics {
+  id          String   @id @default(cuid())
+  postId      String   @unique
+  impressions Int      @default(0)
+  likes       Int      @default(0)
+  retweets    Int      @default(0)
+  replies     Int      @default(0)
+  clicks      Int      @default(0)
+  eri         Float    @default(0)
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  fetchedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EriSnapshot {
+  id          String   @id @default(cuid())
+  projectId   String
+  avgEri      Float
+  topPostId   String?
+  postCount   Int      @default(0)
+  snapshotAt  DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([snapshotAt])
+}
+
+// ─── Phase 4: SEO & Changelog ──────────────────────────────────────────────
+
+model ChangelogEntry {
+  id          String   @id @default(cuid())
+  projectId   String
+  slug        String   @unique
+  title       String
+  summary     String
+  body        String   @db.Text
+  seoTitle    String?
+  seoDesc     String?
+  keywords    String[] @default([])
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  indexedAt   DateTime?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([published])
+}
