@@ -18,6 +18,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { SUITE_LABELS, type DiagnosticSuite } from "@/lib/diagnostics/types";
+import { getMockTestResults } from "@/lib/demo-mode";
 
 interface TestResult {
   suite: DiagnosticSuite;
@@ -37,37 +38,10 @@ const INITIAL_REPORT: DiagnosticReport = {
   overallScore: 92.5,
   overallStatus: "passed",
   results: [
-    {
-      suite: "seo_audit",
-      status: "passed",
-      score: 100,
-      details: {
-        wordCount: 920,
-        assertions: { hasCanonical: true, hasOGImage: true, hasJsonLd: true },
-      },
-    },
-    {
-      suite: "feedback_loop",
-      status: "passed",
-      score: 100,
-      details: { embeddingsCount: 14, vectorSearchReady: true },
-    },
-    {
-      suite: "media_render",
-      status: "passed",
-      score: 100,
-      details: { playwrightConfigured: true, viewportSize: "1280x720" },
-    },
-    {
-      suite: "geo_audit",
-      status: "warning",
-      score: 70,
-      details: {
-        citationsFound: 2,
-        totalQueriesChecked: 3,
-        providers: ["perplexity", "chatgpt"],
-      },
-    },
+    getMockTestResults("seo_audit") as TestResult,
+    getMockTestResults("feedback_loop") as TestResult,
+    getMockTestResults("media_render") as TestResult,
+    getMockTestResults("geo_audit") as TestResult,
   ],
 };
 

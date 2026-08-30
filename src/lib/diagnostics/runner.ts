@@ -11,7 +11,7 @@ export interface TestSuiteResult {
 }
 
 export async function runSeoAudit(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("seo_audit");
+  if (isDemoMode()) return getMockTestResults("seo_audit") as TestSuiteResult;
 
   try {
     const entry = await db.changelogEntry.findFirst({
@@ -70,7 +70,7 @@ export async function runSeoAudit(projectId: string): Promise<TestSuiteResult> {
 }
 
 export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("feedback_loop");
+  if (isDemoMode()) return getMockTestResults("feedback_loop") as TestSuiteResult;
 
   try {
     const vectors = await db.postEmbedding.findMany({
@@ -104,7 +104,7 @@ export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteR
 }
 
 export async function runMediaValidation(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("media_render");
+  if (isDemoMode()) return getMockTestResults("media_render") as TestSuiteResult;
 
   try {
     const project = await db.project.findUnique({ where: { id: projectId } });
@@ -131,7 +131,7 @@ export async function runMediaValidation(projectId: string): Promise<TestSuiteRe
 }
 
 export async function runGeoAudit(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("geo_audit");
+  if (isDemoMode()) return getMockTestResults("geo_audit") as TestSuiteResult;
 
   try {
     const metrics = await db.geoMetric.findMany({
