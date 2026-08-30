@@ -1,8 +1,9 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { getBaseUrl } from "@/lib/env";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+  const baseUrl = getBaseUrl();
 
   const entries = await prisma.changelogEntry.findMany({
     where: { published: true },
