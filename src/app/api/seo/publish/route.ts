@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { seoPublishSchema } from "@/lib/validators";
 import { expandForSeo } from "@/lib/seo/expander";
 import { requestGoogleIndexing } from "@/lib/seo/google-indexing";
+import { getBaseUrl } from "@/lib/env";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
+  const appUrl = getBaseUrl();
   const changelogUrl = `${appUrl}/changelog/${entry.slug}`;
 
   const indexing = await requestGoogleIndexing(changelogUrl);

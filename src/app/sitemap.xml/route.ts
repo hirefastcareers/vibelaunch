@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateSitemapEntries } from "@/lib/seo/expander";
+import { getBaseUrl } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export async function GET() {
     orderBy: { publishedAt: "desc" },
   });
 
-  const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
+  const baseUrl = getBaseUrl();
   const xml = generateSitemapEntries(baseUrl, entries);
 
   return new NextResponse(xml, {

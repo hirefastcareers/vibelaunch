@@ -1,4 +1,5 @@
 import { Client } from "@upstash/qstash";
+import { getBaseUrl } from "@/lib/env";
 
 let qstashClient: Client | null = null;
 
@@ -28,7 +29,8 @@ export async function enqueuePost(
 ): Promise<string> {
   const client = getQStashClient();
   const callbackUrl =
-    process.env.QSTASH_CALLBACK_URL ?? `${process.env.APP_URL}/api/queue/process`;
+    process.env.QSTASH_CALLBACK_URL?.trim() ||
+    `${getBaseUrl()}/api/queue/process`;
 
   const result = await client.publishJSON({
     url: callbackUrl,
