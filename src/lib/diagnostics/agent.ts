@@ -1,68 +1,58 @@
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
-import type { DiagnosticRunSummary, DiagnosticSuite, SuiteResult } from "./types";
+import { isDemoMode } from "@/lib/demo-mode";
+import type { DiagnosticRunSummary, DiagnosticSuite } from "./types";
 import { ALL_SUITES } from "./types";
-import { deriveOverallStatus } from "./scoring";
-import { runSeoAudit } from "./suites/seo-audit";
-import { runFeedbackLoopAudit } from "./suites/feedback-loop";
-import { runMediaRenderAudit } from "./suites/media-render";
-import { runGeoAudit } from "./suites/geo-audit";
+import {
+  runFullDiagnosticSuite,
+  runSeoAudit,
+  runFeedbackLoopTest,
+  runMediaValidation,
+  runGeoAudit,
+  type TestSuiteResult,
+} from "./runner";
 
 const SUITE_RUNNERS: Record<
   DiagnosticSuite,
-  (projectId: string) => Promise<SuiteResult>
+  (projectId: string) => Promise<TestSuiteResult>
 > = {
   seo_audit: runSeoAudit,
-  feedback_loop: runFeedbackLoopAudit,
-  media_render: runMediaRenderAudit,
+  feedback_loop: runFeedbackLoopTest,
+  media_render: runMediaValidation,
   geo_audit: runGeoAudit,
 };
 
 export async function runDiagnosticSuite(
   projectId: string,
   suite: DiagnosticSuite
-): Promise<SuiteResult> {
+): Promise<TestSuiteResult> {
   const result = await SUITE_RUNNERS[suite](projectId);
 
-  await prisma.testRun.create({
-    data: {
-      projectId,
-      suite: result.suite,
-      status: result.status,
-      score: result.score,
-      details: result.details as unknown as Prisma.InputJsonValue,
-    },
-  });
+  if (!isDemoMode()) {
+    await db.testRun.create({
+      data: {
+        projectId,
+        suite: result.suite,
+        status: result.status,
+        score: result.score,
+        details: result.details as Prisma.InputJsonValue,
+      },
+    });
+  }
 
   return result;
 }
 
 export async function runAllDiagnostics(
-  projectId: string,
-  suites: DiagnosticSuite[] = ALL_SUITES
+  projectId: string
 ): Promise<DiagnosticRunSummary> {
-  const results: SuiteResult[] = [];
-
-  for (const suite of suites) {
-    results.push(await runDiagnosticSuite(projectId, suite));
-  }
-
-  const overallScore =
-    results.length > 0
-      ? Math.round(
-          (results.reduce((sum, r) => sum + r.score, 0) / results.length) * 10
-        ) / 10
-      : 0;
-
-  const overallStatus = deriveOverallStatus(
-    overallScore,
-    results.map((r) => r.status)
-  );
+  const { overallScore, overallStatus, results } =
+    await runFullDiagnosticSuite(projectId);
 
   return {
     projectId,
     overallScore,
-    overallStatus,
+    overallStatus: overallStatus as DiagnosticRunSummary["overallStatus"],
     suites: results,
     executedAt: new Date().toISOString(),
   };
@@ -72,26 +62,25 @@ export async function runDiagnosticsForAllProjects(): Promise<{
   processed: number;
   results: DiagnosticRunSummary[];
 }> {
-  const projects = await prisma.project.findMany({
+  const projects = await db.project.findMany({
     where: { status: { in: ["ACTIVE", "LAUNCHED"] } },
     select: { id: true },
   });
 
-  const results: DiagnosticRunSummary[] = [];
+  const summaries: DiagnosticRunSummary[] = [];
   for (const project of projects) {
-    results.push(await runAllDiagnostics(project.id));
+    summaries.push(await runAllDiagnostics(project.id));
   }
 
-  return { processed: projects.length, results };
+  return { processed: projects.length, results: summaries };
 }
 
-export async function getRecentTestRuns(
-  projectId: string,
-  limit = 20
-) {
-  return prisma.testRun.findMany({
+export async function getRecentTestRuns(projectId: string, limit = 20) {
+  return db.testRun.findMany({
     where: { projectId },
     orderBy: { executedAt: "desc" },
     take: limit,
   });
 }
+
+export { runFullDiagnosticSuite };

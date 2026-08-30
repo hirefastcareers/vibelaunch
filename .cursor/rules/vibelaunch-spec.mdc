@@ -108,7 +108,9 @@ VibeLaunch is a full-stack platform for founders to launch products on X (Twitte
 - `geo_audit` — GEO citation score, per-provider coverage, check freshness
 
 ### Agent & Cron
-- `src/lib/diagnostics/agent.ts` — `runAllDiagnostics()`, `runDiagnosticSuite()`, `runDiagnosticsForAllProjects()`
+- `src/lib/diagnostics/runner.ts` — `runFullDiagnosticSuite()` with parallel suite execution and live HTML SEO audit
+- `src/lib/diagnostics/agent.ts` — wraps runner for API/cron consumption
+- `getMockTestResults()` in `lib/demo-mode.ts` — per-suite demo responses
 - `POST /api/cron/diagnostics` — autonomous verification across all active projects
 - `GET /api/diagnostics/runs` — fetch latest test run results
 - `POST /api/diagnostics/run` — trigger manual diagnostic scan

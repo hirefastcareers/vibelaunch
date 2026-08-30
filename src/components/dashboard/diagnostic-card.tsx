@@ -19,8 +19,26 @@ interface TestRunRecord {
   suite: string;
   status: string;
   score: number;
-  details: { summary: string };
+  details: Record<string, unknown>;
   executedAt: string;
+}
+
+function suiteSummary(run: TestRunRecord): string {
+  const d = run.details;
+  if (typeof d.summary === "string") return d.summary;
+  if (typeof d.message === "string") return d.message;
+  if (d.assertions && typeof d.assertions === "object") {
+    const passed = Object.values(d.assertions as Record<string, boolean>).filter(Boolean).length;
+    const total = Object.keys(d.assertions as object).length;
+    return `${passed}/${total} SEO assertions passed`;
+  }
+  if (typeof d.embeddingsCount === "number") {
+    return `${d.embeddingsCount} vector embedding(s) cached`;
+  }
+  if (typeof d.citationsFound === "number") {
+    return `${d.citationsFound} citation(s) across ${d.totalQueriesChecked ?? 0} checks`;
+  }
+  return `Score: ${run.score}%`;
 }
 
 interface DiagnosticData {
@@ -78,7 +96,7 @@ export function DiagnosticCard() {
                     suite: string;
                     status: string;
                     score: number;
-                    details: { summary: string };
+                    details: Record<string, unknown>;
                   }) => ({
                     id: s.suite,
                     suite: s.suite,
@@ -170,7 +188,7 @@ export function DiagnosticCard() {
                     <span className="text-xs text-muted-foreground">{run.score}%</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                    {run.details?.summary ?? "No details"}
+                    {suiteSummary(run)}
                   </p>
                 </div>
               </div>

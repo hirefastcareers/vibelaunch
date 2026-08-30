@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_DIAGNOSTICS_RUN } from "@/lib/mock-data";
 import { runAllDiagnostics, runDiagnosticSuite } from "@/lib/diagnostics/agent";
 import type { DiagnosticSuite } from "@/lib/diagnostics/types";
 import { ALL_SUITES } from "@/lib/diagnostics/types";
@@ -22,13 +21,26 @@ export async function POST(req: NextRequest) {
 
   if (isDemoMode()) {
     await demoDelay(1500);
-    return NextResponse.json(MOCK_DIAGNOSTICS_RUN);
+    const projectId = body.projectId ?? "demo-project-vibelaunch";
+    if (body.suite && ALL_SUITES.includes(body.suite)) {
+      const result = await runDiagnosticSuite(projectId, body.suite);
+      return NextResponse.json({
+        projectId,
+        projectName: "VibeLaunch",
+        overallScore: result.score,
+        overallStatus: result.status,
+        suites: [result],
+        executedAt: new Date().toISOString(),
+      });
+    }
+    const summary = await runAllDiagnostics(projectId);
+    return NextResponse.json({ ...summary, projectName: "VibeLaunch" });
   }
 
   const userId = session.user.id;
   const project = body.projectId
-    ? await prisma.project.findFirst({ where: { id: body.projectId, userId } })
-    : await prisma.project.findFirst({
+    ? await db.project.findFirst({ where: { id: body.projectId, userId } })
+    : await db.project.findFirst({
         where: { userId },
         orderBy: { updatedAt: "desc" },
       });

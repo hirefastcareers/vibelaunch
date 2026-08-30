@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_DIAGNOSTICS } from "@/lib/mock-data";
+import { db } from "@/lib/db";
+import { isDemoMode, demoDelay, getMockTestResults } from "@/lib/demo-mode";
+import { MOCK_PROJECT } from "@/lib/mock-data";
 import { getRecentTestRuns } from "@/lib/diagnostics/agent";
+import { ALL_SUITES } from "@/lib/diagnostics/types";
 
 export const dynamic = "force-dynamic";
 
@@ -15,15 +16,29 @@ export async function GET(req: NextRequest) {
 
   if (isDemoMode()) {
     await demoDelay();
-    return NextResponse.json(MOCK_DIAGNOSTICS);
+    const runs = ALL_SUITES.map((suite) => ({
+      id: `diag-${suite}`,
+      ...getMockTestResults(suite),
+      executedAt: new Date().toISOString(),
+    }));
+    const overallScore =
+      Math.round((runs.reduce((s, r) => s + r.score, 0) / runs.length) * 10) / 10;
+    return NextResponse.json({
+      projectId: MOCK_PROJECT.id,
+      projectName: MOCK_PROJECT.name,
+      overallScore,
+      overallStatus: overallScore >= 80 ? "passed" : overallScore >= 50 ? "warning" : "failed",
+      runs,
+      history: runs,
+    });
   }
 
   const projectId = req.nextUrl.searchParams.get("projectId");
   const userId = session.user.id;
 
   const project = projectId
-    ? await prisma.project.findFirst({ where: { id: projectId, userId } })
-    : await prisma.project.findFirst({
+    ? await db.project.findFirst({ where: { id: projectId, userId } })
+    : await db.project.findFirst({
         where: { userId },
         orderBy: { updatedAt: "desc" },
       });

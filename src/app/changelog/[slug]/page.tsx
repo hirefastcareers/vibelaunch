@@ -17,15 +17,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!entry) return { title: "Not Found" };
 
+  const baseUrl = getBaseUrl();
+  const canonicalUrl = `${baseUrl}/changelog/${slug}`;
+
   return {
     title: entry.seoTitle ?? entry.title,
     description: entry.seoDesc ?? entry.summary,
     keywords: entry.keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title: entry.seoTitle ?? entry.title,
       description: entry.seoDesc ?? entry.summary,
       type: "article",
       publishedTime: entry.publishedAt?.toISOString(),
+      url: canonicalUrl,
+      images: [{ url: `${baseUrl}/api/media/generate?type=code-card&id=${entry.slug}` }],
     },
   };
 }
