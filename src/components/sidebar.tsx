@@ -8,6 +8,7 @@ import {
   MessageSquare,
   Rocket,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -16,6 +17,7 @@ const navItems = [
   { href: "/dashboard", label: "Command Center", icon: LayoutDashboard },
   { href: "/dashboard/queue", label: "Queue Studio", icon: ListOrdered },
   { href: "/dashboard/replies", label: "Smart Replies", icon: MessageSquare },
+  { href: "/dashboard/diagnostics", label: "System Diagnostics", icon: ShieldCheck },
   { href: "/onboard", label: "Onboard Project", icon: Rocket },
 ];
 

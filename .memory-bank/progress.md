@@ -17,3 +17,5 @@
 - [x] SEO / Vector / Media / GEO audit suites (`lib/diagnostics/suites/`)
 - [x] Diagnostic Dashboard Widget (`components/dashboard/diagnostic-card.tsx`)
 - [x] Diagnostics Cron Route (`app/api/cron/diagnostics/route.ts`)
+- [x] System Diagnostics Page (`app/dashboard/diagnostics/page.tsx`)
+- [x] Tester Agent API alias (`app/api/agent/test/route.ts`)
