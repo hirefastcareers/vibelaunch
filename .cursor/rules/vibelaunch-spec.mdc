@@ -115,6 +115,10 @@ VibeLaunch is a full-stack platform for founders to launch products on X (Twitte
 - `GET /api/diagnostics/runs` — fetch latest test run results
 - `POST /api/diagnostics/run` — trigger manual diagnostic scan
 
+### Tester Agent API
+- `lib/agents/tester.ts` — public agent entry point re-exporting diagnostic runner
+- `POST /api/agents/tester` — run full diagnostic suite (`{ projectId?: string }`)
+
 ### Dashboard
 - `components/dashboard/diagnostic-card.tsx` — platform health score and per-suite status
 

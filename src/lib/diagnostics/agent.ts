@@ -10,7 +10,7 @@ import {
   runMediaValidation,
   runGeoAudit,
   type TestSuiteResult,
-} from "./runner";
+} from "@/lib/agents/tester";
 
 const SUITE_RUNNERS: Record<
   DiagnosticSuite,
