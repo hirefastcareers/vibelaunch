@@ -70,6 +70,8 @@ model Project {
   description String?
   tagline     String?
   websiteUrl  String?
+  tone        String?
+  keywords    String[] @default([])
   status      ProjectStatus @default(DRAFT)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   posts       Post[]
