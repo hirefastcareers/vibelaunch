@@ -5,7 +5,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
 import { ensureAuthEnv } from "./env";
-import { isDemoMode, DEMO_USER } from "./demo";
+import { isDemoMode } from "./demo-mode";
+import { DEMO_USER } from "./mock-data";
 
 ensureAuthEnv();
 

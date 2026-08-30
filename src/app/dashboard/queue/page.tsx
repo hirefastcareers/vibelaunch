@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import QueueStudioPage from "./queue-content";
 import { Skeleton } from "@/components/ui/skeleton";

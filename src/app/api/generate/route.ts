@@ -3,7 +3,10 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { generateContentSchema } from "@/lib/validators";
 import { generateAdaptiveContent } from "@/lib/generator/adaptive";
-import { isDemoMode, DEMO_GENERATED } from "@/lib/demo";
+import { isDemoMode, demoDelay } from "@/lib/demo-mode";
+import { MOCK_GENERATED_POST } from "@/lib/mock-data";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -18,7 +21,8 @@ export async function POST(req: NextRequest) {
   }
 
   if (isDemoMode()) {
-    return NextResponse.json({ generated: DEMO_GENERATED });
+    await demoDelay();
+    return NextResponse.json({ generated: MOCK_GENERATED_POST });
   }
 
   const project = await prisma.project.findFirst({

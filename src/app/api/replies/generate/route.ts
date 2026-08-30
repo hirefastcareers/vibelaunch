@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
-import { isDemoMode, DEMO_REPLY } from "@/lib/demo";
+import { isDemoMode, demoDelay } from "@/lib/demo-mode";
+import { MOCK_AI_REPLY, MOCK_SMART_REPLIES_FEED } from "@/lib/mock-data";
+
+export const dynamic = "force-dynamic";
 
 const replySchema = z.object({
   originalPost: z.string().min(1),
@@ -21,13 +24,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { originalPost, keyword, projectName } = parsed.data;
+  const { originalPost, keyword } = parsed.data;
 
   if (isDemoMode()) {
-    return NextResponse.json({ reply: DEMO_REPLY });
+    await demoDelay();
+    const feed = keyword ? MOCK_SMART_REPLIES_FEED[keyword] : undefined;
+    const match = feed?.find((item) => item.content === originalPost);
+    return NextResponse.json({ reply: match?.suggestedReply ?? MOCK_AI_REPLY });
   }
 
-  const reply = await generateSmartReply(originalPost, keyword, projectName);
+  const reply = await generateSmartReply(originalPost, keyword, parsed.data.projectName);
 
   return NextResponse.json({ reply });
 }

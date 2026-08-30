@@ -5,6 +5,10 @@ import { seoPublishSchema } from "@/lib/validators";
 import { expandForSeo } from "@/lib/seo/expander";
 import { requestGoogleIndexing } from "@/lib/seo/google-indexing";
 import { getBaseUrl } from "@/lib/env";
+import { isDemoMode, demoDelay } from "@/lib/demo-mode";
+import { MOCK_SEO_PUBLISH } from "@/lib/mock-data";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -16,6 +20,30 @@ export async function POST(req: NextRequest) {
   const parsed = seoPublishSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  if (isDemoMode()) {
+    await demoDelay();
+    const appUrl = getBaseUrl();
+    const slug = parsed.data.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    return NextResponse.json(
+      {
+        entry: {
+          ...MOCK_SEO_PUBLISH.entry,
+          title: parsed.data.title,
+          summary: parsed.data.summary,
+          slug,
+        },
+        url: `${appUrl}/changelog/${slug}`,
+        indexing: MOCK_SEO_PUBLISH.indexing,
+        message: "Demo: SEO changelog published successfully (simulated)",
+      },
+      { status: 201 }
+    );
   }
 
   const project = await prisma.project.findFirst({
@@ -67,11 +95,7 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json(
-    {
-      entry,
-      url: changelogUrl,
-      indexing,
-    },
+    { entry, url: changelogUrl, indexing },
     { status: 201 }
   );
 }

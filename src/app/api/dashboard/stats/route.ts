@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { isDemoMode, DEMO_STATS } from "@/lib/demo";
+import { isDemoMode, demoDelay } from "@/lib/demo-mode";
+import { MOCK_ANALYTICS } from "@/lib/mock-data";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,8 @@ export async function GET() {
   }
 
   if (isDemoMode()) {
-    return NextResponse.json(DEMO_STATS);
+    await demoDelay();
+    return NextResponse.json(MOCK_ANALYTICS);
   }
 
   const userId = session.user.id;
