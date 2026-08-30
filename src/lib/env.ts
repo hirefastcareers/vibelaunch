@@ -29,4 +29,11 @@ export function ensureAuthEnv(): void {
   if (!process.env.NEXTAUTH_URL?.trim()) {
     process.env.NEXTAUTH_URL = getBaseUrl();
   }
+  if (!process.env.NEXTAUTH_SECRET?.trim()) {
+    process.env.NEXTAUTH_SECRET =
+      "vibelaunch-demo-secret-replace-in-production-32chars";
+  }
+  if (!process.env.APP_URL?.trim()) {
+    process.env.APP_URL = getBaseUrl();
+  }
 }

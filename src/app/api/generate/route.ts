@@ -3,6 +3,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { generateContentSchema } from "@/lib/validators";
 import { generateAdaptiveContent } from "@/lib/generator/adaptive";
+import { isDemoMode, DEMO_GENERATED } from "@/lib/demo";
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -14,6 +15,10 @@ export async function POST(req: NextRequest) {
   const parsed = generateContentSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  if (isDemoMode()) {
+    return NextResponse.json({ generated: DEMO_GENERATED });
   }
 
   const project = await prisma.project.findFirst({
