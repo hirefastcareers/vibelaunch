@@ -1,7 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const REINFORCE_PHASES = [
+  { sub: "PUBLISHED 09:41", state: "SHIPPED", tint: "muted" as const },
+  { sub: "ERI 1.4", state: "SHIPPED", tint: "muted" as const },
+  { sub: "ERI 2.3", state: "SHIPPED", tint: "muted" as const },
+  { sub: "ERI 2.3", state: "REINFORCED", tint: "accent" as const },
+];
+
+const PHASE_MS = [3500, 3500, 3500, 2000];
+const SNAP = { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] as const };
 
 const modules = [
   {
@@ -170,9 +181,37 @@ const modules = [
   },
 ];
 
+function useReinforcementCycle(active: boolean) {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    if (!active) {
+      setPhase(0);
+      return;
+    }
+
+    let step = 0;
+    let elapsed = 0;
+    const tick = 100;
+    const id = setInterval(() => {
+      elapsed += tick;
+      if (elapsed >= PHASE_MS[step]) {
+        elapsed = 0;
+        step = (step + 1) % PHASE_MS.length;
+        setPhase(step);
+      }
+    }, tick);
+
+    return () => clearInterval(id);
+  }, [active]);
+
+  return REINFORCE_PHASES[phase];
+}
+
 export function PlatformTabs() {
   const [tab, setTab] = useState(0);
   const active = modules[tab];
+  const reinforce = useReinforcementCycle(tab === 0);
 
   return (
     <div className="border border-ink">
@@ -246,27 +285,71 @@ export function PlatformTabs() {
               <span>{active.screen}</span>
               <span>{active.screenMeta}</span>
             </div>
-            {active.rows.map((row) => (
-              <div
-                key={row.main}
-                className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-[#EFEBE4] p-3.5"
-              >
-                <div className="flex min-w-0 flex-col gap-[5px]">
-                  <span className="text-sm leading-[1.4] text-foreground">{row.main}</span>
-                  <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
-                    {row.sub}
-                  </span>
-                </div>
-                <span
-                  className={cn(
-                    "whitespace-nowrap font-mono text-[10px] tracking-[0.08em]",
-                    row.tint === "accent" ? "text-accent" : "text-muted-foreground"
-                  )}
+            {active.rows.map((row) => {
+              const live = tab === 0 && row.state === "SHIPPED" ? reinforce : null;
+              const sub = live?.sub ?? row.sub;
+              const state = live?.state ?? row.state;
+              const tint = live?.tint ?? row.tint;
+
+              return (
+                <div
+                  key={row.main}
+                  className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-[#EFEBE4] p-3.5"
                 >
-                  {row.state}
-                </span>
-              </div>
-            ))}
+                  <div className="flex min-w-0 flex-col gap-[5px]">
+                    <span className="text-sm leading-[1.4] text-foreground">{row.main}</span>
+                    {live ? (
+                      <div className="relative h-[13px] overflow-hidden">
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={sub}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            transition={SNAP}
+                            className="absolute inset-0 font-mono text-[10px] tracking-[0.08em] text-muted-foreground"
+                          >
+                            {sub}
+                          </motion.span>
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                        {row.sub}
+                      </span>
+                    )}
+                  </div>
+                  {live ? (
+                    <div className="relative h-[13px] min-w-[5.75rem] overflow-hidden text-right">
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={state}
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={SNAP}
+                          className={cn(
+                            "absolute inset-0 whitespace-nowrap font-mono text-[10px] tracking-[0.08em]",
+                            tint === "accent" ? "text-accent" : "text-muted-foreground"
+                          )}
+                        >
+                          {state}
+                        </motion.span>
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <span
+                      className={cn(
+                        "whitespace-nowrap font-mono text-[10px] tracking-[0.08em]",
+                        row.tint === "accent" ? "text-accent" : "text-muted-foreground"
+                      )}
+                    >
+                      {row.state}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
             <div className="px-3.5 py-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
               <span className="text-primary">▍</span> {active.screenFoot}
             </div>

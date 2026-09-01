@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { isDemoMode } from "@/lib/demo-mode";
+import { CitationSweep } from "@/components/home/citation-sweep";
 import { PlatformTabs } from "@/components/home/platform-tabs";
+import { SectionIndex } from "@/components/home/section-index";
 
 export const dynamic = "force-dynamic";
 
@@ -270,7 +272,7 @@ export default async function HomePage() {
       <section id="platform" className="border-b border-border">
         <div className="ds-container py-[76px]">
           <div className="ds-shell mb-10">
-            <div className="ds-kicker pt-2.5">01 - THE PLATFORM</div>
+            <SectionIndex className="ds-kicker pt-2.5">01 - THE PLATFORM</SectionIndex>
             <div>
               <h2 className="mb-3.5 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
                 One update in. Four channels out.
@@ -288,9 +290,9 @@ export default async function HomePage() {
       <section id="visibility" className="border-b border-ink bg-ink text-background">
         <div className="ds-container py-20">
           <div className="ds-shell mb-11">
-            <div className="pt-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-primary">
+            <SectionIndex className="pt-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-primary">
               02 - GENERATIVE ENGINE OPTIMIZATION
-            </div>
+            </SectionIndex>
             <div>
               <h2 className="mb-3.5 max-w-[24ch] text-[27px] md:text-[34px] lg:text-[44px]">
                 Google is no longer the only search box.
@@ -320,31 +322,7 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col bg-ink-panel p-[30px]">
-              <div className="mb-5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-                CITATION CHECK · WEEKLY SWEEP
-              </div>
-              {citations.map((cite) => (
-                <div
-                  key={cite.engine}
-                  className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-ink-rule py-[15px] font-mono text-xs"
-                >
-                  <span className="text-[#E5E0D8]">{cite.engine}</span>
-                  <span
-                    className={
-                      cite.cited
-                        ? "text-[10px] tracking-[0.08em] text-primary"
-                        : "text-[10px] tracking-[0.08em] text-[#8C857A]"
-                    }
-                  >
-                    {cite.state}
-                  </span>
-                </div>
-              ))}
-              <p className="mb-0 mt-5 font-mono text-[10.5px] leading-[1.6] tracking-[0.03em] text-[#8C857A]">
-                A missing citation opens a task with the specific page and fact to add.
-              </p>
-            </div>
+            <CitationSweep citations={citations} simulated={demo} />
           </div>
         </div>
       </section>
@@ -352,7 +330,7 @@ export default async function HomePage() {
       <section id="compare" className="border-b border-border bg-card">
         <div className="ds-container py-[76px]">
           <div className="ds-shell mb-10">
-            <div className="ds-kicker pt-2.5">03 - THE ALTERNATIVE</div>
+            <SectionIndex className="ds-kicker pt-2.5">03 - THE ALTERNATIVE</SectionIndex>
             <h2 className="m-0 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
               Or you can keep running five tools.
             </h2>
@@ -396,7 +374,7 @@ export default async function HomePage() {
 
       <section className="border-b border-border">
         <div className="ds-container ds-shell py-[72px]">
-          <div className="ds-kicker pt-2">04 - WHAT SHIPS WEEKLY</div>
+          <SectionIndex className="ds-kicker pt-2">04 - WHAT SHIPS WEEKLY</SectionIndex>
           <div className="border-t border-ink">
             {cadence.map((row) => (
               <div
@@ -418,7 +396,7 @@ export default async function HomePage() {
 
       <section id="faq" className="border-b border-border bg-card">
         <div className="ds-container ds-shell py-[72px]">
-          <div className="ds-kicker pt-2">05 - FAQ</div>
+          <SectionIndex className="ds-kicker pt-2">05 - FAQ</SectionIndex>
           <div className="grid gap-px border border-border bg-border">
             {faqs.map((faq) => (
               <div
