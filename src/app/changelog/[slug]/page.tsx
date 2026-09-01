@@ -82,19 +82,19 @@ export default async function ChangelogPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <header className="mb-8">
-        <p className="text-sm text-gray-500 mb-2">
-          {entry.project.name} ·{" "}
+        <p className="font-mono text-[11px] tracking-wider text-muted-foreground mb-2">
+          {entry.project.name} /{" "}
           {entry.publishedAt?.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
           })}
         </p>
-        <h1 className="text-4xl font-bold text-gray-900">{entry.title}</h1>
-        <p className="mt-4 text-lg text-gray-600">{entry.summary}</p>
+        <h1 className="text-4xl">{entry.title}</h1>
+        <p className="mt-4 text-lg text-muted-foreground">{entry.summary}</p>
       </header>
       <div
-        className="prose prose-gray max-w-none"
+        className="max-w-none space-y-4 text-muted-foreground"
         dangerouslySetInnerHTML={{
           __html: entry.body
             .replace(/^# (.+)$/gm, "<h2>$1</h2>")
@@ -107,12 +107,12 @@ export default async function ChangelogPage({ params }: PageProps) {
         }}
       />
       {entry.keywords.length > 0 && (
-        <footer className="mt-12 pt-6 border-t border-gray-200">
+        <footer className="mt-12 pt-6 border-t border-stone-800">
           <div className="flex flex-wrap gap-2">
             {entry.keywords.map((kw) => (
               <span
                 key={kw}
-                className="px-2 py-1 bg-gray-100 text-gray-600 text-sm rounded"
+                className="px-1.5 py-0.5 border border-stone-800 font-mono text-[10px] tracking-wider text-muted-foreground rounded-sm"
               >
                 {kw}
               </span>

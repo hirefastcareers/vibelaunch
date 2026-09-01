@@ -9,16 +9,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  CheckCircle2,
-  AlertTriangle,
-  XCircle,
-  RefreshCw,
-  ShieldCheck,
-} from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { SUITE_LABELS, SUITE_DESCRIPTIONS, type DiagnosticSuite } from "@/lib/diagnostics/types";
 import { getMockTestResults } from "@/lib/demo-mode";
+import { StatusPill, statusLabel, statusTone } from "@/components/status-pill";
 
 interface TestResult {
   suite: DiagnosticSuite;
@@ -44,32 +38,6 @@ const INITIAL_REPORT: DiagnosticReport = {
     getMockTestResults("geo_audit") as TestResult,
   ],
 };
-
-function statusIcon(status: string) {
-  switch (status) {
-    case "passed":
-      return <CheckCircle2 className="h-5 w-5 text-emerald-500" />;
-    case "warning":
-      return <AlertTriangle className="h-5 w-5 text-amber-500" />;
-    default:
-      return <XCircle className="h-5 w-5 text-rose-500" />;
-  }
-}
-
-function statusBadgeVariant(
-  status: string
-): "viral" | "baseline" | "low" | "default" {
-  switch (status) {
-    case "passed":
-      return "viral";
-    case "warning":
-      return "baseline";
-    case "failed":
-      return "low";
-    default:
-      return "default";
-  }
-}
 
 export default function DiagnosticsPage() {
   const [loading, setLoading] = useState(false);
@@ -100,74 +68,72 @@ export default function DiagnosticsPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-6 max-w-5xl space-y-6">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">App Health & Audits</h1>
-          <p className="text-muted-foreground">
+          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+            [HEALTH]
+          </p>
+          <h1 className="text-4xl">App Health & Audits</h1>
+          <p className="text-muted-foreground text-sm mt-1">
             Checks Google indexing, AI learning, media, and whether ChatGPT and Perplexity mention you.
           </p>
         </div>
-        <Button className="gap-2" disabled={loading} onClick={runDiagnostic}>
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Run Instant Diagnostic
+        <Button className="gap-2 font-mono text-xs tracking-wider" disabled={loading} onClick={runDiagnostic}>
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+          RUN CHECK
         </Button>
       </div>
 
-      <Card className="border-border/40 bg-card/60 backdrop-blur">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="space-y-1">
-            <CardTitle className="text-xl flex items-center gap-2">
-              <ShieldCheck className="h-6 w-6 text-primary" />
-              App Health Score
-            </CardTitle>
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">SYS_HEALTH</p>
+            <CardTitle className="text-xl">App Health Score</CardTitle>
             <CardDescription>
               Combined score across indexing, learning, media, and AI search checks
             </CardDescription>
           </div>
-          <div className="text-right">
-            <span className="text-4xl font-extrabold">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-4xl tabular-nums">
               {report.overallScore.toFixed(0)}%
             </span>
-            <Badge
-              className="ml-3 uppercase"
-              variant={statusBadgeVariant(report.overallStatus)}
-            >
-              {report.overallStatus}
-            </Badge>
+            <StatusPill tone={statusTone(report.overallStatus)}>
+              {statusLabel(report.overallStatus)}
+            </StatusPill>
           </div>
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="border border-stone-800 divide-y divide-stone-800">
         {report.results.map((test) => (
-          <Card className="border-border/40" key={test.suite}>
-            <CardHeader className="pb-2">
-              <div className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  {statusIcon(test.status)}
+          <div className="bg-card p-4" key={test.suite}>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <StatusPill tone={statusTone(test.status)}>
+                  {statusLabel(test.status)}
+                </StatusPill>
+                <h3 className="text-lg truncate">
                   {SUITE_LABELS[test.suite] ?? test.suite.replace(/_/g, " ")}
-                </CardTitle>
-                <span className="font-semibold text-sm">{test.score}%</span>
+                </h3>
               </div>
-              <CardDescription className="pt-2">
-                {SUITE_DESCRIPTIONS[test.suite] ?? ""}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {typeof test.details.message === "string"
-                  ? test.details.message
-                  : typeof test.details.summary === "string"
-                    ? test.details.summary
-                    : test.status === "passed"
-                      ? "All checks passed."
-                      : test.status === "warning"
-                        ? "Some checks need attention."
-                        : "This check did not pass."}
-              </p>
-            </CardContent>
-          </Card>
+              <span className="font-mono text-sm tabular-nums">{test.score}%</span>
+            </div>
+            <p className="font-mono text-[11px] text-muted-foreground mt-2">
+              {SUITE_DESCRIPTIONS[test.suite] ?? ""}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {typeof test.details.message === "string"
+                ? test.details.message
+                : typeof test.details.summary === "string"
+                  ? test.details.summary
+                  : test.status === "passed"
+                    ? "All checks passed."
+                    : test.status === "warning"
+                      ? "Some checks need attention."
+                      : "This check did not pass."}
+            </p>
+          </div>
         ))}
       </div>
     </div>

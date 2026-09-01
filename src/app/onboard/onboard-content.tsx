@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Globe, Rocket } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const TONES = [
   { value: "build-in-public", label: "Build in Public" },
@@ -69,10 +69,10 @@ export default function OnboardPage() {
   return (
     <div className="mx-auto max-w-2xl p-8">
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <Rocket className="h-6 w-6 text-primary" />
-          <h1 className="text-3xl font-bold">Autonomous Growth for Indie Builders</h1>
-        </div>
+        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+          [ONBOARD]
+        </p>
+        <h1 className="text-4xl mb-2">Autonomous Growth for Indie Builders</h1>
         <p className="text-muted-foreground">
           Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically.
         </p>
@@ -80,10 +80,7 @@ export default function OnboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
-            Project Setup
-          </CardTitle>
+          <CardTitle>Project Setup</CardTitle>
           <CardDescription>
             Paste your product URL. We&apos;ll pull in your name, description, and keywords to get started.
           </CardDescription>
@@ -91,7 +88,7 @@ export default function OnboardPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
+              <div className="rounded-sm border border-stone-800 p-3 font-mono text-[12px] text-muted-foreground">
                 {error}
               </div>
             )}

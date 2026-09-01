@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface GeneratePostModalProps {
   open: boolean;
@@ -64,10 +64,7 @@ export function GeneratePostModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            Generate New Post with AI
-          </DialogTitle>
+          <DialogTitle>Generate New Post</DialogTitle>
           <DialogDescription>
             Uses your viral posts to write stronger hooks and copy.
           </DialogDescription>
@@ -113,12 +110,12 @@ export function GeneratePostModal({
           </div>
 
           {result && (
-            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
+            <div className="rounded-sm border border-stone-800 bg-muted p-4 font-mono text-sm">
               {result}
             </div>
           )}
 
-          <Button onClick={handleGenerate} disabled={loading || !topic} className="w-full">
+          <Button onClick={handleGenerate} disabled={loading || !topic} className="w-full font-mono text-xs tracking-wider">
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />

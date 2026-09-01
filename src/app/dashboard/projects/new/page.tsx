@@ -44,42 +44,42 @@ export default function NewProjectPage() {
 
   return (
     <main className="min-h-screen max-w-xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">New Project</h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl border">
+      <h1 className="text-4xl mb-8">New Project</h1>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-sm border border-stone-800">
         {error && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>
+          <div className="p-3 border border-stone-800 font-mono text-[12px] text-muted-foreground">{error}</div>
         )}
         <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input name="name" required className="w-full border rounded-lg px-3 py-2" />
+          <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">NAME</label>
+          <input name="name" required className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Slug</label>
+          <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">SLUG</label>
           <input
             name="slug"
             placeholder="auto-generated from name"
             pattern="[a-z0-9-]+"
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Tagline</label>
-          <input name="tagline" className="w-full border rounded-lg px-3 py-2" />
+          <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">TAGLINE</label>
+          <input name="tagline" className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Description</label>
-          <textarea name="description" rows={3} className="w-full border rounded-lg px-3 py-2" />
+          <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">DESCRIPTION</label>
+          <textarea name="description" rows={3} className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Website URL</label>
-          <input name="websiteUrl" type="url" className="w-full border rounded-lg px-3 py-2" />
+          <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">WEBSITE URL</label>
+          <input name="websiteUrl" type="url" className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+          className="w-full py-2 bg-primary text-primary-foreground rounded-sm hover:bg-primary/90 disabled:opacity-50 font-mono text-xs tracking-wider"
         >
-          {loading ? "Creating..." : "Create Project"}
+          {loading ? "CREATING..." : "CREATE PROJECT"}
         </button>
       </form>
     </main>

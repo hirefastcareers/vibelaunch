@@ -14,8 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EriBadge } from "@/components/eri-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Eye, TrendingUp, FileText, Users, Sparkles, ExternalLink } from "lucide-react";
+import { StatusPill } from "@/components/status-pill";
 import { formatRelativeTime } from "@/lib/utils";
 import { GeoCard } from "@/components/dashboard/geo-card";
 import { DiagnosticCard } from "@/components/dashboard/diagnostic-card";
@@ -40,6 +39,28 @@ interface DashboardStats {
   followerGrowth: Array<{ date: string; followers: number; eri: number }>;
 }
 
+function Metric({
+  code,
+  value,
+  hint,
+  id,
+}: {
+  code: string;
+  value: string | number;
+  hint: string;
+  id?: string;
+}) {
+  return (
+    <div id={id} className={`bg-card p-4 ${id ? "scroll-mt-8" : ""}`}>
+      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {code}
+      </p>
+      <div className="font-mono text-2xl tabular-nums mt-3">{value}</div>
+      <p className="font-mono text-[10px] text-muted-foreground mt-2">{hint}</p>
+    </div>
+  );
+}
+
 export default function CommandCenterPage() {
   const [data, setData] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,11 +74,11 @@ export default function CommandCenterPage() {
 
   if (loading) {
     return (
-      <div className="p-8 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="p-6 space-y-4">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid gap-px bg-stone-800 md:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-32" />
+            <Skeleton key={i} className="h-28 rounded-none" />
           ))}
         </div>
         <Skeleton className="h-64" />
@@ -68,87 +89,40 @@ export default function CommandCenterPage() {
   const stats = data?.stats;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-6 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Command Center</h1>
-        <p className="text-muted-foreground mt-1">
-          Real-time launch metrics and top-performing content
+        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+          [OPS]
+        </p>
+        <h1 className="text-4xl">Command Center</h1>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Launch metrics and top-performing content
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Impressions Velocity
-            </CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats?.impressionsVelocity.toLocaleString() ?? 0}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Last 7 days</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Virality Score
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.avgEri ?? 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Across {stats?.publishedCount ?? 0} published posts
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card id="articles" className="scroll-mt-8">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Indexed Articles on Google
-            </CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.seoPagesPublished ?? 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Auto-published from your updates</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Impressions
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats?.totalImpressions.toLocaleString() ?? 0}
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">All time</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              AI Learning Status
-            </CardTitle>
-            <Sparkles className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Active</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Learning from your viral posts
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid gap-px bg-stone-800 border border-stone-800 md:grid-cols-2 lg:grid-cols-5">
+        <Metric
+          code="IMP_7D"
+          value={(stats?.impressionsVelocity ?? 0).toLocaleString()}
+          hint="Impressions, last 7 days"
+        />
+        <Metric
+          code="VIRALITY"
+          value={stats?.avgEri ?? 0}
+          hint={`Across ${stats?.publishedCount ?? 0} published posts`}
+        />
+        <Metric
+          id="articles"
+          code="INDEXED"
+          value={stats?.seoPagesPublished ?? 0}
+          hint="Articles on Google"
+        />
+        <Metric
+          code="IMP_ALL"
+          value={(stats?.totalImpressions ?? 0).toLocaleString()}
+          hint="Impressions, all time"
+        />
+        <Metric code="LEARN" value="ACTIVE" hint="Learning from viral posts" />
       </div>
 
       <div id="ai-search" className="scroll-mt-8">
@@ -159,31 +133,38 @@ export default function CommandCenterPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Follower Growth Trajectory</CardTitle>
+          <CardTitle className="text-xl">Follower Growth Trajectory</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart data={data?.followerGrowth ?? []}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <CartesianGrid strokeDasharray="1 4" stroke="hsl(var(--border))" />
               <XAxis
                 dataKey="date"
                 stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
+                fontSize={11}
+                fontFamily="var(--font-mono)"
                 tickFormatter={(v) => v.slice(5)}
               />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={11}
+                fontFamily="var(--font-mono)"
+              />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
+                  borderRadius: "2px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 12,
                 }}
               />
               <Line
                 type="monotone"
                 dataKey="followers"
                 stroke="hsl(var(--primary))"
-                strokeWidth={2}
+                strokeWidth={1.5}
                 dot={false}
               />
             </LineChart>
@@ -192,49 +173,47 @@ export default function CommandCenterPage() {
       </Card>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Top Performing Posts</h2>
+        <h2 className="text-2xl mb-4">Top Performing Posts</h2>
         {!data?.topPosts.length ? (
           <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
+            <CardContent className="py-8 text-sm text-muted-foreground">
               No published posts yet.{" "}
-              <Link href="/dashboard/queue" className="text-primary hover:underline">
+              <Link href="/dashboard/queue" className="underline text-foreground">
                 Head to the AI Post Generator
               </Link>{" "}
               to create your first post.
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-3">
+          <div className="border border-stone-800 divide-y divide-stone-800">
             {data.topPosts.map((post) => (
-              <Card key={post.id} className="hover:border-primary/30 transition-colors">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm leading-relaxed">{post.content}</p>
-                      <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
-                        <span>{post.impressions.toLocaleString()} impressions</span>
-                        <span>{formatRelativeTime(post.publishedAt)}</span>
-                        {post.mediaUrls.length > 0 && (
-                          <Badge variant="secondary">{post.mediaUrls.length} media</Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2 shrink-0">
-                      <EriBadge eri={post.eri} />
-                      {post.xPostUrl && (
-                        <a
-                          href={post.xPostUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary hover:underline flex items-center gap-1"
-                        >
-                          View <ExternalLink className="h-3 w-3" />
-                        </a>
+              <div key={post.id} className="bg-card p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm leading-relaxed font-mono">{post.content}</p>
+                    <div className="flex items-center gap-3 mt-3 font-mono text-[10px] text-muted-foreground">
+                      <span>{post.impressions.toLocaleString()} IMP</span>
+                      <span>{formatRelativeTime(post.publishedAt)}</span>
+                      {post.mediaUrls.length > 0 && (
+                        <StatusPill>{`[MEDIA: ${post.mediaUrls.length}]`}</StatusPill>
                       )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="flex flex-col items-end gap-2 shrink-0">
+                    <EriBadge eri={post.eri} />
+                    {post.xPostUrl && (
+                      <a
+                        href={post.xPostUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-[10px] tracking-wider underline text-muted-foreground hover:text-foreground"
+                      >
+                        VIEW
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}

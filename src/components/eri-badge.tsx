@@ -1,15 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { getEriTier } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-
-const tierVariants: Record<string, "viral" | "solid" | "baseline" | "low"> = {
-  "high-viral": "viral",
-  solid: "solid",
-  baseline: "baseline",
-  low: "low",
-};
+import { StatusPill } from "@/components/status-pill";
 
 interface EriBadgeProps {
   eri: number;
@@ -17,10 +9,10 @@ interface EriBadgeProps {
 }
 
 export function EriBadge({ eri, className }: EriBadgeProps) {
-  const tier = getEriTier(eri);
+  const tone = eri >= 5 ? "ok" : eri >= 2 ? "warn" : "fail";
   return (
-    <Badge variant={tierVariants[tier]} className={cn("font-mono", className)}>
-      Virality {eri.toFixed(1)}
-    </Badge>
+    <StatusPill tone={tone} className={cn(className)}>
+      {`[VIRALITY: ${eri.toFixed(1)}]`}
+    </StatusPill>
   );
 }

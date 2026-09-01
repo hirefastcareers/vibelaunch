@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-    --card: 224 71% 6%;
-    --card-foreground: 213 31% 91%;
-    --popover: 224 71% 6%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 263 70% 58%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 222 47% 11%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 223 47% 11%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 216 34% 17%;
-    --accent-foreground: 213 31% 91%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
-    --ring: 263 70% 58%;
-    --radius: 0.625rem;
+    --background: 0 0% 7%;
+    --foreground: 60 14% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 60 14% 98%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 60 14% 98%;
+    --primary: 16 100% 50%;
+    --primary-foreground: 60 14% 98%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 60 14% 98%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 24 5% 64%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 60 14% 98%;
+    --destructive: 16 100% 50%;
+    --destructive-foreground: 60 14% 98%;
+    --border: 12 6% 16%;
+    --input: 12 6% 16%;
+    --ring: 16 100% 50%;
+    --radius: 0.125rem;
   }
 }
 
@@ -31,7 +31,24 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  code,
+  kbd,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono), ui-monospace, monospace;
   }
 }

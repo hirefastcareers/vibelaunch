@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare, Sparkles, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 
 interface FeedItem {
   id: string;
@@ -85,13 +85,13 @@ export default function RepliesPage() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <MessageSquare className="h-7 w-7 text-primary" />
-          Smart Reply Assistant
-        </h1>
-        <p className="text-muted-foreground mt-1">
+        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+          [REPLIES]
+        </p>
+        <h1 className="text-4xl">Smart Reply Assistant</h1>
+        <p className="text-muted-foreground mt-1 text-sm">
           Monitor keyword feeds and generate context-aware, non-spammy replies
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function RepliesPage() {
       {Object.entries(feeds).map(([keyword, items]) => (
         <Card key={keyword}>
           <CardHeader>
-            <CardTitle className="text-lg font-mono text-primary">{keyword}</CardTitle>
+            <CardTitle className="font-mono text-sm tracking-wider">{keyword}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {items.map((item) => {
@@ -109,10 +109,10 @@ export default function RepliesPage() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-lg border border-border p-4 space-y-3"
+                  className="rounded-sm border border-stone-800 p-4 space-y-3"
                 >
                   <div>
-                    <span className="text-sm font-medium text-primary">{item.author}</span>
+                    <span className="text-sm font-mono text-muted-foreground">{item.author}</span>
                     <p className="text-sm mt-1 text-foreground/90">{item.content}</p>
                   </div>
 
@@ -123,8 +123,7 @@ export default function RepliesPage() {
                       onClick={() => generateReply(keyword, item)}
                       disabled={generating === key}
                     >
-                      <Sparkles className="h-3.5 w-3.5" />
-                      {generating === key ? "Generating..." : "AI Smart Reply"}
+                      {generating === key ? "Generating..." : "Generate reply"}
                     </Button>
                   ) : (
                     <div className="space-y-2">
