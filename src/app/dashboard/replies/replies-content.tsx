@@ -109,7 +109,7 @@ export default function RepliesPage() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-sm border border-stone-800 p-4 space-y-3"
+                  className="rounded-sm border border-border p-4 space-y-3"
                 >
                   <div>
                     <span className="text-sm font-mono text-muted-foreground">{item.author}</span>

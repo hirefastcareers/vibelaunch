@@ -129,7 +129,7 @@ export function DiagnosticCard() {
           </StatusPill>
         </div>
 
-        <div className="border border-stone-800 divide-y divide-stone-800">
+        <div className="border border-border divide-y divide-border">
           {(data?.runs ?? []).map((run) => {
             const label = SUITE_LABELS[run.suite as DiagnosticSuite] ?? run.suite;
             return (

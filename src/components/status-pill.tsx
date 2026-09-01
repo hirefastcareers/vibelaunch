@@ -5,9 +5,9 @@ type Tone = "ok" | "warn" | "fail" | "neutral";
 
 const TONE: Record<Tone, string> = {
   ok: "border-primary text-primary",
-  warn: "border-stone-800 text-muted-foreground",
-  fail: "border-stone-800 text-muted-foreground",
-  neutral: "border-stone-800 text-muted-foreground",
+  warn: "border-border text-muted-foreground",
+  fail: "border-border text-muted-foreground",
+  neutral: "border-border text-muted-foreground",
 };
 
 interface StatusPillProps {

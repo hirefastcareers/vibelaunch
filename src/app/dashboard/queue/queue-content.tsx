@@ -50,7 +50,7 @@ function MediaThumbnail({ urls }: { urls: string[] }) {
   const isCode = url.includes("code-card");
 
   return (
-    <div className="h-14 w-14 rounded-sm border border-stone-800 bg-muted flex items-center justify-center shrink-0 overflow-hidden font-mono text-[9px] tracking-wider text-muted-foreground">
+    <div className="h-14 w-14 rounded-sm border border-border bg-muted flex items-center justify-center shrink-0 overflow-hidden font-mono text-[9px] tracking-wider text-muted-foreground">
       {isVideo ? "VID" : isCode ? "CODE" : (
         <img src={url} alt="" className="h-full w-full object-cover" />
       )}
@@ -60,7 +60,7 @@ function MediaThumbnail({ urls }: { urls: string[] }) {
 
 function PostCard({ post }: { post: QueuePost }) {
   return (
-    <div className="border-b border-stone-800 bg-card p-4 last:border-b-0">
+    <div className="border-b border-border bg-card p-4 last:border-b-0">
       <div className="flex gap-4">
         <MediaThumbnail urls={post.mediaUrls} />
         <div className="flex-1 min-w-0">
@@ -85,13 +85,13 @@ function PostCard({ post }: { post: QueuePost }) {
 function PostList({ posts, emptyMessage }: { posts: QueuePost[]; emptyMessage: string }) {
   if (!posts.length) {
     return (
-      <div className="py-8 px-4 font-mono text-[12px] text-muted-foreground border border-stone-800">
+      <div className="py-8 px-4 font-mono text-[12px] text-muted-foreground border border-border">
         {emptyMessage}
       </div>
     );
   }
   return (
-    <div className="border border-stone-800">
+    <div className="border border-border">
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}

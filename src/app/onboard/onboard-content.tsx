@@ -88,7 +88,7 @@ export default function OnboardPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="rounded-sm border border-stone-800 p-3 font-mono text-[12px] text-muted-foreground">
+              <div className="rounded-sm border border-border p-3 font-mono text-[12px] text-muted-foreground">
                 {error}
               </div>
             )}

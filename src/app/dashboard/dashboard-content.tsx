@@ -76,7 +76,7 @@ export default function CommandCenterPage() {
     return (
       <div className="p-6 space-y-4">
         <Skeleton className="h-8 w-48" />
-        <div className="grid gap-px bg-stone-800 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-5">
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-28 rounded-none" />
           ))}
@@ -100,7 +100,7 @@ export default function CommandCenterPage() {
         </p>
       </div>
 
-      <div className="grid gap-px bg-stone-800 border border-stone-800 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-px bg-border border border-border md:grid-cols-2 lg:grid-cols-5">
         <Metric
           code="IMP_7D"
           value={(stats?.impressionsVelocity ?? 0).toLocaleString()}
@@ -185,7 +185,7 @@ export default function CommandCenterPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="border border-stone-800 divide-y divide-stone-800">
+          <div className="border border-border divide-y divide-border">
             {data.topPosts.map((post) => (
               <div key={post.id} className="bg-card p-4">
                 <div className="flex items-start justify-between gap-4">

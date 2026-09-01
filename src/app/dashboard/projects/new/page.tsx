@@ -45,13 +45,13 @@ export default function NewProjectPage() {
   return (
     <main className="min-h-screen max-w-xl mx-auto px-4 py-12">
       <h1 className="text-4xl mb-8">New Project</h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-sm border border-stone-800">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-sm border border-border">
         {error && (
-          <div className="p-3 border border-stone-800 font-mono text-[12px] text-muted-foreground">{error}</div>
+          <div className="p-3 border border-border font-mono text-[12px] text-muted-foreground">{error}</div>
         )}
         <div>
           <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">NAME</label>
-          <input name="name" required className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
+          <input name="name" required className="w-full border border-border rounded-sm bg-background px-3 py-2" />
         </div>
         <div>
           <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">SLUG</label>
@@ -59,20 +59,20 @@ export default function NewProjectPage() {
             name="slug"
             placeholder="auto-generated from name"
             pattern="[a-z0-9-]+"
-            className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2"
+            className="w-full border border-border rounded-sm bg-background px-3 py-2"
           />
         </div>
         <div>
           <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">TAGLINE</label>
-          <input name="tagline" className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
+          <input name="tagline" className="w-full border border-border rounded-sm bg-background px-3 py-2" />
         </div>
         <div>
           <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">DESCRIPTION</label>
-          <textarea name="description" rows={3} className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
+          <textarea name="description" rows={3} className="w-full border border-border rounded-sm bg-background px-3 py-2" />
         </div>
         <div>
           <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">WEBSITE URL</label>
-          <input name="websiteUrl" type="url" className="w-full border border-stone-800 rounded-sm bg-background px-3 py-2" />
+          <input name="websiteUrl" type="url" className="w-full border border-border rounded-sm bg-background px-3 py-2" />
         </div>
         <button
           type="submit"

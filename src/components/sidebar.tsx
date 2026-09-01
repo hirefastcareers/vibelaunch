@@ -24,7 +24,7 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-stone-800 bg-card">
+    <aside className="flex h-full w-64 flex-col border-r border-border bg-card">
       <div className="flex h-14 items-center px-4">
         <span className="font-serif text-xl tracking-tight">Sorano</span>
       </div>
@@ -40,26 +40,28 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
               key={item.label}
               href={item.href}
               className={cn(
-                "flex items-baseline gap-2 rounded-sm px-2 py-2 text-sm transition-colors",
+                "flex items-baseline gap-2 rounded-sm border-l-2 border-transparent px-2 py-2 text-sm transition-colors",
                 active
-                  ? "bg-accent text-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  ? "border-l-2 border-primary bg-secondary text-foreground"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
               )}
             >
-              <span className="font-mono text-[10px] text-muted-foreground">{item.key}</span>
+              <span className={cn("font-mono text-[10px]", active ? "text-primary" : "text-muted-foreground")}>
+                {item.key}
+              </span>
               <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-3 space-y-3 border-t border-stone-800">
+      <div className="p-3 space-y-3 border-t border-border">
         <button
           onClick={onOpenCommandPalette}
-          className="flex w-full items-center justify-between rounded-sm border border-stone-800 bg-transparent px-3 py-2 text-xs text-muted-foreground hover:bg-accent transition-colors"
+          className="flex w-full items-center justify-between rounded-sm border border-border bg-transparent px-3 py-2 text-xs text-muted-foreground hover:bg-accent transition-colors"
         >
           <span className="font-mono text-[10px] tracking-wider">QUICK ACTIONS</span>
-          <kbd className="rounded-sm border border-stone-800 bg-background px-1.5 py-0.5 font-mono text-[10px]">
+          <kbd className="rounded-sm border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">
             ⌘K
           </kbd>
         </button>

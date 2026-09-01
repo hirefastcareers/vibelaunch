@@ -107,12 +107,12 @@ export default async function ChangelogPage({ params }: PageProps) {
         }}
       />
       {entry.keywords.length > 0 && (
-        <footer className="mt-12 pt-6 border-t border-stone-800">
+        <footer className="mt-12 pt-6 border-t border-border">
           <div className="flex flex-wrap gap-2">
             {entry.keywords.map((kw) => (
               <span
                 key={kw}
-                className="px-1.5 py-0.5 border border-stone-800 font-mono text-[10px] tracking-wider text-muted-foreground rounded-sm"
+                className="px-1.5 py-0.5 border border-border font-mono text-[10px] tracking-wider text-muted-foreground rounded-sm"
               >
                 {kw}
               </span>

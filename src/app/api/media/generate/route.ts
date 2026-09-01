@@ -49,15 +49,28 @@ export async function GET(req: NextRequest) {
 
   const svg = type === "code-card"
     ? `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-        <rect fill="#0f172a" width="1200" height="630"/>
-        <text x="60" y="80" fill="#a78bfa" font-family="monospace" font-size="24">// Code Card Preview</text>
-        <text x="60" y="140" fill="#e2e8f0" font-family="monospace" font-size="18">${id}</text>
+        <defs>
+          <pattern id="ds-stripe" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+            <rect width="6" height="12" fill="#E0DCD3"/>
+          </pattern>
+        </defs>
+        <rect fill="#FAF8F4" width="1200" height="630"/>
+        <rect fill="url(#ds-stripe)" width="1200" height="630"/>
+        <rect x="588" y="278" width="8" height="8" fill="#FF5500"/>
+        <text x="600" y="328" text-anchor="middle" fill="#171512" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" letter-spacing="2.2">CODE CARD PLACEHOLDER</text>
+        <text x="600" y="352" text-anchor="middle" fill="#6B655C" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" letter-spacing="1.6">${id}</text>
       </svg>`
     : `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
-        <rect fill="#0f172a" width="640" height="360"/>
-        <circle cx="320" cy="180" r="40" fill="none" stroke="#a78bfa" stroke-width="4"/>
-        <polygon points="310,165 310,195 335,180" fill="#a78bfa"/>
-        <text x="320" y="260" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="14">Video Preview</text>
+        <defs>
+          <pattern id="ds-stripe" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+            <rect width="6" height="12" fill="#E0DCD3"/>
+          </pattern>
+        </defs>
+        <rect fill="#FAF8F4" width="640" height="360"/>
+        <rect fill="url(#ds-stripe)" width="640" height="360"/>
+        <rect x="316" y="148" width="8" height="8" fill="#FF5500"/>
+        <text x="320" y="186" text-anchor="middle" fill="#171512" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" letter-spacing="2.2">VIDEO PLACEHOLDER</text>
+        <text x="320" y="208" text-anchor="middle" fill="#6B655C" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" letter-spacing="1.6">${id}</text>
       </svg>`;
 
   return new NextResponse(svg, {

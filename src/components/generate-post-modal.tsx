@@ -110,7 +110,7 @@ export function GeneratePostModal({
           </div>
 
           {result && (
-            <div className="rounded-sm border border-stone-800 bg-muted p-4 font-mono text-sm">
+            <div className="rounded-sm border border-border bg-muted p-4 font-mono text-sm">
               {result}
             </div>
           )}

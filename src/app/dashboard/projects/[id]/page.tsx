@@ -44,7 +44,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           {project.posts.length === 0 ? (
             <p className="text-muted-foreground text-sm">No posts yet.</p>
           ) : (
-            <ul className="border border-stone-800 divide-y divide-stone-800">
+            <ul className="border border-border divide-y divide-border">
               {project.posts.map((post) => (
                 <li key={post.id} className="bg-card p-4 text-sm">
                   <p className="font-mono">{post.content}</p>
@@ -63,12 +63,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           {project.changelog.length === 0 ? (
             <p className="text-muted-foreground text-sm">No changelog entries yet.</p>
           ) : (
-            <ul className="border border-stone-800 divide-y divide-stone-800">
+            <ul className="border border-border divide-y divide-border">
               {project.changelog.map((entry) => (
                 <li key={entry.id}>
                   <Link
                     href={`/changelog/${entry.slug}`}
-                    className="block bg-card p-4 hover:bg-accent text-sm"
+                    className="block bg-card p-4 hover:bg-secondary text-sm"
                   >
                     <p>{entry.title}</p>
                     <p className="text-muted-foreground mt-1">{entry.summary}</p>
@@ -83,7 +83,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {project.analytics.length > 0 && (
         <section className="mt-8">
           <h2 className="text-2xl mb-4">Virality Snapshots</h2>
-          <div className="border border-stone-800 overflow-hidden">
+          <div className="border border-border overflow-hidden">
             <table className="w-full text-sm font-mono">
               <thead className="bg-card text-[10px] tracking-wider text-muted-foreground">
                 <tr>
@@ -94,7 +94,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </thead>
               <tbody>
                 {project.analytics.map((snap) => (
-                  <tr key={snap.id} className="border-t border-stone-800">
+                  <tr key={snap.id} className="border-t border-border">
                     <td className="p-3">{snap.snapshotAt.toLocaleDateString()}</td>
                     <td className="p-3 tabular-nums">{snap.avgEri}</td>
                     <td className="p-3 tabular-nums">{snap.postCount}</td>

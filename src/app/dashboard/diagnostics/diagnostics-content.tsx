@@ -105,7 +105,7 @@ export default function DiagnosticsPage() {
         </CardHeader>
       </Card>
 
-      <div className="border border-stone-800 divide-y divide-stone-800">
+      <div className="border border-border divide-y divide-border">
         {report.results.map((test) => (
           <div className="bg-card p-4" key={test.suite}>
             <div className="flex items-center justify-between gap-3">

@@ -119,7 +119,7 @@ export function GeoCard() {
             {(data?.suggestions ?? []).map((suggestion, i) => (
               <li
                 key={i}
-                className="text-sm text-muted-foreground leading-relaxed pl-3 border-l border-stone-800"
+                className="text-sm text-muted-foreground leading-relaxed pl-3 border-l border-border"
               >
                 {suggestion}
               </li>
