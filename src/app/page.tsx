@@ -173,7 +173,7 @@ export default async function HomePage() {
         </div>
       )}
 
-      <nav className="sticky top-0 z-20 border-b border-border bg-[rgba(250,248,244,0.94)] backdrop-blur-[8px]">
+      <nav className="sticky top-0 z-20 border-b border-stone-300 bg-[rgba(251,251,243,0.94)] backdrop-blur-[8px]">
         <div className="ds-container flex h-auto flex-wrap items-center justify-between gap-8 py-3 lg:h-[66px] lg:py-0">
           <Link href="/" className="flex items-baseline gap-[9px]">
             <span className="font-serif text-[27px] tracking-[-0.02em]">Sorano</span>
@@ -212,65 +212,61 @@ export default async function HomePage() {
         </div>
       </nav>
 
-      <section className="border-b border-border">
-        <div className="ds-container grid grid-cols-1 items-stretch lg:grid-cols-[1fr_1.02fr]">
-          <div className="flex flex-col justify-center border-border py-14 lg:border-r lg:py-[76px] lg:pr-14">
-            <div className="mb-[26px] flex items-center gap-2.5 font-mono text-[10px] tracking-[0.16em] text-muted-foreground">
+      <section className="border-b border-stone-300 bg-background">
+        <div className="ds-container grid grid-cols-1 items-stretch bg-background lg:grid-cols-2">
+          <div className="flex flex-col justify-center border-b border-stone-300 py-14 lg:border-b-0 lg:border-r lg:py-[76px] lg:pr-14">
+            <div className="ds-label mb-[26px] flex items-center gap-2.5">
               <span className="size-1.5 animate-sorano-blink rounded-full bg-primary" />
               <span>AUTONOMOUS GROWTH ENGINE</span>
             </div>
-            <h1 className="mb-[22px] max-w-[14ch] text-pretty text-[37px] md:text-[50px] lg:text-[70px]">
+            <h1 className="mb-[22px] max-w-[14ch] font-serif text-pretty text-[37px] md:text-[50px] lg:text-[70px]">
               Ship once.
               <br />
-              Get found <span className="italic text-accent">everywhere</span>.
+              Get found <span className="font-serif italic text-accent">everywhere</span>.
             </h1>
             <p className="mb-8 max-w-[44ch] text-pretty text-[18.5px] leading-[1.55] text-[#4A453D]">
               Sorano turns your product updates into viral social posts, Google-ranked articles,
               and AI search recommendations - automatically.
             </p>
-            <div className="mb-[30px] flex flex-wrap items-center gap-3.5">
-              <Link href={ctaHref} className="ds-btn">
+            <div className="mb-[30px] flex flex-col items-stretch gap-3.5 sm:flex-row sm:items-center">
+              <Link href={ctaHref} className="ds-btn text-center">
                 {heroCta}
               </Link>
               <Link
                 href="#platform"
-                className="rounded-sm border border-[#C9C3B8] px-5 py-3.5 font-mono text-xs tracking-[0.1em] text-[#4A453D] hover:border-foreground"
+                className="rounded-sm border border-stone-300 px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-[#4A453D] hover:border-foreground"
               >
                 SEE THE PLATFORM
               </Link>
             </div>
-            <div className="flex flex-wrap gap-7 border-t border-border pt-[18px] font-mono text-[10px] tracking-[0.1em] text-muted-foreground">
+            <div className="ds-label flex flex-wrap gap-7 border-t border-stone-300 pt-[18px]">
               <span>SIGN IN WITH X</span>
               <span>NO API KEYS</span>
               <span>NO SECOND CMS</span>
             </div>
           </div>
 
-          <div className="flex items-center py-10 lg:py-10 lg:pl-14">
+          <div className="flex items-center bg-background py-10 lg:pl-14">
             <div className="w-full border border-ink bg-white">
               <div className="flex items-center justify-between bg-ink px-4 py-[11px] font-mono text-[10px] tracking-[0.1em] text-background">
                 <span>SORANO / AI VISIBILITY</span>
                 <span className="text-[#8C857A]">LAST 30 DAYS</span>
               </div>
-              <div className="flex items-baseline gap-3.5 border-b border-border px-5 pb-2 pt-[22px]">
+              <div className="flex items-baseline gap-3.5 border-b border-stone-300 px-5 pb-2 pt-[22px]">
                 <div>
-                  <div className="font-serif text-[48px] leading-none tracking-[-0.03em]">38%</div>
-                  <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.12em] text-muted-foreground">
-                    SHARE OF ANSWERS
-                  </div>
+                  <div className="font-serif text-[40px] leading-none tracking-[-0.03em] lg:text-[48px]">38%</div>
+                  <div className="ds-label mt-1.5">SHARE OF ANSWERS</div>
                 </div>
                 <div className="ml-auto text-right">
                   <div className="font-mono text-[11px] text-accent">▲ +14 PTS</div>
-                  <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.1em] text-muted-foreground">
-                    VS PRIOR PERIOD
-                  </div>
+                  <div className="ds-label mt-1.5">VS PRIOR PERIOD</div>
                 </div>
               </div>
               <div className="flex flex-col gap-[13px] px-5 py-[18px] pb-5">
                 {shareRows.map((row) => (
                   <div
                     key={row.name}
-                    className="grid grid-cols-[128px_1fr_42px] items-center gap-3 font-mono text-[11px]"
+                    className="grid grid-cols-[minmax(0,5.5rem)_1fr_2.5rem] items-center gap-3 font-mono text-[11px] sm:grid-cols-[128px_1fr_42px]"
                   >
                     <span className={`overflow-hidden text-ellipsis whitespace-nowrap ${row.label}`}>
                       {row.name}
@@ -282,7 +278,7 @@ export default async function HomePage() {
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between border-t border-border px-5 py-3 font-mono text-[9.5px] tracking-[0.1em] text-muted-foreground">
+              <div className="ds-label flex flex-wrap justify-between gap-2 border-t border-stone-300 px-5 py-3">
                 <span>SOURCE: CHATGPT · PERPLEXITY · AI OVERVIEWS</span>
                 <span>N=240 PROMPTS</span>
               </div>
@@ -291,11 +287,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-card">
-        <div className="ds-container flex flex-wrap items-center gap-8 py-[22px] font-mono text-[10.5px] tracking-[0.12em] text-muted-foreground">
-          <span className="text-foreground">WORKS WITH</span>
+      <section className="border-b border-stone-300 bg-card">
+        <div className="ds-container flex flex-wrap items-center gap-8 py-[22px]">
+          <span className="ds-label">WORKS WITH</span>
           {integrations.map((tool) => (
-            <span key={tool}>{tool}</span>
+            <span key={tool} className="ds-label">
+              {tool}
+            </span>
           ))}
         </div>
       </section>

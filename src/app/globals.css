@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 40 27% 96%;
+    --background: 60 50% 97%;
     --foreground: 36 9% 8%;
     --card: 40 22% 92%;
     --card-foreground: 36 9% 8%;
-    --popover: 40 27% 96%;
+    --popover: 60 50% 97%;
     --popover-foreground: 36 9% 8%;
-    --primary: 20 100% 50%;
+    --primary: 16 100% 50%;
     --primary-foreground: 0 0% 100%;
     --secondary: 40 22% 92%;
     --secondary-foreground: 36 9% 8%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 36 16% 85%;
     --input: 36 16% 85%;
-    --ring: 20 100% 50%;
+    --ring: 16 100% 50%;
     --radius: 0.125rem;
     --ink: 36 9% 8%;
     --ink-panel: 33 10% 10%;
@@ -88,12 +88,16 @@
     @apply grid grid-cols-1 items-start gap-7 lg:grid-cols-[280px_1fr] lg:gap-12;
   }
 
+  .ds-label {
+    @apply font-mono text-[11px] uppercase tracking-widest text-stone-500;
+  }
+
   .ds-kicker {
-    @apply font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground;
+    @apply font-mono text-[11px] uppercase tracking-widest text-stone-500;
   }
 
   .ds-btn {
-    @apply inline-block rounded-sm bg-primary px-6 py-[15px] font-mono text-xs tracking-[0.1em] text-white hover:bg-accent;
+    @apply inline-block rounded-sm bg-[#FF4500] px-6 py-[15px] font-mono text-xs tracking-[0.1em] text-white hover:font-bold hover:text-black;
   }
 
   .ds-btn-ink {
