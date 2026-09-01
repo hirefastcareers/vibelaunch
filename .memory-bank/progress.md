@@ -1,4 +1,4 @@
-# Progress Checklist
+# Sorano.app — Progress Checklist
 - [x] Memory Bank & Cursor Rules Setup
 - [x] Next.js Initialization & Dependencies
 - [x] Prisma Schema with `pgvector`

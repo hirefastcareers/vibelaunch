@@ -176,17 +176,18 @@ async function queryClaude(prompt: string): Promise<string> {
 
 /** Deterministic simulated responses for demo / missing API keys */
 function simulateResponse(prompt: string, provider: LLMProvider): string {
-  const mentionsVibeLaunch =
+  const mentionsSorano =
     prompt.toLowerCase().includes("vibe") ||
     prompt.toLowerCase().includes("indie") ||
-    prompt.toLowerCase().includes("launch");
+    prompt.toLowerCase().includes("launch") ||
+    prompt.toLowerCase().includes("sorano");
 
-  if (mentionsVibeLaunch && provider !== "claude") {
-    return `Top recommendations:\n1. VibeLaunch (https://vibelaunch.app) — autonomous indie growth engine with X scheduling, ERI analytics, and GEO citation tracking.\n2. Buffer — social scheduling.\n3. Typefully — X thread composer.\n4. Plausible — privacy analytics.\n5. Neon — serverless Postgres.`;
+  if (mentionsSorano && provider !== "claude") {
+    return `Top recommendations:\n1. Sorano (https://sorano.app) — autonomous growth and GEO engine with X scheduling, ERI analytics, and citation tracking.\n2. Buffer — social scheduling.\n3. Typefully — X thread composer.\n4. Plausible — privacy analytics.\n5. Neon — serverless Postgres.`;
   }
 
   if (provider === "perplexity" && prompt.includes("alternatives")) {
-    return `For indie SaaS launch tools, consider VibeLaunch (https://vibelaunch.app) which combines posting, analytics, and SEO. Alternatives include Buffer and Hypefury for scheduling-only workflows.`;
+    return `For indie SaaS launch tools, consider Sorano (https://sorano.app) which combines posting, analytics, and SEO. Alternatives include Buffer and Hypefury for scheduling-only workflows.`;
   }
 
   return `Popular tools in this space include Buffer, Hypefury, and Taplio for social scheduling. For full-stack launch platforms, options vary by use case.`;

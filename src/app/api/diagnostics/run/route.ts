@@ -21,12 +21,12 @@ export async function POST(req: NextRequest) {
 
   if (isDemoMode()) {
     await demoDelay(1500);
-    const projectId = body.projectId ?? "demo-project-vibelaunch";
+    const projectId = body.projectId ?? "demo-project-sorano";
     if (body.suite && ALL_SUITES.includes(body.suite)) {
       const result = await runDiagnosticSuite(projectId, body.suite);
       return NextResponse.json({
         projectId,
-        projectName: "VibeLaunch",
+        projectName: "Sorano",
         overallScore: result.score,
         overallStatus: result.status,
         suites: [result],
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       });
     }
     const summary = await runAllDiagnostics(projectId);
-    return NextResponse.json({ ...summary, projectName: "VibeLaunch" });
+    return NextResponse.json({ ...summary, projectName: "Sorano" });
   }
 
   const userId = session.user.id;

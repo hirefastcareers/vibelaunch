@@ -7,21 +7,22 @@ import {
 } from "@/lib/geo/llm-schema";
 
 const input = {
-  projectName: "VibeLaunch",
-  projectUrl: "https://vibelaunch.app",
+  projectName: "Sorano",
+  projectUrl: "https://sorano.app",
   description: "Autonomous indie growth engine",
   tagline: "Launch smarter",
   keywords: ["indie", "saas"],
   changelogTitle: "v2 Release",
   changelogSummary: "Adaptive AI is live",
-  changelogUrl: "https://vibelaunch.app/changelog/v2",
+  changelogUrl: "https://sorano.app/changelog/v2",
 };
 
 describe("llm-schema", () => {
   it("builds SoftwareApplication schema with pricing and audience", () => {
     const schema = buildSoftwareApplicationSchema(input);
     expect(schema["@type"]).toBe("SoftwareApplication");
-    expect(schema.name).toBe("VibeLaunch");
+    expect(schema.name).toBe("Sorano");
+    expect(schema.publisher).toMatchObject({ name: "Sorano" });
     expect(schema.offers).toMatchObject({ price: "0", priceCurrency: "USD" });
     expect(schema.audience.audienceType).toContain("Indie hackers");
     expect(schema.featureList).toContain("GEO citation tracking for ChatGPT, Perplexity, and Claude");
@@ -31,7 +32,7 @@ describe("llm-schema", () => {
     const schema = buildFAQPageSchema(input);
     expect(schema["@type"]).toBe("FAQPage");
     const questions = schema.mainEntity.map((q) => q.name);
-    expect(questions).toContain("How does VibeLaunch compare to alternatives?");
+    expect(questions).toContain("How does Sorano compare to alternatives?");
   });
 
   it("combines schemas in @graph", () => {

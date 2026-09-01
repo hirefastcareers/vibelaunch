@@ -2,25 +2,25 @@
 export const DEMO_USER = {
   id: "demo-user-id",
   name: "Demo Founder",
-  email: "demo@vibelaunch.app",
+  email: "demo@sorano.app",
   xUsername: "demo_founder",
   image: null,
 };
 
 /** Scraped project context returned by /api/project/onboard in demo mode */
 export const MOCK_SCRAPED_CONTEXT = {
-  title: "VibeLaunch",
+  title: "Sorano",
   description:
-    "VibeLaunch — Autonomous Indie Growth Engine. Schedule X posts, track ERI analytics, generate adaptive AI content, and publish SEO changelogs from one command center.",
-  tagline: "Autonomous Indie Growth Engine",
-  keywords: ["vibelaunch", "build-in-public", "indie-hacker", "x-growth", "seo"],
+    "Sorano — Autonomous Growth & GEO Engine. Continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.",
+  tagline: "Autonomous Growth & GEO Engine",
+  keywords: ["sorano", "build-in-public", "indie-hacker", "x-growth", "seo"],
 };
 
 export const MOCK_PROJECT = {
-  id: "demo-project-vibelaunch",
-  name: "VibeLaunch",
-  slug: "vibelaunch",
-  websiteUrl: "https://vibelaunch.app",
+  id: "demo-project-sorano",
+  name: "Sorano",
+  slug: "sorano",
+  websiteUrl: "https://sorano.app",
   description: MOCK_SCRAPED_CONTEXT.description,
   tagline: MOCK_SCRAPED_CONTEXT.tagline,
   tone: "build-in-public",
@@ -42,7 +42,7 @@ export const MOCK_QUEUE = {
       scheduledAt: null as string | null,
       publishedAt: null as string | null,
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: null as number | null,
       xPostUrl: null as string | null,
     },
@@ -55,7 +55,7 @@ export const MOCK_QUEUE = {
       scheduledAt: null,
       publishedAt: null,
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: null,
       xPostUrl: null,
     },
@@ -68,7 +68,7 @@ export const MOCK_QUEUE = {
       scheduledAt: null,
       publishedAt: null,
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: null,
       xPostUrl: null,
     },
@@ -77,13 +77,13 @@ export const MOCK_QUEUE = {
     {
       id: "demo-scheduled-1",
       content:
-        "🧵 Thread (1/5): How we built VibeLaunch's post queue — QStash scheduling, media engine, and one-click X publish. A build-in-public breakdown:",
+        "🧵 Thread (1/5): How we built Sorano's post queue — QStash scheduling, media engine, and one-click X publish. A build-in-public breakdown:",
       status: "SCHEDULED",
       mediaUrls: [previewImage("video")],
       scheduledAt: new Date(Date.now() + 1 * 86400000).toISOString(),
       publishedAt: null,
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: null,
       xPostUrl: null,
     },
@@ -96,7 +96,7 @@ export const MOCK_QUEUE = {
       scheduledAt: new Date(Date.now() + 3 * 86400000).toISOString(),
       publishedAt: null,
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: null,
       xPostUrl: null,
     },
@@ -105,13 +105,13 @@ export const MOCK_QUEUE = {
     {
       id: "demo-published-1",
       content:
-        "Just shipped v2 of VibeLaunch — adaptive AI posts, ERI analytics, and SEO changelogs. Building in public hits different 🚀",
+        "Just shipped v2 of Sorano — adaptive AI posts, ERI analytics, and SEO changelogs. Building in public hits different 🚀",
       status: "PUBLISHED",
       mediaUrls: [previewImage("video")],
       scheduledAt: null,
       publishedAt: new Date(Date.now() - 1 * 86400000).toISOString(),
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: 8.75,
       xPostUrl: "https://x.com/demo_founder/status/1001",
     },
@@ -124,20 +124,20 @@ export const MOCK_QUEUE = {
       scheduledAt: null,
       publishedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: 6.2,
       xPostUrl: "https://x.com/demo_founder/status/1002",
     },
     {
       id: "demo-published-3",
       content:
-        "ERI > vanity metrics. We built VibeLaunch to optimize for engagement rate index, not just impressions.",
+        "ERI > vanity metrics. We built Sorano to optimize for engagement rate index, not just impressions.",
       status: "PUBLISHED",
       mediaUrls: [previewImage("code")],
       scheduledAt: null,
       publishedAt: new Date(Date.now() - 5 * 86400000).toISOString(),
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: 5.4,
       xPostUrl: "https://x.com/demo_founder/status/1003",
     },
@@ -150,7 +150,7 @@ export const MOCK_QUEUE = {
       scheduledAt: null,
       publishedAt: new Date(Date.now() - 7 * 86400000).toISOString(),
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: 4.1,
       xPostUrl: "https://x.com/demo_founder/status/1004",
     },
@@ -163,7 +163,7 @@ export const MOCK_QUEUE = {
       scheduledAt: null,
       publishedAt: new Date(Date.now() - 10 * 86400000).toISOString(),
       projectId: MOCK_PROJECT.id,
-      projectName: "VibeLaunch",
+      projectName: "Sorano",
       eri: 3.8,
       xPostUrl: "https://x.com/demo_founder/status/1005",
     },
@@ -205,7 +205,7 @@ export const MOCK_ANALYTICS = {
 
 export const MOCK_X_THREAD = {
   thread: [
-    "🧵 Launch threads that convert — a VibeLaunch playbook (1/4)",
+    "🧵 Launch threads that convert — a Sorano playbook (1/4)",
     "Start with the problem, not the product. Your audience scrolls past feature lists. Lead with the pain you felt building.",
     "Show proof early: metrics, screenshots, or a 15s demo clip. Impression velocity spikes when media is attached.",
     "End with one CTA. Not three links. One next step. Track ERI on each post and let the vector store learn what works.",
@@ -216,7 +216,7 @@ export const MOCK_X_THREAD = {
 
 export const MOCK_GENERATED_POST = {
   content:
-    "🚀 Shipped adaptive AI content in VibeLaunch — your highest-ERI posts now train the generator. Launch smarter, not louder.",
+    "🚀 Shipped adaptive AI content in Sorano — your highest-ERI posts now train the generator. Launch smarter, not louder.",
   tone: "casual",
   inspiredBy: ["demo-published-1", "demo-published-3"],
 };
@@ -235,14 +235,14 @@ export const MOCK_SEO_PUBLISH = {
     title: "v2.0 — Adaptive AI Launch Engine",
     summary: "Vector-reinforced content generation and ERI analytics are now live.",
     body: "## v2.0 Release\n\nAdaptive AI content generation powered by high-ERI vector reinforcement.",
-    seoTitle: "v2.0 Adaptive AI | VibeLaunch Changelog",
-    seoDesc: "Vector-reinforced content generation and ERI analytics are now live in VibeLaunch.",
-    keywords: ["vibelaunch", "changelog", "adaptive-ai", "eri"],
+    seoTitle: "v2.0 Adaptive AI | Sorano Changelog",
+    seoDesc: "Vector-reinforced content generation and ERI analytics are now live in Sorano.",
+    keywords: ["sorano", "changelog", "adaptive-ai", "eri"],
     published: true,
     publishedAt: new Date().toISOString(),
     indexedAt: new Date().toISOString(),
   },
-  url: "https://vibelaunch.app/changelog/v2-adaptive-ai-launch",
+  url: "https://sorano.app/changelog/v2-adaptive-ai-launch",
   indexing: { success: true },
 };
 
@@ -322,7 +322,7 @@ export const MOCK_SMART_REPLIES_FEED: Record<
         "What's the smallest SaaS you've seen succeed? I love these niche tool stories.",
       url: "https://x.com/tiny_saas/status/7",
       suggestedReply:
-        "Tools that solve one painful workflow for a specific audience. VibeLaunch started as 'just X scheduling' before expanding to SEO + analytics.",
+        "Tools that solve one painful workflow for a specific audience. Sorano started as 'just X scheduling' before expanding to SEO + analytics.",
     },
   ],
 };
@@ -337,7 +337,7 @@ export const MOCK_GEO_METRICS = [
     id: "geo-1",
     queryPrompt: "Best vibe coding tools for indie hackers",
     cited: true,
-    citationUrl: "https://vibelaunch.app",
+    citationUrl: "https://sorano.app",
     llmProvider: "perplexity",
     checkedAt: geoCheckedAt,
   },
@@ -345,7 +345,7 @@ export const MOCK_GEO_METRICS = [
     id: "geo-2",
     queryPrompt: "Best vibe coding tools for indie hackers",
     cited: true,
-    citationUrl: "https://vibelaunch.app",
+    citationUrl: "https://sorano.app",
     llmProvider: "chatgpt",
     checkedAt: geoCheckedAt,
   },
@@ -359,15 +359,15 @@ export const MOCK_GEO_METRICS = [
   },
   {
     id: "geo-4",
-    queryPrompt: "Top tools for vibelaunch",
+    queryPrompt: "Top tools for sorano",
     cited: true,
-    citationUrl: "https://vibelaunch.app",
+    citationUrl: "https://sorano.app",
     llmProvider: "perplexity",
     checkedAt: geoCheckedAt,
   },
   {
     id: "geo-5",
-    queryPrompt: "Top tools for vibelaunch",
+    queryPrompt: "Top tools for sorano",
     cited: false,
     citationUrl: null,
     llmProvider: "chatgpt",
@@ -375,7 +375,7 @@ export const MOCK_GEO_METRICS = [
   },
   {
     id: "geo-6",
-    queryPrompt: "Top tools for vibelaunch",
+    queryPrompt: "Top tools for sorano",
     cited: false,
     citationUrl: null,
     llmProvider: "claude",
@@ -383,23 +383,23 @@ export const MOCK_GEO_METRICS = [
   },
   {
     id: "geo-7",
-    queryPrompt: "What are the best vibelaunch alternatives? How does VibeLaunch compare?",
+    queryPrompt: "What are the best sorano alternatives? How does Sorano compare?",
     cited: true,
-    citationUrl: "https://vibelaunch.app",
+    citationUrl: "https://sorano.app",
     llmProvider: "perplexity",
     checkedAt: geoCheckedAt,
   },
   {
     id: "geo-8",
-    queryPrompt: "What are the best vibelaunch alternatives? How does VibeLaunch compare?",
+    queryPrompt: "What are the best sorano alternatives? How does Sorano compare?",
     cited: true,
-    citationUrl: "https://vibelaunch.app",
+    citationUrl: "https://sorano.app",
     llmProvider: "chatgpt",
     checkedAt: geoCheckedAt,
   },
   {
     id: "geo-9",
-    queryPrompt: "What are the best vibelaunch alternatives? How does VibeLaunch compare?",
+    queryPrompt: "What are the best sorano alternatives? How does Sorano compare?",
     cited: false,
     citationUrl: null,
     llmProvider: "claude",
@@ -420,7 +420,7 @@ export const MOCK_GEO = {
   suggestions: [
     "Add FAQ schema with direct Q&A pairs — Claude retrieval favors FAQPage JSON-LD on changelog pages.",
     "Publish benchmark data or usage stats — ChatGPT citations increase when pages contain specific, verifiable numbers.",
-    'Create content targeting: "Top tools for vibelaunch" — you\'re not yet cited for this high-intent query.',
+    'Create content targeting: "Top tools for sorano" — you\'re not yet cited for this high-intent query.',
   ],
 };
 
@@ -434,7 +434,7 @@ export const MOCK_GEO_CHECK = {
     cited: m.cited,
     citationUrl: m.citationUrl,
     responseSnippet: m.cited
-      ? "VibeLaunch (https://vibelaunch.app) — autonomous indie growth engine..."
+      ? "Sorano (https://sorano.app) — autonomous indie growth engine..."
       : "Popular tools include Buffer, Hypefury, and Taplio...",
   })),
   citationScore: MOCK_GEO.citationScore,

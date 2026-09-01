@@ -22,7 +22,7 @@ export default async function HomePage() {
 
       <nav className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <span className="text-xl font-bold text-primary">VibeLaunch</span>
+          <span className="text-xl font-bold text-primary">Sorano</span>
           <div className="flex items-center gap-4">
             {session ? (
               <>
@@ -46,11 +46,11 @@ export default async function HomePage() {
       </nav>
 
       <section className="max-w-4xl mx-auto px-4 py-24 text-center">
-        <h1 className="text-5xl font-bold mb-6">Launch on X. Grow with SEO.</h1>
+        <h1 className="text-5xl font-bold mb-6">Autonomous Growth & GEO Engine</h1>
         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-          VibeLaunch helps founders schedule X posts, track engagement with ERI
-          analytics, generate adaptive content, and publish SEO changelogs — all
-          in one platform.
+          Sorano delivers continuous organic growth, Playwright UI media capture,
+          social-to-static SEO, and Generative Engine Optimization — all in one
+          platform.
         </p>
         <Link
           href={session ? "/dashboard" : "/auth/signin"}

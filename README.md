@@ -1,6 +1,6 @@
-# VibeLaunch
+# Sorano.app
 
-Launch your product on X with AI-powered content, ERI analytics, and SEO changelogs.
+Autonomous growth and GEO engine — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
 
 ## Features
 

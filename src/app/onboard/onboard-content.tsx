@@ -103,7 +103,7 @@ export default function OnboardPage() {
                 name="targetUrl"
                 type="url"
                 required
-                defaultValue="https://vibelaunch.app"
+                defaultValue="https://sorano.app"
                 disabled={loading}
               />
             </div>
@@ -114,7 +114,7 @@ export default function OnboardPage() {
                 id="projectName"
                 name="projectName"
                 required
-                defaultValue="VibeLaunch"
+                defaultValue="Sorano"
                 disabled={loading}
               />
             </div>

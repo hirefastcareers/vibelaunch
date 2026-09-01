@@ -63,7 +63,7 @@ export function getMockTestResults(suite: string): MockTestSuiteResult {
       score: 100,
       details: {
         playwrightConfigured: true,
-        targetUrl: "https://vibelaunch.live",
+        targetUrl: "https://sorano.app",
         viewportSize: "1280x720",
       },
     },

@@ -29,8 +29,8 @@ describe("geo analytics", () => {
       { id: "2", queryPrompt: "Best indie tools", cited: false, citationUrl: null, llmProvider: "chatgpt", checkedAt: new Date() },
       { id: "3", queryPrompt: "Best indie tools", cited: false, citationUrl: null, llmProvider: "claude", checkedAt: new Date() },
     ];
-    const suggestions = generateGeoSuggestions(lowScoreMetrics, "VibeLaunch");
+    const suggestions = generateGeoSuggestions(lowScoreMetrics, "Sorano");
     expect(suggestions.length).toBeGreaterThan(0);
-    expect(suggestions.some((s) => s.includes("VibeLaunch"))).toBe(true);
+    expect(suggestions.some((s) => s.includes("Sorano"))).toBe(true);
   });
 });

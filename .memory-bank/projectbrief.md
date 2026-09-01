@@ -1,8 +1,8 @@
-# VibeLaunch — Project Brief
+# Sorano.app — Project Brief
 
-## What is VibeLaunch?
+## What is Sorano?
 
-VibeLaunch is a launch platform for founders who build with AI tools and need to ship on X (Twitter) with analytics and SEO from day one.
+Sorano is an autonomous growth and GEO engine for founders — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
 
 ## Core Value Proposition
 

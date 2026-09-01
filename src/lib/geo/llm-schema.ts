@@ -1,5 +1,13 @@
 export type LLMProvider = "perplexity" | "chatgpt" | "claude";
 
+export const SORANO_PUBLISHER = {
+  "@type": "Organization" as const,
+  name: "Sorano",
+  url: "https://sorano.app",
+  description:
+    "Autonomous growth and GEO engine — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.",
+};
+
 export interface GeoSchemaInput {
   projectName: string;
   projectUrl: string;
@@ -43,8 +51,10 @@ export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
       "SEO changelog pages with Google indexing",
       "GEO citation tracking for ChatGPT, Perplexity, and Claude",
     ],
-    keywords: input.keywords?.join(", ") ?? "indie saas, launch, x growth",
+    keywords: input.keywords?.join(", ") ?? "sorano, indie saas, geo, x growth",
     slogan: input.tagline ?? input.changelogSummary,
+    publisher: SORANO_PUBLISHER,
+    creator: SORANO_PUBLISHER,
   };
 }
 
@@ -93,11 +103,8 @@ export function buildArticleSchema(input: GeoSchemaInput) {
     headline: input.changelogTitle,
     description: input.changelogSummary,
     url: input.changelogUrl,
-    author: {
-      "@type": "Organization",
-      name: input.projectName,
-      url: input.projectUrl,
-    },
+    author: SORANO_PUBLISHER,
+    publisher: SORANO_PUBLISHER,
     about: {
       "@type": "SoftwareApplication",
       name: input.projectName,

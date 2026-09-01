@@ -33,7 +33,7 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
     <aside className="flex h-full w-64 flex-col border-r border-border bg-card">
       <div className="flex h-16 items-center gap-2 px-6">
         <Sparkles className="h-5 w-5 text-primary" />
-        <span className="text-lg font-bold tracking-tight">VibeLaunch</span>
+        <span className="text-lg font-bold tracking-tight">Sorano</span>
       </div>
 
       <Separator />
