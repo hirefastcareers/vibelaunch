@@ -194,7 +194,7 @@ export function PlatformTabs() {
               onClick={() => setTab(idx)}
               className={cn(
                 "flex min-w-[180px] flex-1 cursor-pointer flex-col gap-[7px] border-0 px-[18px] py-4 text-left font-mono text-[11px] tracking-[0.06em]",
-                selected ? "bg-background text-foreground" : "bg-ink text-[#C9C3B8]"
+                selected ? "bg-background text-foreground" : "bg-ink text-surface-muted"
               )}
             >
               <span
@@ -221,7 +221,7 @@ export function PlatformTabs() {
           <h3 className="m-0 text-[21px] leading-[1.1] tracking-[-0.02em] lg:text-[30px]">
             {active.title}
           </h3>
-          <p className="m-0 text-pretty text-[15.5px] leading-[1.6] text-[#4A453D]">
+          <p className="m-0 text-pretty text-[15.5px] leading-[1.6] text-ink-muted">
             {active.desc}
           </p>
           <div className="mt-1.5 flex flex-col gap-2.5">
@@ -274,7 +274,7 @@ export function PlatformTabs() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 border-t border-ink bg-ink px-5 py-[15px] font-mono text-[11px] tracking-[0.04em] text-[#C9C3B8]">
+      <div className="flex items-center gap-3 border-t border-ink bg-ink px-5 py-[15px] font-mono text-[11px] tracking-[0.04em] text-surface-muted">
         <span className="text-primary">↺</span>
         <span>Engagement data feeds back into generation. Week four writes better hooks than week one.</span>
       </div>

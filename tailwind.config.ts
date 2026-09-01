@@ -48,7 +48,9 @@ const config: Config = {
           panel: "hsl(var(--ink-panel))",
           rule: "hsl(var(--ink-rule))",
           dim: "hsl(var(--ink-dim))",
+          muted: "hsl(var(--ink-muted))",
         },
+        "surface-muted": "hsl(var(--surface-muted))",
       },
       fontFamily: {
         serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],

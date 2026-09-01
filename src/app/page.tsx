@@ -23,9 +23,9 @@ const stats = [
 
 const shareRows = [
   { name: "Sorano", pct: "62%", val: "38%", bar: "bg-primary", label: "text-foreground" },
-  { name: "Competitor A", pct: "44%", val: "27%", bar: "bg-ink", label: "text-[#4A453D]" },
-  { name: "Competitor B", pct: "31%", val: "19%", bar: "bg-[#8C857A]", label: "text-[#4A453D]" },
-  { name: "Everyone else", pct: "26%", val: "16%", bar: "bg-[#C9C3B8]", label: "text-[#4A453D]" },
+  { name: "Competitor A", pct: "44%", val: "27%", bar: "bg-ink", label: "text-ink-muted" },
+  { name: "Competitor B", pct: "31%", val: "19%", bar: "bg-[#8C857A]", label: "text-ink-muted" },
+  { name: "Everyone else", pct: "26%", val: "16%", bar: "bg-surface-muted", label: "text-ink-muted" },
 ];
 
 const promptStats = [
@@ -157,64 +157,18 @@ export default async function HomePage() {
   const heroCta = signedIn ? "GO TO DASHBOARD" : "TRY DEMO DASHBOARD";
   const navCta = signedIn ? "DASHBOARD" : demo ? "DEMO LOGIN" : "SIGN IN WITH X";
   const bottomCta = signedIn ? "GO TO DASHBOARD" : "SIGN IN WITH X";
+  const userLabel = session?.user.xUsername
+    ? `@${session.user.xUsername}`
+    : session?.user.name;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {demo && (
-        <div className="flex flex-wrap items-center justify-center gap-2.5 bg-ink px-6 py-[9px] font-mono text-[11px] tracking-[0.06em] text-[#C9C3B8]">
-          <span className="text-primary">[PREVIEW]</span>
-          <span>Demo login to explore the full dashboard</span>
-          <Link
-            href="/auth/signin"
-            className="text-background underline underline-offset-[3px] hover:text-primary"
-          >
-            → ENTER
-          </Link>
-        </div>
-      )}
+      <DemoBanner visible={demo} />
+      <SiteNav signedIn={signedIn} navCta={navCta} userLabel={userLabel} />
 
-      <nav className="sticky top-0 z-20 border-b border-stone-300 bg-[rgba(251,251,243,0.94)] backdrop-blur-[8px]">
-        <div className="ds-container flex h-auto flex-wrap items-center justify-between gap-8 py-3 lg:h-[66px] lg:py-0">
-          <Link href="/" className="flex items-baseline gap-[9px]">
-            <span className="font-serif text-[27px] tracking-[-0.02em]">Sorano</span>
-            <span className="pb-[3px] font-mono text-[9px] tracking-[0.14em] text-muted-foreground">
-              SEO · GEO · X
-            </span>
-          </Link>
-          <div className="flex flex-wrap items-center gap-x-[26px] gap-y-2.5 font-mono text-[11px] tracking-[0.08em]">
-            <Link href="#platform" className="text-[#4A453D] hover:text-accent">
-              PLATFORM
-            </Link>
-            <Link href="#visibility" className="text-[#4A453D] hover:text-accent">
-              AI_VISIBILITY
-            </Link>
-            <Link href="#compare" className="text-[#4A453D] hover:text-accent">
-              COMPARE
-            </Link>
-            <Link href="#faq" className="text-[#4A453D] hover:text-accent">
-              FAQ
-            </Link>
-            {signedIn ? (
-              <>
-                <Link href="/dashboard" className="ds-btn-ink">
-                  {navCta}
-                </Link>
-                <span className="text-muted-foreground">
-                  {session?.user.xUsername ? `@${session.user.xUsername}` : session?.user.name}
-                </span>
-              </>
-            ) : (
-              <Link href="/auth/signin" className="ds-btn-ink">
-                {navCta}
-              </Link>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      <section className="border-b border-stone-300 bg-background">
+      <section className="border-b border-border bg-background">
         <div className="ds-container grid grid-cols-1 items-stretch bg-background lg:grid-cols-2">
-          <div className="flex flex-col justify-center border-b border-stone-300 py-14 lg:border-b-0 lg:border-r lg:py-[76px] lg:pr-14">
+          <div className="flex flex-col justify-center border-b border-border py-14 lg:border-b-0 lg:border-r lg:py-[76px] lg:pr-14">
             <div className="ds-label mb-[26px] flex items-center gap-2.5">
               <span className="size-1.5 animate-sorano-blink rounded-full bg-primary" />
               <span>AUTONOMOUS GROWTH ENGINE</span>
@@ -224,7 +178,7 @@ export default async function HomePage() {
               <br />
               Get found <span className="font-serif italic text-accent">everywhere</span>.
             </h1>
-            <p className="mb-8 max-w-[44ch] text-pretty text-[18.5px] leading-[1.55] text-[#4A453D]">
+            <p className="mb-8 max-w-[44ch] text-pretty text-[18.5px] leading-[1.55] text-ink-muted">
               Sorano turns your product updates into viral social posts, Google-ranked articles,
               and AI search recommendations - automatically.
             </p>
@@ -234,12 +188,12 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="#platform"
-                className="rounded-sm border border-stone-300 px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-[#4A453D] hover:border-foreground"
+                className="rounded-sm border border-border px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-ink-muted hover:border-foreground"
               >
                 SEE THE PLATFORM
               </Link>
             </div>
-            <div className="ds-label flex flex-wrap gap-7 border-t border-stone-300 pt-[18px]">
+            <div className="ds-label flex flex-wrap gap-7 border-t border-border pt-[18px]">
               <span>SIGN IN WITH X</span>
               <span>NO API KEYS</span>
               <span>NO SECOND CMS</span>
@@ -252,7 +206,7 @@ export default async function HomePage() {
                 <span>SORANO / AI VISIBILITY</span>
                 <span className="text-[#8C857A]">LAST 30 DAYS</span>
               </div>
-              <div className="flex items-baseline gap-3.5 border-b border-stone-300 px-5 pb-2 pt-[22px]">
+              <div className="flex items-baseline gap-3.5 border-b border-border px-5 pb-2 pt-[22px]">
                 <div>
                   <div className="font-serif text-[40px] leading-none tracking-[-0.03em] lg:text-[48px]">38%</div>
                   <div className="ds-label mt-1.5">SHARE OF ANSWERS</div>
@@ -274,11 +228,11 @@ export default async function HomePage() {
                     <span className="block h-2.5 bg-[#EFEBE4]">
                       <span className={`block h-2.5 ${row.bar}`} style={{ width: row.pct }} />
                     </span>
-                    <span className="text-right text-[#4A453D]">{row.val}</span>
+                    <span className="text-right text-ink-muted">{row.val}</span>
                   </div>
                 ))}
               </div>
-              <div className="ds-label flex flex-wrap justify-between gap-2 border-t border-stone-300 px-5 py-3">
+              <div className="ds-label flex flex-wrap justify-between gap-2 border-t border-border px-5 py-3">
                 <span>SOURCE: CHATGPT · PERPLEXITY · AI OVERVIEWS</span>
                 <span>N=240 PROMPTS</span>
               </div>
@@ -287,7 +241,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-b border-stone-300 bg-card">
+      <section className="border-b border-border bg-card">
         <div className="ds-container flex flex-wrap items-center gap-8 py-[22px]">
           <span className="ds-label">WORKS WITH</span>
           {integrations.map((tool) => (
@@ -304,7 +258,7 @@ export default async function HomePage() {
             {stats.map((stat) => (
               <div key={stat.n} className="bg-background px-6 py-[30px]">
                 <div className="font-serif text-[40px] leading-none tracking-[-0.03em]">{stat.n}</div>
-                <div className="mt-2.5 text-pretty text-sm leading-[1.45] text-[#4A453D]">
+                <div className="mt-2.5 text-pretty text-sm leading-[1.45] text-ink-muted">
                   {stat.label}
                 </div>
               </div>
@@ -321,7 +275,7 @@ export default async function HomePage() {
               <h2 className="mb-3.5 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
                 One update in. Four channels out.
               </h2>
-              <p className="m-0 max-w-[56ch] text-pretty text-[17px] leading-[1.6] text-[#4A453D]">
+              <p className="m-0 max-w-[56ch] text-pretty text-[17px] leading-[1.6] text-ink-muted">
                 Write two lines about what you shipped. Sorano handles the rest and feeds the results
                 back into the next run.
               </p>
@@ -432,7 +386,7 @@ export default async function HomePage() {
                 </div>
               </div>
             ))}
-            <div className="flex flex-wrap justify-between gap-5 px-5 py-[18px] font-mono text-[11px] tracking-[0.06em] text-[#4A453D]">
+            <div className="flex flex-wrap justify-between gap-5 px-5 py-[18px] font-mono text-[11px] tracking-[0.06em] text-ink-muted">
               <span>FIVE SUBSCRIPTIONS, FIVE LOGINS, NOTHING TALKS TO ANYTHING</span>
               <span className="text-accent">ONE ENGINE, ONE LOGIN</span>
             </div>
@@ -450,7 +404,7 @@ export default async function HomePage() {
                 className="grid grid-cols-1 items-baseline gap-1.5 border-b border-border py-5 lg:grid-cols-[210px_1fr_120px] lg:gap-6"
               >
                 <div className="font-serif text-[22px] tracking-[-0.01em]">{row.what}</div>
-                <div className="text-pretty text-[14.5px] leading-[1.5] text-[#4A453D]">
+                <div className="text-pretty text-[14.5px] leading-[1.5] text-ink-muted">
                   {row.detail}
                 </div>
                 <div className="font-mono text-[10px] tracking-[0.1em] text-muted-foreground lg:text-right">
@@ -474,7 +428,7 @@ export default async function HomePage() {
                 <h3 className="m-0 text-[21px] leading-[1.2] tracking-[-0.01em] lg:text-[23px]">
                   {faq.q}
                 </h3>
-                <p className="m-0 text-pretty text-[15px] leading-[1.6] text-[#4A453D]">{faq.a}</p>
+                <p className="m-0 text-pretty text-[15px] leading-[1.6] text-ink-muted">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -512,7 +466,7 @@ export default async function HomePage() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="font-mono text-[11.5px] tracking-[0.03em] text-[#C9C3B8] hover:text-primary"
+                  className="font-mono text-[11.5px] tracking-[0.03em] text-surface-muted hover:text-primary"
                 >
                   {link.label}
                 </Link>
@@ -526,5 +480,71 @@ export default async function HomePage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function DemoBanner({ visible }: { visible: boolean }) {
+  if (!visible) return null;
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-2.5 bg-ink px-6 py-[9px] font-mono text-[11px] tracking-[0.06em] text-surface-muted">
+      <span className="text-primary">[PREVIEW]</span>
+      <span>Demo login to explore the full dashboard</span>
+      <Link
+        href="/auth/signin"
+        className="text-background underline underline-offset-[3px] hover:text-primary"
+      >
+        → ENTER
+      </Link>
+    </div>
+  );
+}
+
+function SiteNav({
+  signedIn,
+  navCta,
+  userLabel,
+}: {
+  signedIn: boolean;
+  navCta: string;
+  userLabel?: string | null;
+}) {
+  return (
+    <nav className="sticky top-0 z-20 border-b border-border bg-background/94 backdrop-blur-[8px]">
+      <div className="ds-container flex h-auto flex-wrap items-center justify-between gap-8 py-3 lg:h-[66px] lg:py-0">
+        <Link href="/" className="flex items-baseline gap-[9px]">
+          <span className="font-serif text-[27px] tracking-[-0.02em]">Sorano</span>
+          <span className="pb-[3px] font-mono text-[9px] tracking-[0.14em] text-muted-foreground">
+            SEO · GEO · X
+          </span>
+        </Link>
+        <div className="flex flex-wrap items-center gap-x-[26px] gap-y-2.5 font-mono text-[11px] tracking-[0.08em]">
+          <Link href="#platform" className="text-ink-muted hover:text-accent">
+            PLATFORM
+          </Link>
+          <Link href="#visibility" className="text-ink-muted hover:text-accent">
+            AI_VISIBILITY
+          </Link>
+          <Link href="#compare" className="text-ink-muted hover:text-accent">
+            COMPARE
+          </Link>
+          <Link href="#faq" className="text-ink-muted hover:text-accent">
+            FAQ
+          </Link>
+          {signedIn ? (
+            <>
+              <Link href="/dashboard" className="ds-btn-ink">
+                {navCta}
+              </Link>
+              <span className="text-muted-foreground">{userLabel}</span>
+            </>
+          ) : (
+            <Link href="/auth/signin" className="ds-btn-ink">
+              {navCta}
+            </Link>
+          )}
+        </div>
+      </div>
+    </nav>
   );
 }
