@@ -80,13 +80,13 @@ Be genuine, add value, no self-promotion unless naturally relevant. Return ONLY 
 
 function generateFallbackReply(originalPost: string, keyword?: string): string {
   if (originalPost.toLowerCase().includes("mrr") || originalPost.toLowerCase().includes("revenue")) {
-    return "Congrats on the milestone! Curious — what was the biggest lever for growth in your case?";
+    return "Congrats on the milestone! Curious - what was the biggest lever for growth in your case?";
   }
   if (keyword?.includes("vibecoding")) {
-    return "Totally agree — AI scaffolds fast, but tests and review are what make it production-ready.";
+    return "Totally agree - AI scaffolds fast, but tests and review are what make it production-ready.";
   }
   if (keyword?.includes("micro-saas")) {
     return "Love seeing niche tools win. Focused problem + simple pricing seems to be the pattern.";
   }
-  return "Great insight — thanks for sharing this openly. Really resonates with the build-in-public journey.";
+  return "Great insight - thanks for sharing this openly. Really resonates with the build-in-public journey.";
 }

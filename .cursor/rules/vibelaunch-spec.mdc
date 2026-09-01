@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sorano is a full-stack autonomous growth and GEO engine for founders — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
+Sorano is a full-stack autonomous growth and GEO engine for founders - continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
 
 ## Tech Stack
 
@@ -28,100 +28,100 @@ Sorano is a full-stack autonomous growth and GEO engine for founders — continu
 - Stores `xUserId` and `xUsername` on User
 
 ### Project CRUD
-- `GET/POST /api/projects` — list and create
-- `GET/PATCH/DELETE /api/projects/[id]` — read, update, delete
+- `GET/POST /api/projects` - list and create
+- `GET/PATCH/DELETE /api/projects/[id]` - read, update, delete
 - Dashboard UI at `/dashboard`
 
 ## Phase 2: Publishing Pipeline
 
 ### Media Engine
-- `src/lib/media/engine.ts` — Sharp-based image processing
+- `src/lib/media/engine.ts` - Sharp-based image processing
 - Validates URLs, resizes to X constraints (4096px, 5MB)
 
 ### QStash Post Queue
-- `src/lib/queue/qstash.ts` — enqueue with delay/scheduling
-- `POST /api/queue/process` — webhook handler with signature verification
-- `POST /api/posts/[id]/publish` — enqueue a post
+- `src/lib/queue/qstash.ts` - enqueue with delay/scheduling
+- `POST /api/queue/process` - webhook handler with signature verification
+- `POST /api/posts/[id]/publish` - enqueue a post
 
 ### X Publish
-- `src/lib/x/publish.ts` — publish tweets + media upload
+- `src/lib/x/publish.ts` - publish tweets + media upload
 - Fetches engagement metrics via X API v2
 
 ## Phase 3: Analytics & AI
 
 ### ERI Analytics Cron
-- `POST /api/cron/eri` — fetches metrics, creates EriSnapshots
+- `POST /api/cron/eri` - fetches metrics, creates EriSnapshots
 - ERI formula: `(likes + retweets*2 + replies*1.5 + clicks*0.5) / impressions * 100`
 
 ### Vector Reinforcement
-- `src/lib/vector/embeddings.ts` — OpenAI embeddings stored in pgvector
+- `src/lib/vector/embeddings.ts` - OpenAI embeddings stored in pgvector
 - High-ERI posts (≥2.0) get reinforced embeddings
 
 ### Adaptive Generator
-- `POST /api/generate` — generates content inspired by top-performing posts
-- `src/lib/generator/adaptive.ts` — uses vector similarity + OpenAI
+- `POST /api/generate` - generates content inspired by top-performing posts
+- `src/lib/generator/adaptive.ts` - uses vector similarity + OpenAI
 
 ## Phase 4: SEO
 
 ### SEO Expander
-- `src/lib/seo/expander.ts` — expands summaries into full SEO content
+- `src/lib/seo/expander.ts` - expands summaries into full SEO content
 
 ### Changelog Pages
-- `/changelog/[slug]` — public changelog entries with metadata
+- `/changelog/[slug]` - public changelog entries with metadata
 
 ### Sitemap
-- `/sitemap.xml` — dynamic XML sitemap of published changelogs
+- `/sitemap.xml` - dynamic XML sitemap of published changelogs
 
 ### Google Indexing
-- `src/lib/seo/google-indexing.ts` — Indexing API via service account JWT
+- `src/lib/seo/google-indexing.ts` - Indexing API via service account JWT
 
 ### SEO Publish API
-- `POST /api/seo/publish` — create changelog, expand SEO, request indexing
+- `POST /api/seo/publish` - create changelog, expand SEO, request indexing
 
 ## Phase 6: GEO (Generative Engine Optimization)
 
 ### Prisma
-- `GeoMetric` model linked to `Project` — tracks citation checks per LLM provider and query prompt
+- `GeoMetric` model linked to `Project` - tracks citation checks per LLM provider and query prompt
 
 ### Citation Tracker
-- `src/lib/geo/citation-tracker.ts` — `checkLLMCitations(projectId)` queries Perplexity, ChatGPT, and Claude
+- `src/lib/geo/citation-tracker.ts` - `checkLLMCitations(projectId)` queries Perplexity, ChatGPT, and Claude
 - `detectCitation()` parses responses for project name/domain mentions
 
 ### LLM Schema Engine
-- `src/lib/geo/llm-schema.ts` — `SoftwareApplication`, `FAQPage`, and `Article` JSON-LD for changelog pages
+- `src/lib/geo/llm-schema.ts` - `SoftwareApplication`, `FAQPage`, and `Article` JSON-LD for changelog pages
 - Injected on `/changelog/[slug]` via `buildGeoJsonLd()`
 
 ### GEO Dashboard
-- `components/dashboard/geo-card.tsx` — citation score, AI engine badges, content tweak suggestions
-- `GET /api/geo/metrics` — fetch citation analytics
-- `POST /api/geo/check` — trigger fresh LLM citation scan
+- `components/dashboard/geo-card.tsx` - citation score, AI engine badges, content tweak suggestions
+- `GET /api/geo/metrics` - fetch citation analytics
+- `POST /api/geo/check` - trigger fresh LLM citation scan
 
 ## Phase 7: Autonomous Verification & Diagnostic Agent
 
 ### Prisma
-- `TestRun` model linked to `Project` — stores suite results, score, status, and assertion details (JSON)
+- `TestRun` model linked to `Project` - stores suite results, score, status, and assertion details (JSON)
 
 ### Diagnostic Suites
-- `seo_audit` — changelog SEO metadata, Google indexing, JSON-LD schema readiness
-- `feedback_loop` — vector reinforcement for high-ERI posts, embedding sync, ERI snapshots
-- `media_render` — media URL validation, Sharp processing, code card render integrity
-- `geo_audit` — GEO citation score, per-provider coverage, check freshness
+- `seo_audit` - changelog SEO metadata, Google indexing, JSON-LD schema readiness
+- `feedback_loop` - vector reinforcement for high-ERI posts, embedding sync, ERI snapshots
+- `media_render` - media URL validation, Sharp processing, code card render integrity
+- `geo_audit` - GEO citation score, per-provider coverage, check freshness
 
 ### Agent & Cron
-- `src/lib/diagnostics/runner.ts` — `runFullDiagnosticSuite()` with parallel suite execution and live HTML SEO audit
-- `src/lib/diagnostics/agent.ts` — wraps runner for API/cron consumption
-- `getMockTestResults()` in `lib/demo-mode.ts` — per-suite demo responses
-- `POST /api/cron/diagnostics` — autonomous verification across all active projects
-- `GET /api/diagnostics/runs` — fetch latest test run results
-- `POST /api/diagnostics/run` — trigger manual diagnostic scan
+- `src/lib/diagnostics/runner.ts` - `runFullDiagnosticSuite()` with parallel suite execution and live HTML SEO audit
+- `src/lib/diagnostics/agent.ts` - wraps runner for API/cron consumption
+- `getMockTestResults()` in `lib/demo-mode.ts` - per-suite demo responses
+- `POST /api/cron/diagnostics` - autonomous verification across all active projects
+- `GET /api/diagnostics/runs` - fetch latest test run results
+- `POST /api/diagnostics/run` - trigger manual diagnostic scan
 
 ### Tester Agent API
-- `lib/agents/tester.ts` — public agent entry point re-exporting diagnostic runner
-- `POST /api/agents/tester` — run full diagnostic suite (`{ projectId?: string }`)
-- `POST /api/agent/test` — alias endpoint for diagnostics UI
+- `lib/agents/tester.ts` - public agent entry point re-exporting diagnostic runner
+- `POST /api/agents/tester` - run full diagnostic suite (`{ projectId?: string }`)
+- `POST /api/agent/test` - alias endpoint for diagnostics UI
 
 ### Dashboard
-- `components/dashboard/diagnostic-card.tsx` — platform health score and per-suite status
+- `components/dashboard/diagnostic-card.tsx` - platform health score and per-suite status
 
 ## Environment Variables
 

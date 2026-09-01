@@ -12,7 +12,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-background text-foreground">
       {demo && (
         <div className="bg-primary/10 border-b border-primary/20 px-6 py-2 text-center text-sm text-primary">
-          Preview mode active —{" "}
+          Preview mode active -{" "}
           <Link href="/auth/signin" className="underline font-medium">
             Demo Login
           </Link>{" "}
@@ -49,7 +49,7 @@ export default async function HomePage() {
         <h1 className="text-5xl font-bold mb-6">Autonomous Growth for Indie Builders</h1>
         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
           Turn your product updates into viral social posts, Google-ranked articles,
-          and AI search recommendations—automatically.
+          and AI search recommendations - automatically.
         </p>
         <Link
           href={session ? "/dashboard" : "/auth/signin"}
@@ -62,7 +62,7 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-4 gap-8">
         {[
           { phase: "Posts", title: "AI Post Generator & Hooks", desc: "Turn product updates into viral social posts that learn from what already worked." },
-          { phase: "Articles", title: "Auto-Published Articles", desc: "Ship Google-ranked articles from the same updates—without a separate content workflow." },
+          { phase: "Articles", title: "Auto-Published Articles", desc: "Ship Google-ranked articles from the same updates - without a separate content workflow." },
           { phase: "AI Search", title: "AI Search (ChatGPT/Perplexity)", desc: "Get recommended in ChatGPT and Perplexity when people ask for tools like yours." },
           { phase: "Health", title: "App Health & Audits", desc: "See indexing, media, and AI-search citation checks in one place." },
         ].map((f) => (

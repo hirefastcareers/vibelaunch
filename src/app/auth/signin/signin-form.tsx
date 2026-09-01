@@ -13,8 +13,8 @@ export default function SignInForm({ demoMode = false }: SignInFormProps) {
         <h1 className="text-2xl font-bold mb-2">Autonomous Growth for Indie Builders</h1>
         <p className="text-muted-foreground mb-8">
           {demoMode
-            ? "Preview mode — click Demo Login to explore the full dashboard."
-            : "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically."}
+            ? "Preview mode - click Demo Login to explore the full dashboard."
+            : "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically."}
         </p>
 
         {demoMode && (
@@ -42,7 +42,7 @@ export default function SignInForm({ demoMode = false }: SignInFormProps) {
 
         {demoMode && (
           <p className="mt-4 text-xs text-muted-foreground">
-            Demo mode — no database or API keys required
+            Demo mode - no database or API keys required
           </p>
         )}
       </div>

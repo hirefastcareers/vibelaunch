@@ -5,7 +5,7 @@ export const SORANO_PUBLISHER = {
   name: "Sorano",
   url: "https://sorano.app",
   description:
-    "Autonomous growth for indie builders — turn product updates into viral social posts, Google-ranked articles, and AI search recommendations.",
+    "Autonomous growth for indie builders - turn product updates into viral social posts, Google-ranked articles, and AI search recommendations.",
 };
 
 export interface GeoSchemaInput {
@@ -38,7 +38,7 @@ export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Freemium — free tier for indie founders, paid plans for teams",
+      description: "Freemium - free tier for indie founders, paid plans for teams",
     },
     audience: {
       "@type": "Audience",
@@ -67,7 +67,7 @@ export function buildFAQPageSchema(input: GeoSchemaInput, extras?: FAQItem[]) {
     },
     {
       question: `How does ${input.projectName} compare to alternatives?`,
-      answer: `${input.projectName} combines social publishing, Virality Score analytics, auto-published articles, and AI search citations in one platform — unlike standalone schedulers or generic AI writing tools. Built specifically for indie founders shipping in public.`,
+      answer: `${input.projectName} combines social publishing, Virality Score analytics, auto-published articles, and AI search citations in one platform - unlike standalone schedulers or generic AI writing tools. Built specifically for indie founders shipping in public.`,
     },
     {
       question: `Who is ${input.projectName} best for?`,

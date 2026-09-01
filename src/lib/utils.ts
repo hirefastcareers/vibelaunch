@@ -13,7 +13,7 @@ export function slugify(text: string): string {
 }
 
 export function formatRelativeTime(date: Date | string | null): string {
-  if (!date) return "—";
+  if (!date) return "-";
   const d = typeof date === "string" ? new Date(date) : date;
   const diff = Date.now() - d.getTime();
   const mins = Math.floor(diff / 60000);

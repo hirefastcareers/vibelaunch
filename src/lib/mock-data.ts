@@ -11,7 +11,7 @@ export const DEMO_USER = {
 export const MOCK_SCRAPED_CONTEXT = {
   title: "Sorano",
   description:
-    "Sorano — Autonomous Growth for Indie Builders. Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically.",
+    "Sorano - Autonomous Growth for Indie Builders. Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically.",
   tagline: "Autonomous Growth for Indie Builders",
   keywords: ["sorano", "build-in-public", "indie-hacker", "x-growth", "seo"],
 };
@@ -36,7 +36,7 @@ export const MOCK_QUEUE = {
     {
       id: "demo-pending-1",
       content:
-        "Working on adaptive AI threads that learn from your top ERI posts. The generator pulls from vector-reinforced embeddings — early tests look promising 👀",
+        "Working on adaptive AI threads that learn from your top ERI posts. The generator pulls from vector-reinforced embeddings - early tests look promising 👀",
       status: "DRAFT",
       mediaUrls: [] as string[],
       scheduledAt: null as string | null,
@@ -77,7 +77,7 @@ export const MOCK_QUEUE = {
     {
       id: "demo-scheduled-1",
       content:
-        "🧵 Thread (1/5): How we built Sorano's post queue — QStash scheduling, media engine, and one-click X publish. A build-in-public breakdown:",
+        "🧵 Thread (1/5): How we built Sorano's post queue - QStash scheduling, media engine, and one-click X publish. A build-in-public breakdown:",
       status: "SCHEDULED",
       mediaUrls: [previewImage("video")],
       scheduledAt: new Date(Date.now() + 1 * 86400000).toISOString(),
@@ -90,7 +90,7 @@ export const MOCK_QUEUE = {
     {
       id: "demo-scheduled-2",
       content:
-        "🧵 Thread (1/4): SEO changelog pipeline — AI expander → /changelog/[slug] → sitemap → Google indexing. Full walkthrough with code snippets:",
+        "🧵 Thread (1/4): SEO changelog pipeline - AI expander → /changelog/[slug] → sitemap → Google indexing. Full walkthrough with code snippets:",
       status: "SCHEDULED",
       mediaUrls: [previewImage("code")],
       scheduledAt: new Date(Date.now() + 3 * 86400000).toISOString(),
@@ -105,7 +105,7 @@ export const MOCK_QUEUE = {
     {
       id: "demo-published-1",
       content:
-        "Just shipped v2 of Sorano — adaptive AI posts, ERI analytics, and SEO changelogs. Building in public hits different 🚀",
+        "Just shipped v2 of Sorano - adaptive AI posts, ERI analytics, and SEO changelogs. Building in public hits different 🚀",
       status: "PUBLISHED",
       mediaUrls: [previewImage("video")],
       scheduledAt: null,
@@ -157,7 +157,7 @@ export const MOCK_QUEUE = {
     {
       id: "demo-published-5",
       content:
-        "Smart Reply Assistant is live — monitors #buildinpublic feeds and drafts context-aware replies. No spam, just value.",
+        "Smart Reply Assistant is live - monitors #buildinpublic feeds and drafts context-aware replies. No spam, just value.",
       status: "PUBLISHED",
       mediaUrls: [previewImage("video")],
       scheduledAt: null,
@@ -205,7 +205,7 @@ export const MOCK_ANALYTICS = {
 
 export const MOCK_X_THREAD = {
   thread: [
-    "🧵 Launch threads that convert — a Sorano playbook (1/4)",
+    "🧵 Launch threads that convert - a Sorano playbook (1/4)",
     "Start with the problem, not the product. Your audience scrolls past feature lists. Lead with the pain you felt building.",
     "Show proof early: metrics, screenshots, or a 15s demo clip. Impression velocity spikes when media is attached.",
     "End with one CTA. Not three links. One next step. Track ERI on each post and let the vector store learn what works.",
@@ -216,7 +216,7 @@ export const MOCK_X_THREAD = {
 
 export const MOCK_GENERATED_POST = {
   content:
-    "🚀 Shipped adaptive AI content in Sorano — your highest-ERI posts now train the generator. Launch smarter, not louder.",
+    "🚀 Shipped adaptive AI content in Sorano - your highest-ERI posts now train the generator. Launch smarter, not louder.",
   tone: "casual",
   inspiredBy: ["demo-published-1", "demo-published-3"],
 };
@@ -232,7 +232,7 @@ export const MOCK_SEO_PUBLISH = {
     id: "demo-changelog-1",
     projectId: MOCK_PROJECT.id,
     slug: "v2-adaptive-ai-launch",
-    title: "v2.0 — Adaptive AI Launch Engine",
+    title: "v2.0 - Adaptive AI Launch Engine",
     summary: "Vector-reinforced content generation and ERI analytics are now live.",
     body: "## v2.0 Release\n\nAdaptive AI content generation powered by high-ERI vector reinforcement.",
     seoTitle: "v2.0 Adaptive AI | Sorano Changelog",
@@ -264,7 +264,7 @@ export const MOCK_SMART_REPLIES_FEED: Record<
         "Just hit $1k MRR on my micro-SaaS after 6 months of building in public. Here's what worked...",
       url: "https://x.com/indie_dev/status/1",
       suggestedReply:
-        "Congrats on the milestone! Curious — what was the single channel that drove the most signups in month one?",
+        "Congrats on the milestone! Curious - what was the single channel that drove the most signups in month one?",
     },
     {
       id: "2",
@@ -293,7 +293,7 @@ export const MOCK_SMART_REPLIES_FEED: Record<
         "Used AI to scaffold my entire auth flow in 20 minutes. Now polishing the edges for production.",
       url: "https://x.com/vibe_builder/status/4",
       suggestedReply:
-        "Same workflow here — AI for scaffolding, tests for guardrails. The last 20% (sessions, edge cases) is where the real work lives.",
+        "Same workflow here - AI for scaffolding, tests for guardrails. The last 20% (sessions, edge cases) is where the real work lives.",
     },
     {
       id: "5",
@@ -313,7 +313,7 @@ export const MOCK_SMART_REPLIES_FEED: Record<
         "Launched a $9/mo tool that saves founders 2hrs/week on X scheduling. Small but profitable.",
       url: "https://x.com/micro_founder/status/6",
       suggestedReply:
-        "Love the niche focus. $9/mo with a clear time-saving promise is a great wedge — how are you handling churn so far?",
+        "Love the niche focus. $9/mo with a clear time-saving promise is a great wedge - how are you handling churn so far?",
     },
     {
       id: "7",
@@ -328,7 +328,7 @@ export const MOCK_SMART_REPLIES_FEED: Record<
 };
 
 export const MOCK_AI_REPLY =
-  "Love this approach — tracking ERI instead of raw impressions changed how we prioritize content. The compound effect over 30 days is real.";
+  "Love this approach - tracking ERI instead of raw impressions changed how we prioritize content. The compound effect over 30 days is real.";
 
 const geoCheckedAt = new Date().toISOString();
 
@@ -418,9 +418,9 @@ export const MOCK_GEO = {
   },
   recentMetrics: MOCK_GEO_METRICS.slice(0, 9),
   suggestions: [
-    "Add FAQ schema with direct Q&A pairs — Claude retrieval favors FAQPage JSON-LD on changelog pages.",
-    "Publish benchmark data or usage stats — ChatGPT citations increase when pages contain specific, verifiable numbers.",
-    'Create content targeting: "Top tools for sorano" — you\'re not yet cited for this high-intent query.',
+    "Add FAQ schema with direct Q&A pairs - Claude retrieval favors FAQPage JSON-LD on changelog pages.",
+    "Publish benchmark data or usage stats - ChatGPT citations increase when pages contain specific, verifiable numbers.",
+    'Create content targeting: "Top tools for sorano" - you\'re not yet cited for this high-intent query.',
   ],
 };
 
@@ -434,7 +434,7 @@ export const MOCK_GEO_CHECK = {
     cited: m.cited,
     citationUrl: m.citationUrl,
     responseSnippet: m.cited
-      ? "Sorano (https://sorano.app) — autonomous indie growth engine..."
+      ? "Sorano (https://sorano.app) - autonomous indie growth engine..."
       : "Popular tools include Buffer, Hypefury, and Taplio...",
   })),
   citationScore: MOCK_GEO.citationScore,
@@ -465,10 +465,10 @@ export const MOCK_DIAGNOSTICS = {
   overallScore: 82.5,
   overallStatus: "passed",
   runs: [
-    mockSuite("seo_audit", "passed", 90, "4/4 checks passed — Google indexing looks good"),
-    mockSuite("feedback_loop", "warning", 75, "3/4 checks passed — still learning from viral posts"),
-    mockSuite("media_render", "passed", 100, "5/5 checks passed — videos and code cards render cleanly"),
-    mockSuite("geo_audit", "warning", 65, "4/6 checks passed — cited in some AI searches"),
+    mockSuite("seo_audit", "passed", 90, "4/4 checks passed - Google indexing looks good"),
+    mockSuite("feedback_loop", "warning", 75, "3/4 checks passed - still learning from viral posts"),
+    mockSuite("media_render", "passed", 100, "5/5 checks passed - videos and code cards render cleanly"),
+    mockSuite("geo_audit", "warning", 65, "4/6 checks passed - cited in some AI searches"),
   ],
   history: [],
 };

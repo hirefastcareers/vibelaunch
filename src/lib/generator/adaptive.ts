@@ -51,7 +51,7 @@ Topic: ${topic}
 Tone: ${tone}
 
 High-performing past posts for inspiration:
-${examples || "No examples yet — write something engaging."}
+${examples || "No examples yet - write something engaging."}
 
 Return ONLY the post text, no quotes or explanation.`;
 
@@ -94,7 +94,7 @@ function generateFallback(
 ): GeneratedContent {
   const templates: Record<string, string> = {
     professional: `Excited to share an update on ${topic} for ${project.name}. ${project.tagline ?? ""}`.trim(),
-    casual: `Just shipped something cool for ${project.name} — ${topic}! 🚀`,
+    casual: `Just shipped something cool for ${project.name} - ${topic}! 🚀`,
     hype: `🔥 ${project.name} just leveled up! ${topic} is HERE. Don't sleep on this.`,
     technical: `New in ${project.name}: ${topic}. Built for developers who care about quality.`,
   };

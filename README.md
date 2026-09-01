@@ -1,16 +1,16 @@
 # Sorano.app
 
-Autonomous growth and GEO engine — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
+Autonomous growth and GEO engine - continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
 
 ## Features
 
-- **X OAuth** — Sign in with your X account
-- **Project Management** — Create and manage launch projects
-- **Post Queue** — Schedule and publish posts via QStash
-- **Media Engine** — Process images for X constraints
-- **ERI Analytics** — Track engagement rate index across posts
-- **Adaptive Generator** — AI content inspired by top-performing posts
-- **SEO Changelog** — Publish changelog pages with Google indexing
+- **X OAuth** - Sign in with your X account
+- **Project Management** - Create and manage launch projects
+- **Post Queue** - Schedule and publish posts via QStash
+- **Media Engine** - Process images for X constraints
+- **ERI Analytics** - Track engagement rate index across posts
+- **Adaptive Generator** - AI content inspired by top-performing posts
+- **SEO Changelog** - Publish changelog pages with Google indexing
 
 ## Quick Start
 
@@ -52,6 +52,10 @@ See `.cursor/rules/vibelaunch-spec.mdc` for the full platform specification and 
 | 3 | ERI analytics cron, vector reinforcement, adaptive generator |
 | 4 | SEO expander, changelog pages, sitemap, Google indexing |
 
+## Writing
+
+Never use em dashes (—). Prefer commas, periods, colons, or a regular hyphen (-).
+
 ## License
 
-Private — hirefastcareers/vibelaunch
+Private - hirefastcareers/vibelaunch

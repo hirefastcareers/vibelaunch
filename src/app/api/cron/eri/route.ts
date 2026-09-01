@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     endpoint: "/api/cron/eri",
-    description: "ERI analytics cron — fetches X metrics and reinforces high-performing embeddings",
+    description: "ERI analytics cron - fetches X metrics and reinforces high-performing embeddings",
     method: "POST",
   });
 }

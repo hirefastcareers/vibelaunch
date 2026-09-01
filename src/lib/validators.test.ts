@@ -37,7 +37,7 @@ describe("Validators", () => {
       title: "v1.0 Release",
       summary: "We shipped the first version.",
     });
-    // cuid validation may fail with fake id — test structure
+    // cuid validation may fail with fake id - test structure
     expect(result.success).toBe(false); // invalid cuid
   });
 });

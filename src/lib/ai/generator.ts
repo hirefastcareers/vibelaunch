@@ -11,7 +11,7 @@ export interface GenerateOptions {
 }
 
 /**
- * Adaptive dynamic prompt generator — wraps vector-informed content generation.
+ * Adaptive dynamic prompt generator - wraps vector-informed content generation.
  */
 export async function generatePost(options: GenerateOptions): Promise<GeneratedContent> {
   return generateAdaptiveContent(

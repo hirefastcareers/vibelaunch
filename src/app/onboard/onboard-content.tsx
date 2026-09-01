@@ -60,7 +60,7 @@ export default function OnboardPage() {
 
       router.push("/dashboard");
     } catch {
-      setError("Network error — please try again");
+      setError("Network error - please try again");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export default function OnboardPage() {
           <h1 className="text-3xl font-bold">Autonomous Growth for Indie Builders</h1>
         </div>
         <p className="text-muted-foreground">
-          Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically.
+          Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically.
         </p>
       </div>
 

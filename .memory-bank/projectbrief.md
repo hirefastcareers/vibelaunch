@@ -1,16 +1,16 @@
-# Sorano.app — Project Brief
+# Sorano.app - Project Brief
 
 ## What is Sorano?
 
-Sorano is an autonomous growth and GEO engine for founders — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
+Sorano is an autonomous growth and GEO engine for founders - continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
 
 ## Core Value Proposition
 
-1. **Connect X** — OAuth 2.0 sign-in, no manual API key management
-2. **Manage Projects** — CRUD for launch projects with slug-based identity
-3. **Schedule & Publish** — QStash-backed post queue with media processing
-4. **Learn & Adapt** — ERI analytics + pgvector reinforcement for content generation
-5. **SEO Changelog** — Auto-expanded changelog pages with Google indexing
+1. **Connect X** - OAuth 2.0 sign-in, no manual API key management
+2. **Manage Projects** - CRUD for launch projects with slug-based identity
+3. **Schedule & Publish** - QStash-backed post queue with media processing
+4. **Learn & Adapt** - ERI analytics + pgvector reinforcement for content generation
+5. **SEO Changelog** - Auto-expanded changelog pages with Google indexing
 
 ## Target User
 

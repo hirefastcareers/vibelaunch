@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     endpoint: "/api/cron/analytics",
-    description: "Analytics cron — ERI snapshots and vector reinforcement",
+    description: "Analytics cron - ERI snapshots and vector reinforcement",
     method: "POST",
   });
 }

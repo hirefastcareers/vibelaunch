@@ -3,7 +3,7 @@ import "./globals.css";
 
 const title = "Sorano.app | Autonomous Growth for Indie Builders";
 const description =
-  "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically.";
+  "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically.";
 
 export const metadata: Metadata = {
   title,

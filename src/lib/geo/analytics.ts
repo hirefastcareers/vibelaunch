@@ -59,38 +59,38 @@ export function generateGeoSuggestions(
 
   if (score < 30) {
     suggestions.push(
-      `Publish a comparison page: "How ${projectName} compares to alternatives" — AI search tools often recommend products that spell this out.`
+      `Publish a comparison page: "How ${projectName} compares to alternatives" - AI search tools often recommend products that spell this out.`
     );
   }
 
   if (byProvider.claude.cited === 0 && byProvider.claude.total > 0) {
     suggestions.push(
-      "Add a simple FAQ on your public pages — Claude is more likely to mention products that answer common questions directly."
+      "Add a simple FAQ on your public pages - Claude is more likely to mention products that answer common questions directly."
     );
   }
 
   if (byProvider.perplexity.cited < byProvider.perplexity.total) {
     suggestions.push(
-      "Include pricing, features, and who the product is for on public pages — Perplexity cites pages that spell this out clearly."
+      "Include pricing, features, and who the product is for on public pages - Perplexity cites pages that spell this out clearly."
     );
   }
 
   if (byProvider.chatgpt.cited < byProvider.chatgpt.total) {
     suggestions.push(
-      "Publish benchmark data or usage stats — ChatGPT citations increase when pages contain specific, verifiable numbers."
+      "Publish benchmark data or usage stats - ChatGPT citations increase when pages contain specific, verifiable numbers."
     );
   }
 
   const uncitedPrompts = metrics.filter((m) => !m.cited).map((m) => m.queryPrompt);
   if (uncitedPrompts.length > 0) {
     suggestions.push(
-      `Create content targeting: "${uncitedPrompts[0]}" — you're not yet cited for this high-intent query.`
+      `Create content targeting: "${uncitedPrompts[0]}" - you're not yet cited for this high-intent query.`
     );
   }
 
   if (suggestions.length === 0) {
     suggestions.push(
-      "Strong presence in AI search — keep publishing articles and refresh them with each release."
+      "Strong presence in AI search - keep publishing articles and refresh them with each release."
     );
   }
 
