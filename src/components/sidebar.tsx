@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  ListOrdered,
+  Bot,
+  FileText,
   MessageSquare,
   Rocket,
   Sparkles,
@@ -15,9 +16,11 @@ import { Separator } from "@/components/ui/separator";
 
 const navItems = [
   { href: "/dashboard", label: "Command Center", icon: LayoutDashboard },
-  { href: "/dashboard/queue", label: "Queue Studio", icon: ListOrdered },
+  { href: "/dashboard/queue", label: "AI Post Generator & Hooks", icon: Sparkles },
+  { href: "/dashboard#articles", label: "Auto-Published Articles", icon: FileText },
+  { href: "/dashboard#ai-search", label: "AI Search (ChatGPT/Perplexity)", icon: Bot },
   { href: "/dashboard/replies", label: "Smart Replies", icon: MessageSquare },
-  { href: "/dashboard/diagnostics", label: "System Diagnostics", icon: ShieldCheck },
+  { href: "/dashboard/diagnostics", label: "App Health & Audits", icon: ShieldCheck },
   { href: "/onboard", label: "Onboard Project", icon: Rocket },
 ];
 
@@ -40,11 +43,12 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
 
       <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => {
-          const active = pathname === item.href;
+          const itemPath = item.href.split("#")[0];
+          const active = pathname === itemPath && !item.href.includes("#");
           const Icon = item.icon;
           return (
             <Link
-              key={item.href}
+              key={item.label}
               href={item.href}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",

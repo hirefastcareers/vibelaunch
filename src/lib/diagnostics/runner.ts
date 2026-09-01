@@ -24,7 +24,7 @@ export async function runSeoAudit(projectId: string): Promise<TestSuiteResult> {
         suite: "seo_audit",
         status: "warning",
         score: 50,
-        details: { message: "No static SEO pages published yet to audit." },
+        details: { message: "No articles published yet to check." },
       };
     }
 
@@ -89,8 +89,8 @@ export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteR
         embeddingsCount: vectors.length,
         vectorSearchReady: hasVectors,
         message: hasVectors
-          ? "pgvector historical hooks successfully cached."
-          : "No ERI vectors found in database.",
+          ? "The system is learning from your viral posts."
+          : "No viral posts to learn from yet.",
       },
     };
   } catch (error: unknown) {

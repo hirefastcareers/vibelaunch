@@ -17,7 +17,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
-import { SUITE_LABELS, type DiagnosticSuite } from "@/lib/diagnostics/types";
+import { SUITE_LABELS, SUITE_DESCRIPTIONS, type DiagnosticSuite } from "@/lib/diagnostics/types";
 import { getMockTestResults } from "@/lib/demo-mode";
 
 interface TestResult {
@@ -103,9 +103,9 @@ export default function DiagnosticsPage() {
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">System Diagnostics</h1>
+          <h1 className="text-3xl font-bold tracking-tight">App Health & Audits</h1>
           <p className="text-muted-foreground">
-            Autonomous testing agent auditing SEO, Vectors, Media, and GEO citations.
+            Checks Google indexing, AI learning, media, and whether ChatGPT and Perplexity mention you.
           </p>
         </div>
         <Button className="gap-2" disabled={loading} onClick={runDiagnostic}>
@@ -119,10 +119,10 @@ export default function DiagnosticsPage() {
           <div className="space-y-1">
             <CardTitle className="text-xl flex items-center gap-2">
               <ShieldCheck className="h-6 w-6 text-primary" />
-              System Health Index
+              App Health Score
             </CardTitle>
             <CardDescription>
-              Aggregated performance score across all test suites
+              Combined score across indexing, learning, media, and AI search checks
             </CardDescription>
           </div>
           <div className="text-right">
@@ -142,17 +142,30 @@ export default function DiagnosticsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {report.results.map((test) => (
           <Card className="border-border/40" key={test.suite}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-lg capitalize flex items-center gap-2">
-                {statusIcon(test.status)}
-                {SUITE_LABELS[test.suite] ?? test.suite.replace(/_/g, " ")}
-              </CardTitle>
-              <span className="font-semibold text-sm">{test.score}%</span>
+            <CardHeader className="pb-2">
+              <div className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  {statusIcon(test.status)}
+                  {SUITE_LABELS[test.suite] ?? test.suite.replace(/_/g, " ")}
+                </CardTitle>
+                <span className="font-semibold text-sm">{test.score}%</span>
+              </div>
+              <CardDescription className="pt-2">
+                {SUITE_DESCRIPTIONS[test.suite] ?? ""}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <pre className="text-xs bg-muted/50 p-3 rounded-md overflow-x-auto text-muted-foreground">
-                {JSON.stringify(test.details, null, 2)}
-              </pre>
+              <p className="text-sm text-muted-foreground">
+                {typeof test.details.message === "string"
+                  ? test.details.message
+                  : typeof test.details.summary === "string"
+                    ? test.details.summary
+                    : test.status === "passed"
+                      ? "All checks passed."
+                      : test.status === "warning"
+                        ? "Some checks need attention."
+                        : "This check did not pass."}
+              </p>
             </CardContent>
           </Card>
         ))}

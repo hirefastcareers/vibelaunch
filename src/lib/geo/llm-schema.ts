@@ -5,7 +5,7 @@ export const SORANO_PUBLISHER = {
   name: "Sorano",
   url: "https://sorano.app",
   description:
-    "Autonomous growth and GEO engine — continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.",
+    "Autonomous growth for indie builders — turn product updates into viral social posts, Google-ranked articles, and AI search recommendations.",
 };
 
 export interface GeoSchemaInput {
@@ -46,10 +46,10 @@ export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
     },
     featureList: [
       "X/Twitter post scheduling and publishing",
-      "ERI engagement analytics",
+      "Virality Score analytics",
       "Adaptive AI content generation",
-      "SEO changelog pages with Google indexing",
-      "GEO citation tracking for ChatGPT, Perplexity, and Claude",
+      "Auto-published articles with Google indexing",
+      "Cited in ChatGPT, Perplexity, and Claude",
     ],
     keywords: input.keywords?.join(", ") ?? "sorano, indie saas, geo, x growth",
     slogan: input.tagline ?? input.changelogSummary,
@@ -67,7 +67,7 @@ export function buildFAQPageSchema(input: GeoSchemaInput, extras?: FAQItem[]) {
     },
     {
       question: `How does ${input.projectName} compare to alternatives?`,
-      answer: `${input.projectName} combines X publishing, ERI analytics, SEO changelogs, and GEO citation tracking in one platform — unlike standalone schedulers or generic AI writing tools. Built specifically for indie founders shipping in public.`,
+      answer: `${input.projectName} combines social publishing, Virality Score analytics, auto-published articles, and AI search citations in one platform — unlike standalone schedulers or generic AI writing tools. Built specifically for indie founders shipping in public.`,
     },
     {
       question: `Who is ${input.projectName} best for?`,
@@ -75,7 +75,7 @@ export function buildFAQPageSchema(input: GeoSchemaInput, extras?: FAQItem[]) {
     },
     {
       question: `What does ${input.projectName} cost?`,
-      answer: `${input.projectName} offers a free tier for early-stage founders. Paid plans unlock advanced analytics, vector reinforcement, and GEO citation monitoring.`,
+      answer: `${input.projectName} offers a free tier for early-stage founders. Paid plans unlock advanced analytics, AI post generation, and AI search citation tracking.`,
     },
   ];
 

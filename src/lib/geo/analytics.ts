@@ -59,19 +59,19 @@ export function generateGeoSuggestions(
 
   if (score < 30) {
     suggestions.push(
-      `Publish a comparison page: "How ${projectName} compares to alternatives" — LLMs heavily cite structured comparison content.`
+      `Publish a comparison page: "How ${projectName} compares to alternatives" — AI search tools often recommend products that spell this out.`
     );
   }
 
   if (byProvider.claude.cited === 0 && byProvider.claude.total > 0) {
     suggestions.push(
-      "Add FAQ schema with direct Q&A pairs — Claude retrieval favors FAQPage JSON-LD on changelog pages."
+      "Add a simple FAQ on your public pages — Claude is more likely to mention products that answer common questions directly."
     );
   }
 
   if (byProvider.perplexity.cited < byProvider.perplexity.total) {
     suggestions.push(
-      "Include pricing, feature list, and target audience on public pages — Perplexity cites pages with explicit SoftwareApplication schema."
+      "Include pricing, features, and who the product is for on public pages — Perplexity cites pages that spell this out clearly."
     );
   }
 
@@ -90,7 +90,7 @@ export function generateGeoSuggestions(
 
   if (suggestions.length === 0) {
     suggestions.push(
-      "Strong GEO presence — maintain changelog cadence and refresh JSON-LD schema with each release."
+      "Strong presence in AI search — keep publishing articles and refresh them with each release."
     );
   }
 

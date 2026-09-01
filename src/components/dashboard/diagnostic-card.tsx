@@ -30,13 +30,13 @@ function suiteSummary(run: TestRunRecord): string {
   if (d.assertions && typeof d.assertions === "object") {
     const passed = Object.values(d.assertions as Record<string, boolean>).filter(Boolean).length;
     const total = Object.keys(d.assertions as object).length;
-    return `${passed}/${total} SEO assertions passed`;
+    return `${passed}/${total} indexing checks passed`;
   }
   if (typeof d.embeddingsCount === "number") {
-    return `${d.embeddingsCount} vector embedding(s) cached`;
+    return `Learning from ${d.embeddingsCount} viral post(s)`;
   }
   if (typeof d.citationsFound === "number") {
-    return `${d.citationsFound} citation(s) across ${d.totalQueriesChecked ?? 0} checks`;
+    return `Cited in ${d.citationsFound} of ${d.totalQueriesChecked ?? 0} AI searches`;
   }
   return `Score: ${run.score}%`;
 }
@@ -127,7 +127,7 @@ export function DiagnosticCard() {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">Diagnostic Agent</CardTitle>
+          <CardTitle className="text-lg">App Health Checks</CardTitle>
         </div>
         <Button variant="outline" size="sm" onClick={handleRunAll} disabled={running}>
           <RefreshCw className={`h-4 w-4 ${running ? "animate-spin" : ""}`} />
@@ -146,7 +146,7 @@ export function DiagnosticCard() {
             }`}
           />
           <div>
-            <p className="text-sm text-muted-foreground">Platform Health Score</p>
+            <p className="text-sm text-muted-foreground">App Health Score</p>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-bold">{data?.overallScore ?? 0}%</span>
               <Badge
@@ -198,8 +198,8 @@ export function DiagnosticCard() {
 
         {!data?.runs?.length && (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No diagnostic runs yet. Click &quot;Run All Checks&quot; to verify SEO, vector,
-            media, and GEO systems.
+            No health checks yet. Click &quot;Run All Checks&quot; to verify indexing, AI learning,
+            media, and AI search citations.
           </p>
         )}
       </CardContent>

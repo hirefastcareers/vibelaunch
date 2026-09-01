@@ -139,9 +139,9 @@ export default function QueueStudioPage() {
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Queue & Content Studio</h1>
+          <h1 className="text-3xl font-bold">AI Post Generator & Hooks</h1>
           <p className="text-muted-foreground mt-1">
-            Manage pending, scheduled, and published posts
+            Draft, schedule, and publish posts that learn from what already went viral
           </p>
         </div>
         <Button onClick={() => setModalOpen(true)}>

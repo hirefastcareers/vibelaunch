@@ -10,11 +10,11 @@ export default function SignInForm({ demoMode = false }: SignInFormProps) {
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="bg-card p-8 rounded-xl border border-border shadow-sm max-w-md w-full text-center">
-        <h1 className="text-2xl font-bold mb-2">Sign in to Sorano</h1>
+        <h1 className="text-2xl font-bold mb-2">Autonomous Growth for Indie Builders</h1>
         <p className="text-muted-foreground mb-8">
           {demoMode
             ? "Preview mode — click Demo Login to explore the full dashboard."
-            : "Connect your X account to start launching."}
+            : "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically."}
         </p>
 
         {demoMode && (

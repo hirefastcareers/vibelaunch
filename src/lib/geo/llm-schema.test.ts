@@ -25,7 +25,7 @@ describe("llm-schema", () => {
     expect(schema.publisher).toMatchObject({ name: "Sorano" });
     expect(schema.offers).toMatchObject({ price: "0", priceCurrency: "USD" });
     expect(schema.audience.audienceType).toContain("Indie hackers");
-    expect(schema.featureList).toContain("GEO citation tracking for ChatGPT, Perplexity, and Claude");
+    expect(schema.featureList).toContain("Cited in ChatGPT, Perplexity, and Claude");
   });
 
   it("builds FAQPage with comparison question", () => {

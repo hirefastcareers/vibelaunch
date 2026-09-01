@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const title = "Sorano.app | Autonomous Growth & GEO Engine";
+const title = "Sorano.app | Autonomous Growth for Indie Builders";
 const description =
-  "Continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization (GEO).";
+  "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically.";
 
 export const metadata: Metadata = {
   title,

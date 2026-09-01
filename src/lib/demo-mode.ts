@@ -54,7 +54,7 @@ export function getMockTestResults(suite: string): MockTestSuiteResult {
       details: {
         embeddingsCount: 14,
         vectorSearchReady: true,
-        message: "pgvector historical hooks successfully cached.",
+        message: "The system is learning from your viral posts.",
       },
     },
     media_render: {

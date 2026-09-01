@@ -69,7 +69,7 @@ export function GeneratePostModal({
             Generate New Post with AI
           </DialogTitle>
           <DialogDescription>
-            Uses vector-reinforced high-ERI posts to craft adaptive content.
+            Uses your viral posts to write stronger hooks and copy.
           </DialogDescription>
         </DialogHeader>
 

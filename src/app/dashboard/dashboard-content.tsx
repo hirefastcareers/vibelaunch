@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EriBadge } from "@/components/eri-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Eye, TrendingUp, FileText, Users, ExternalLink } from "lucide-react";
+import { Eye, TrendingUp, FileText, Users, Sparkles, ExternalLink } from "lucide-react";
 import { formatRelativeTime } from "@/lib/utils";
 import { GeoCard } from "@/components/dashboard/geo-card";
 import { DiagnosticCard } from "@/components/dashboard/diagnostic-card";
@@ -55,8 +55,8 @@ export default function CommandCenterPage() {
     return (
       <div className="p-8 space-y-6">
         <Skeleton className="h-10 w-64" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-32" />
           ))}
         </div>
@@ -76,7 +76,7 @@ export default function CommandCenterPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -95,7 +95,7 @@ export default function CommandCenterPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Average ERI Score
+              Virality Score
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -107,16 +107,16 @@ export default function CommandCenterPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card id="articles" className="scroll-mt-8">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              SEO Pages Published
+              Indexed Articles on Google
             </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.seoPagesPublished ?? 0}</div>
-            <p className="text-xs text-muted-foreground mt-1">Static changelog pages</p>
+            <p className="text-xs text-muted-foreground mt-1">Auto-published from your updates</p>
           </CardContent>
         </Card>
 
@@ -134,9 +134,26 @@ export default function CommandCenterPage() {
             <p className="text-xs text-muted-foreground mt-1">All time</p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              AI Learning Status
+            </CardTitle>
+            <Sparkles className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Active</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Learning from your viral posts
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      <GeoCard />
+      <div id="ai-search" className="scroll-mt-8">
+        <GeoCard />
+      </div>
 
       <DiagnosticCard />
 
@@ -181,7 +198,7 @@ export default function CommandCenterPage() {
             <CardContent className="py-12 text-center text-muted-foreground">
               No published posts yet.{" "}
               <Link href="/dashboard/queue" className="text-primary hover:underline">
-                Head to Queue Studio
+                Head to the AI Post Generator
               </Link>{" "}
               to create your first post.
             </CardContent>

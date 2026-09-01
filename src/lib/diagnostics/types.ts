@@ -21,8 +21,15 @@ export const ALL_SUITES: DiagnosticSuite[] = [
 ];
 
 export const SUITE_LABELS: Record<DiagnosticSuite, string> = {
-  seo_audit: "SEO Indexing",
-  feedback_loop: "Vector Reinforcement",
-  media_render: "Media Integrity",
-  geo_audit: "GEO Citations",
+  seo_audit: "Google Indexing Check",
+  feedback_loop: "AI Self-Tuning Check",
+  media_render: "Video & Code Card Check",
+  geo_audit: "AI Search Citation Check",
+};
+
+export const SUITE_DESCRIPTIONS: Record<DiagnosticSuite, string> = {
+  seo_audit: "Checks meta tags, schema, and page length",
+  feedback_loop: "Verifies the system is learning from viral posts",
+  media_render: "Ensures media renders cleanly",
+  geo_audit: "Verifies mentions in ChatGPT & Perplexity",
 };

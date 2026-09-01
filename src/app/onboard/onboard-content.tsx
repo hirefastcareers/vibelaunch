@@ -71,10 +71,10 @@ export default function OnboardPage() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <Rocket className="h-6 w-6 text-primary" />
-          <h1 className="text-3xl font-bold">Onboard Your Project</h1>
+          <h1 className="text-3xl font-bold">Autonomous Growth for Indie Builders</h1>
         </div>
         <p className="text-muted-foreground">
-          Paste your product URL — we&apos;ll scrape context, embed it, and spin up your launch workspace.
+          Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically.
         </p>
       </div>
 
@@ -85,7 +85,7 @@ export default function OnboardPage() {
             Project Setup
           </CardTitle>
           <CardDescription>
-            The scraper runs on submit to extract title, description, and keywords.
+            Paste your product URL. We&apos;ll pull in your name, description, and keywords to get started.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -148,7 +148,7 @@ export default function OnboardPage() {
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Scraping & embedding context...
+                  Setting up your workspace...
                 </>
               ) : (
                 "Launch Onboarding"

@@ -49,7 +49,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   <p className="text-gray-800">{post.content}</p>
                   <div className="mt-2 flex gap-3 text-xs text-gray-500">
                     <span>{post.status}</span>
-                    {post.analytics && <span>ERI {post.analytics.eri}</span>}
+                    {post.analytics && <span>Virality Score {post.analytics.eri}</span>}
                   </div>
                 </li>
               ))}
@@ -81,13 +81,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
       {project.analytics.length > 0 && (
         <section className="mt-8">
-          <h2 className="text-lg font-semibold mb-4">ERI Snapshots</h2>
+          <h2 className="text-lg font-semibold mb-4">Virality Snapshots</h2>
           <div className="bg-white rounded-lg border overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="text-left p-3">Date</th>
-                  <th className="text-left p-3">Avg ERI</th>
+                  <th className="text-left p-3">Avg Virality</th>
                   <th className="text-left p-3">Posts</th>
                 </tr>
               </thead>

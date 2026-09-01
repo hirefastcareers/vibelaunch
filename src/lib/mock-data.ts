@@ -11,8 +11,8 @@ export const DEMO_USER = {
 export const MOCK_SCRAPED_CONTEXT = {
   title: "Sorano",
   description:
-    "Sorano — Autonomous Growth & GEO Engine. Continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.",
-  tagline: "Autonomous Growth & GEO Engine",
+    "Sorano — Autonomous Growth for Indie Builders. Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations—automatically.",
+  tagline: "Autonomous Growth for Indie Builders",
   keywords: ["sorano", "build-in-public", "indie-hacker", "x-growth", "seo"],
 };
 
@@ -465,10 +465,10 @@ export const MOCK_DIAGNOSTICS = {
   overallScore: 82.5,
   overallStatus: "passed",
   runs: [
-    mockSuite("seo_audit", "passed", 90, "4/4 checks passed — SEO indexing readiness passed"),
-    mockSuite("feedback_loop", "warning", 75, "3/4 checks passed — vector reinforcement warning"),
-    mockSuite("media_render", "passed", 100, "5/5 checks passed — media integrity passed"),
-    mockSuite("geo_audit", "warning", 65, "4/6 checks passed — GEO citations warning"),
+    mockSuite("seo_audit", "passed", 90, "4/4 checks passed — Google indexing looks good"),
+    mockSuite("feedback_loop", "warning", 75, "3/4 checks passed — still learning from viral posts"),
+    mockSuite("media_render", "passed", 100, "5/5 checks passed — videos and code cards render cleanly"),
+    mockSuite("geo_audit", "warning", 65, "4/6 checks passed — cited in some AI searches"),
   ],
   history: [],
 };

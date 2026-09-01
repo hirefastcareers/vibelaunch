@@ -67,7 +67,7 @@ export function GeoCard() {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
           <Bot className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">GEO Citation Monitor</CardTitle>
+          <CardTitle className="text-lg">AI Search (ChatGPT/Perplexity)</CardTitle>
         </div>
         <Button
           variant="outline"
@@ -82,7 +82,7 @@ export function GeoCard() {
       <CardContent className="space-y-6">
         <div className="flex items-end gap-3">
           <div>
-            <p className="text-sm text-muted-foreground mb-1">GEO Citation Score</p>
+            <p className="text-sm text-muted-foreground mb-1">Cited in AI Searches</p>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold">{data?.citationScore ?? 0}%</span>
               <Badge variant={scoreVariant}>
@@ -96,7 +96,7 @@ export function GeoCard() {
         </div>
 
         <div>
-          <p className="text-sm font-medium mb-3">AI Engine Breakdown</p>
+          <p className="text-sm font-medium mb-3">Where you&apos;re cited</p>
           <div className="flex flex-wrap gap-2">
             {PROVIDER_KEYS.map((key) => {
               const provider = data?.byProvider[key];
@@ -127,7 +127,7 @@ export function GeoCard() {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="h-4 w-4 text-amber-400" />
-            <p className="text-sm font-medium">Recommended GEO Content Tweaks</p>
+            <p className="text-sm font-medium">Recommended tweaks to get cited more</p>
           </div>
           <ul className="space-y-2">
             {(data?.suggestions ?? []).map((suggestion, i) => (

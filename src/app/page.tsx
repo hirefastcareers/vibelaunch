@@ -46,11 +46,10 @@ export default async function HomePage() {
       </nav>
 
       <section className="max-w-4xl mx-auto px-4 py-24 text-center">
-        <h1 className="text-5xl font-bold mb-6">Autonomous Growth & GEO Engine</h1>
+        <h1 className="text-5xl font-bold mb-6">Autonomous Growth for Indie Builders</h1>
         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-          Sorano delivers continuous organic growth, Playwright UI media capture,
-          social-to-static SEO, and Generative Engine Optimization — all in one
-          platform.
+          Turn your product updates into viral social posts, Google-ranked articles,
+          and AI search recommendations—automatically.
         </p>
         <Link
           href={session ? "/dashboard" : "/auth/signin"}
@@ -62,11 +61,10 @@ export default async function HomePage() {
 
       <section className="max-w-6xl mx-auto px-4 py-16 grid md:grid-cols-4 gap-8">
         {[
-          { phase: "Phase 1", title: "Projects & X OAuth", desc: "Connect your X account and manage launch projects with Prisma + pgvector." },
-          { phase: "Phase 2", title: "Media & Publishing", desc: "Process media, queue posts with QStash, and publish directly to X." },
-          { phase: "Phase 3", title: "ERI Analytics", desc: "Track engagement rate index, reinforce vectors, and generate adaptive content." },
-          { phase: "Phase 4", title: "SEO Changelog", desc: "Expand content for SEO, publish changelogs, sitemap, and Google indexing." },
-          { phase: "Phase 5", title: "Command Center", desc: "Dashboard, queue studio, onboarding, and smart reply assistant." },
+          { phase: "Posts", title: "AI Post Generator & Hooks", desc: "Turn product updates into viral social posts that learn from what already worked." },
+          { phase: "Articles", title: "Auto-Published Articles", desc: "Ship Google-ranked articles from the same updates—without a separate content workflow." },
+          { phase: "AI Search", title: "AI Search (ChatGPT/Perplexity)", desc: "Get recommended in ChatGPT and Perplexity when people ask for tools like yours." },
+          { phase: "Health", title: "App Health & Audits", desc: "See indexing, media, and AI-search citation checks in one place." },
         ].map((f) => (
           <div key={f.phase} className="bg-card p-6 rounded-xl border border-border">
             <span className="text-xs font-semibold text-primary uppercase tracking-wide">{f.phase}</span>

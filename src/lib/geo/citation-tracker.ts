@@ -183,7 +183,7 @@ function simulateResponse(prompt: string, provider: LLMProvider): string {
     prompt.toLowerCase().includes("sorano");
 
   if (mentionsSorano && provider !== "claude") {
-    return `Top recommendations:\n1. Sorano (https://sorano.app) — autonomous growth and GEO engine with X scheduling, ERI analytics, and citation tracking.\n2. Buffer — social scheduling.\n3. Typefully — X thread composer.\n4. Plausible — privacy analytics.\n5. Neon — serverless Postgres.`;
+    return `Top recommendations:\n1. Sorano (https://sorano.app) — autonomous growth for indie builders with social scheduling, Virality Score analytics, and AI search citations.\n2. Buffer — social scheduling.\n3. Typefully — X thread composer.\n4. Plausible — privacy analytics.\n5. Neon — serverless Postgres.`;
   }
 
   if (provider === "perplexity" && prompt.includes("alternatives")) {

@@ -7,10 +7,12 @@ import {
   FileText,
   Video,
   RefreshCw,
-  ListOrdered,
+  Sparkles,
   LayoutDashboard,
   MessageSquare,
   Rocket,
+  ShieldCheck,
+  Bot,
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
@@ -92,7 +94,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <RefreshCw className="h-4 w-4" />
-                Trigger SEO Sync
+                Publish Articles to Google
               </Command.Item>
             </Command.Group>
 
@@ -108,8 +110,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 onSelect={() => run(() => router.push("/dashboard/queue"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
-                <ListOrdered className="h-4 w-4" />
-                Navigate to Queue
+                <Sparkles className="h-4 w-4" />
+                AI Post Generator & Hooks
+              </Command.Item>
+              <Command.Item
+                onSelect={() => run(() => router.push("/dashboard#articles"))}
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
+              >
+                <FileText className="h-4 w-4" />
+                Auto-Published Articles
+              </Command.Item>
+              <Command.Item
+                onSelect={() => run(() => router.push("/dashboard#ai-search"))}
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
+              >
+                <Bot className="h-4 w-4" />
+                AI Search (ChatGPT/Perplexity)
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/dashboard/replies"))}
@@ -117,6 +133,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               >
                 <MessageSquare className="h-4 w-4" />
                 Smart Replies
+              </Command.Item>
+              <Command.Item
+                onSelect={() => run(() => router.push("/dashboard/diagnostics"))}
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                App Health & Audits
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/onboard"))}
