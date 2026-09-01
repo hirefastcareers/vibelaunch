@@ -43,6 +43,12 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        ink: {
+          DEFAULT: "hsl(var(--ink))",
+          panel: "hsl(var(--ink-panel))",
+          rule: "hsl(var(--ink-rule))",
+          dim: "hsl(var(--ink-dim))",
+        },
       },
       fontFamily: {
         serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
@@ -59,6 +65,15 @@ const config: Config = {
         DEFAULT: "none",
         md: "none",
         lg: "none",
+      },
+      keyframes: {
+        "sorano-blink": {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
+      },
+      animation: {
+        "sorano-blink": "sorano-blink 1.6s steps(1) infinite",
       },
     },
   },

@@ -1,83 +1,532 @@
 import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { isDemoMode } from "@/lib/demo-mode";
+import { PlatformTabs } from "@/components/home/platform-tabs";
 
 export const dynamic = "force-dynamic";
+
+const integrations = [
+  "X / TWITTER",
+  "GOOGLE SEARCH CONSOLE",
+  "CHATGPT",
+  "PERPLEXITY",
+  "AI OVERVIEWS",
+  "PLAYWRIGHT",
+];
+
+const stats = [
+  { n: "40 sec", label: "of your day per shipped feature" },
+  { n: "4", label: "channels fed from one changelog entry" },
+  { n: "3", label: "AI engines swept for citations each week" },
+  { n: "1", label: "login instead of a five-tool stack" },
+];
+
+const shareRows = [
+  { name: "Sorano", pct: "62%", val: "38%", bar: "bg-primary", label: "text-foreground" },
+  { name: "Competitor A", pct: "44%", val: "27%", bar: "bg-ink", label: "text-[#4A453D]" },
+  { name: "Competitor B", pct: "31%", val: "19%", bar: "bg-[#8C857A]", label: "text-[#4A453D]" },
+  { name: "Everyone else", pct: "26%", val: "16%", bar: "bg-[#C9C3B8]", label: "text-[#4A453D]" },
+];
+
+const promptStats = [
+  { k: "TRACKED SINCE", v: "MAR 2026" },
+  { k: "ENGINES SWEPT", v: "3" },
+  { k: "YOUR BEST POSITION", v: "2 OF 5" },
+];
+
+const citations = [
+  { engine: "ChatGPT", state: "CITED · POS 2", cited: true },
+  { engine: "Perplexity", state: "CITED · POS 4", cited: true },
+  { engine: "Google AI Overview", state: "NOT CITED", cited: false },
+];
+
+const compare = [
+  {
+    job: "Write the post",
+    old: "You, at 11pm, staring at a blank composer",
+    next: "Drafted from your best-performing hooks, scored before it queues",
+  },
+  {
+    job: "Publish the article",
+    old: "Copy the changelog into a CMS, fix the metadata",
+    next: "Static page, internal links and sitemap ping on publish",
+  },
+  {
+    job: "Capture the media",
+    old: "Screenshot tool, crop, upload, repeat",
+    next: "Playwright captures the screens your update touched",
+  },
+  {
+    job: "Get cited by AI",
+    old: "Nobody is checking",
+    next: "240 prompts swept weekly across three engines",
+  },
+  {
+    job: "Learn what worked",
+    old: "Three dashboards and a spreadsheet",
+    next: "Engagement feeds straight back into the next generation",
+  },
+];
+
+const cadence = [
+  {
+    what: "Social posts",
+    detail: "Drafted, scored and queued from your updates - you approve or let it run.",
+    freq: "5-7 / WEEK",
+  },
+  {
+    what: "Articles",
+    detail: "Changelog entries expanded into static pages with internal linking.",
+    freq: "1-3 / WEEK",
+  },
+  {
+    what: "UI media",
+    detail: "Playwright captures of the screens your update touched.",
+    freq: "PER SHIP",
+  },
+  {
+    what: "Citation sweep",
+    detail: "Checks whether AI engines recommend you, and what to fix if not.",
+    freq: "WEEKLY",
+  },
+  {
+    what: "Health audit",
+    detail: "Indexing, sitemap, metadata and media coverage in one report.",
+    freq: "WEEKLY",
+  },
+];
+
+const faqs = [
+  {
+    q: "Do I have to write anything?",
+    a: "Two lines about what you shipped. Sorano handles the posts, the article, the media and the structured data for AI search.",
+  },
+  {
+    q: "Will the posts sound generated?",
+    a: "They are built from your own best-performing posts. Engagement data feeds back in, so voice and hooks tighten over time.",
+  },
+  {
+    q: "What is GEO, exactly?",
+    a: "Generative Engine Optimization: making your content the kind of source ChatGPT and Perplexity quote when someone asks for a tool like yours.",
+  },
+  {
+    q: "How is this different from an SEO suite?",
+    a: "Suites tell you what to fix. Sorano writes, publishes and tracks it from the update you already wrote.",
+  },
+  {
+    q: "What do I connect?",
+    a: "Sign in with X. No API keys, no separate CMS, no scheduling tool on the side.",
+  },
+];
+
+const footerCols = [
+  {
+    head: "PLATFORM",
+    links: [
+      { label: "Posts & hooks", href: "#platform" },
+      { label: "Articles & SEO", href: "#platform" },
+      { label: "AI visibility", href: "#visibility" },
+      { label: "Dashboard demo", href: "/auth/signin" },
+    ],
+  },
+  {
+    head: "RESOURCES",
+    links: [
+      { label: "Changelog", href: "/changelog" },
+      { label: "Blog", href: "/blog" },
+      { label: "GEO guide", href: "/blog" },
+      { label: "Status", href: "/status" },
+    ],
+  },
+  {
+    head: "COMPANY",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "@sorano", href: "https://x.com" },
+    ],
+  },
+];
 
 export default async function HomePage() {
   const session = await getSession();
   const demo = isDemoMode();
+  const signedIn = Boolean(session);
+  const ctaHref = signedIn ? "/dashboard" : "/auth/signin";
+  const heroCta = signedIn ? "GO TO DASHBOARD" : "TRY DEMO DASHBOARD";
+  const navCta = signedIn ? "DASHBOARD" : demo ? "DEMO LOGIN" : "SIGN IN WITH X";
+  const bottomCta = signedIn ? "GO TO DASHBOARD" : "SIGN IN WITH X";
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       {demo && (
-        <div className="border-b border-stone-800 px-6 py-2 font-mono text-[11px] text-muted-foreground">
-          [PREVIEW]{" "}
-          <Link href="/auth/signin" className="underline text-foreground">
-            Demo Login
-          </Link>{" "}
-          to explore the full dashboard
+        <div className="flex flex-wrap items-center justify-center gap-2.5 bg-ink px-6 py-[9px] font-mono text-[11px] tracking-[0.06em] text-[#C9C3B8]">
+          <span className="text-primary">[PREVIEW]</span>
+          <span>Demo login to explore the full dashboard</span>
+          <Link
+            href="/auth/signin"
+            className="text-background underline underline-offset-[3px] hover:text-primary"
+          >
+            → ENTER
+          </Link>
         </div>
       )}
 
-      <nav className="border-b border-stone-800">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <span className="font-serif text-xl">Sorano</span>
-          <div className="flex items-center gap-4 font-mono text-[11px] tracking-wider">
-            {session ? (
+      <nav className="sticky top-0 z-20 border-b border-border bg-[rgba(250,248,244,0.94)] backdrop-blur-[8px]">
+        <div className="ds-container flex h-auto flex-wrap items-center justify-between gap-8 py-3 lg:h-[66px] lg:py-0">
+          <Link href="/" className="flex items-baseline gap-[9px]">
+            <span className="font-serif text-[27px] tracking-[-0.02em]">Sorano</span>
+            <span className="pb-[3px] font-mono text-[9px] tracking-[0.14em] text-muted-foreground">
+              SEO · GEO · X
+            </span>
+          </Link>
+          <div className="flex flex-wrap items-center gap-x-[26px] gap-y-2.5 font-mono text-[11px] tracking-[0.08em]">
+            <Link href="#platform" className="text-[#4A453D] hover:text-accent">
+              PLATFORM
+            </Link>
+            <Link href="#visibility" className="text-[#4A453D] hover:text-accent">
+              AI_VISIBILITY
+            </Link>
+            <Link href="#compare" className="text-[#4A453D] hover:text-accent">
+              COMPARE
+            </Link>
+            <Link href="#faq" className="text-[#4A453D] hover:text-accent">
+              FAQ
+            </Link>
+            {signedIn ? (
               <>
-                <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">
-                  DASHBOARD
+                <Link href="/dashboard" className="ds-btn-ink">
+                  {navCta}
                 </Link>
                 <span className="text-muted-foreground">
-                  {session.user.xUsername ? `@${session.user.xUsername}` : session.user.name}
+                  {session?.user.xUsername ? `@${session.user.xUsername}` : session?.user.name}
                 </span>
               </>
             ) : (
-              <Link
-                href="/auth/signin"
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-sm hover:bg-primary/90"
-              >
-                {demo ? "DEMO LOGIN" : "SIGN IN WITH X"}
+              <Link href="/auth/signin" className="ds-btn-ink">
+                {navCta}
               </Link>
             )}
           </div>
         </div>
       </nav>
 
-      <section className="max-w-5xl mx-auto px-6 py-20">
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-4">
-          [GROWTH_ENGINE]
-        </p>
-        <h1 className="text-5xl md:text-6xl max-w-3xl mb-6">
-          Autonomous Growth for Indie Builders
-        </h1>
-        <p className="text-lg text-muted-foreground mb-10 max-w-xl">
-          Turn your product updates into viral social posts, Google-ranked articles,
-          and AI search recommendations - automatically.
-        </p>
-        <Link
-          href={session ? "/dashboard" : "/auth/signin"}
-          className="inline-block px-6 py-3 bg-primary text-primary-foreground text-sm font-mono tracking-wider rounded-sm hover:bg-primary/90"
-        >
-          {session ? "GO TO DASHBOARD" : demo ? "TRY DEMO DASHBOARD" : "GET STARTED"}
-        </Link>
+      <section className="border-b border-border">
+        <div className="ds-container grid grid-cols-1 items-stretch lg:grid-cols-[1fr_1.02fr]">
+          <div className="flex flex-col justify-center border-border py-14 lg:border-r lg:py-[76px] lg:pr-14">
+            <div className="mb-[26px] flex items-center gap-2.5 font-mono text-[10px] tracking-[0.16em] text-muted-foreground">
+              <span className="size-1.5 animate-sorano-blink rounded-full bg-primary" />
+              <span>AUTONOMOUS GROWTH ENGINE</span>
+            </div>
+            <h1 className="mb-[22px] max-w-[14ch] text-pretty text-[37px] md:text-[50px] lg:text-[70px]">
+              Ship once.
+              <br />
+              Get found <span className="italic text-accent">everywhere</span>.
+            </h1>
+            <p className="mb-8 max-w-[44ch] text-pretty text-[18.5px] leading-[1.55] text-[#4A453D]">
+              Sorano turns your product updates into viral social posts, Google-ranked articles,
+              and AI search recommendations - automatically.
+            </p>
+            <div className="mb-[30px] flex flex-wrap items-center gap-3.5">
+              <Link href={ctaHref} className="ds-btn">
+                {heroCta}
+              </Link>
+              <Link
+                href="#platform"
+                className="rounded-sm border border-[#C9C3B8] px-5 py-3.5 font-mono text-xs tracking-[0.1em] text-[#4A453D] hover:border-foreground"
+              >
+                SEE THE PLATFORM
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-7 border-t border-border pt-[18px] font-mono text-[10px] tracking-[0.1em] text-muted-foreground">
+              <span>SIGN IN WITH X</span>
+              <span>NO API KEYS</span>
+              <span>NO SECOND CMS</span>
+            </div>
+          </div>
+
+          <div className="flex items-center py-10 lg:py-10 lg:pl-14">
+            <div className="w-full border border-ink bg-white">
+              <div className="flex items-center justify-between bg-ink px-4 py-[11px] font-mono text-[10px] tracking-[0.1em] text-background">
+                <span>SORANO / AI VISIBILITY</span>
+                <span className="text-[#8C857A]">LAST 30 DAYS</span>
+              </div>
+              <div className="flex items-baseline gap-3.5 border-b border-border px-5 pb-2 pt-[22px]">
+                <div>
+                  <div className="font-serif text-[48px] leading-none tracking-[-0.03em]">38%</div>
+                  <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.12em] text-muted-foreground">
+                    SHARE OF ANSWERS
+                  </div>
+                </div>
+                <div className="ml-auto text-right">
+                  <div className="font-mono text-[11px] text-accent">▲ +14 PTS</div>
+                  <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.1em] text-muted-foreground">
+                    VS PRIOR PERIOD
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-[13px] px-5 py-[18px] pb-5">
+                {shareRows.map((row) => (
+                  <div
+                    key={row.name}
+                    className="grid grid-cols-[128px_1fr_42px] items-center gap-3 font-mono text-[11px]"
+                  >
+                    <span className={`overflow-hidden text-ellipsis whitespace-nowrap ${row.label}`}>
+                      {row.name}
+                    </span>
+                    <span className="block h-2.5 bg-[#EFEBE4]">
+                      <span className={`block h-2.5 ${row.bar}`} style={{ width: row.pct }} />
+                    </span>
+                    <span className="text-right text-[#4A453D]">{row.val}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between border-t border-border px-5 py-3 font-mono text-[9.5px] tracking-[0.1em] text-muted-foreground">
+                <span>SOURCE: CHATGPT · PERPLEXITY · AI OVERVIEWS</span>
+                <span>N=240 PROMPTS</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-6 pb-20 grid md:grid-cols-2 gap-px bg-stone-800 border border-stone-800">
-        {[
-          { key: "01", title: "AI Post Generator & Hooks", desc: "Turn product updates into viral social posts that learn from what already worked." },
-          { key: "02", title: "Auto-Published Articles", desc: "Ship Google-ranked articles from the same updates, without a separate content workflow." },
-          { key: "03", title: "AI Search (ChatGPT/Perplexity)", desc: "Get recommended in ChatGPT and Perplexity when people ask for tools like yours." },
-          { key: "04", title: "App Health & Audits", desc: "See indexing, media, and AI-search citation checks in one place." },
-        ].map((f) => (
-          <div key={f.key} className="bg-background p-6">
-            <span className="font-mono text-[10px] tracking-widest text-muted-foreground">{f.key}</span>
-            <h3 className="mt-2 text-xl">{f.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{f.desc}</p>
-          </div>
-        ))}
+      <section className="border-b border-border bg-card">
+        <div className="ds-container flex flex-wrap items-center gap-8 py-[22px] font-mono text-[10.5px] tracking-[0.12em] text-muted-foreground">
+          <span className="text-foreground">WORKS WITH</span>
+          {integrations.map((tool) => (
+            <span key={tool}>{tool}</span>
+          ))}
+        </div>
       </section>
+
+      <section className="border-b border-border">
+        <div className="ds-container">
+          <div className="grid grid-cols-1 gap-px border-x border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.n} className="bg-background px-6 py-[30px]">
+                <div className="font-serif text-[40px] leading-none tracking-[-0.03em]">{stat.n}</div>
+                <div className="mt-2.5 text-pretty text-sm leading-[1.45] text-[#4A453D]">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="platform" className="border-b border-border">
+        <div className="ds-container py-[76px]">
+          <div className="ds-shell mb-10">
+            <div className="ds-kicker pt-2.5">01 - THE PLATFORM</div>
+            <div>
+              <h2 className="mb-3.5 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
+                One update in. Four channels out.
+              </h2>
+              <p className="m-0 max-w-[56ch] text-pretty text-[17px] leading-[1.6] text-[#4A453D]">
+                Write two lines about what you shipped. Sorano handles the rest and feeds the results
+                back into the next run.
+              </p>
+            </div>
+          </div>
+          <PlatformTabs />
+        </div>
+      </section>
+
+      <section id="visibility" className="border-b border-ink bg-ink text-background">
+        <div className="ds-container py-20">
+          <div className="ds-shell mb-11">
+            <div className="pt-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-primary">
+              02 - GENERATIVE ENGINE OPTIMIZATION
+            </div>
+            <div>
+              <h2 className="mb-3.5 max-w-[24ch] text-[27px] md:text-[34px] lg:text-[44px]">
+                Google is no longer the only search box.
+              </h2>
+              <p className="m-0 max-w-[56ch] text-pretty text-[17px] leading-[1.6] text-[#B5AFA5]">
+                People ask ChatGPT and Perplexity which tool to use. Sorano tracks whether the answer
+                names you, and structures your content until it does.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-px border border-ink-rule bg-ink-rule lg:grid-cols-2">
+            <div className="bg-ink-panel p-[30px]">
+              <div className="mb-5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
+                TRACKED PROMPT
+              </div>
+              <p className="mb-[26px] font-serif text-[28px] leading-[1.25] text-background">
+                &ldquo;What&apos;s the best tool for an indie hacker to automate SEO and social
+                posts?&rdquo;
+              </p>
+              <div className="flex flex-col gap-3 border-t border-ink-rule pt-5">
+                {promptStats.map((stat) => (
+                  <div key={stat.k} className="flex justify-between font-mono text-[11px]">
+                    <span className="tracking-[0.06em] text-[#8C857A]">{stat.k}</span>
+                    <span className="text-[#E5E0D8]">{stat.v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col bg-ink-panel p-[30px]">
+              <div className="mb-5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
+                CITATION CHECK · WEEKLY SWEEP
+              </div>
+              {citations.map((cite) => (
+                <div
+                  key={cite.engine}
+                  className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-ink-rule py-[15px] font-mono text-xs"
+                >
+                  <span className="text-[#E5E0D8]">{cite.engine}</span>
+                  <span
+                    className={
+                      cite.cited
+                        ? "text-[10px] tracking-[0.08em] text-primary"
+                        : "text-[10px] tracking-[0.08em] text-[#8C857A]"
+                    }
+                  >
+                    {cite.state}
+                  </span>
+                </div>
+              ))}
+              <p className="mb-0 mt-5 font-mono text-[10.5px] leading-[1.6] tracking-[0.03em] text-[#8C857A]">
+                A missing citation opens a task with the specific page and fact to add.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="compare" className="border-b border-border bg-card">
+        <div className="ds-container py-[76px]">
+          <div className="ds-shell mb-10">
+            <div className="ds-kicker pt-2.5">03 - THE ALTERNATIVE</div>
+            <h2 className="m-0 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
+              Or you can keep running five tools.
+            </h2>
+          </div>
+
+          <div className="border border-ink bg-background">
+            <div className="grid grid-cols-1 gap-px bg-ink lg:grid-cols-[1.2fr_1fr_1fr]">
+              <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
+                THE JOB
+              </div>
+              <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
+                STITCHED STACK
+              </div>
+              <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-primary">
+                SORANO
+              </div>
+            </div>
+            {compare.map((row) => (
+              <div
+                key={row.job}
+                className="grid grid-cols-1 border-b border-border lg:grid-cols-[1.2fr_1fr_1fr]"
+              >
+                <div className="border-border px-5 py-[18px] font-serif text-[21px] tracking-[-0.01em] lg:border-r">
+                  {row.job}
+                </div>
+                <div className="border-border px-5 py-[18px] text-pretty text-[14.5px] leading-[1.5] text-muted-foreground lg:border-r">
+                  {row.old}
+                </div>
+                <div className="px-5 py-[18px] text-pretty text-[14.5px] leading-[1.5] text-foreground">
+                  {row.next}
+                </div>
+              </div>
+            ))}
+            <div className="flex flex-wrap justify-between gap-5 px-5 py-[18px] font-mono text-[11px] tracking-[0.06em] text-[#4A453D]">
+              <span>FIVE SUBSCRIPTIONS, FIVE LOGINS, NOTHING TALKS TO ANYTHING</span>
+              <span className="text-accent">ONE ENGINE, ONE LOGIN</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-border">
+        <div className="ds-container ds-shell py-[72px]">
+          <div className="ds-kicker pt-2">04 - WHAT SHIPS WEEKLY</div>
+          <div className="border-t border-ink">
+            {cadence.map((row) => (
+              <div
+                key={row.what}
+                className="grid grid-cols-1 items-baseline gap-1.5 border-b border-border py-5 lg:grid-cols-[210px_1fr_120px] lg:gap-6"
+              >
+                <div className="font-serif text-[22px] tracking-[-0.01em]">{row.what}</div>
+                <div className="text-pretty text-[14.5px] leading-[1.5] text-[#4A453D]">
+                  {row.detail}
+                </div>
+                <div className="font-mono text-[10px] tracking-[0.1em] text-muted-foreground lg:text-right">
+                  {row.freq}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="border-b border-border bg-card">
+        <div className="ds-container ds-shell py-[72px]">
+          <div className="ds-kicker pt-2">05 - FAQ</div>
+          <div className="grid gap-px border border-border bg-border">
+            {faqs.map((faq) => (
+              <div
+                key={faq.q}
+                className="grid grid-cols-1 items-start gap-3.5 bg-background px-7 py-[26px] lg:grid-cols-[1fr_1.25fr] lg:gap-8"
+              >
+                <h3 className="m-0 text-[21px] leading-[1.2] tracking-[-0.01em] lg:text-[23px]">
+                  {faq.q}
+                </h3>
+                <p className="m-0 text-pretty text-[15px] leading-[1.6] text-[#4A453D]">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-border">
+        <div className="ds-container flex flex-col items-start gap-[26px] py-[90px]">
+          <h2 className="m-0 max-w-[19ch] text-[27px] md:text-[34px] lg:text-[56px] lg:leading-[1.02] lg:tracking-[-0.03em]">
+            Your next update can do four jobs instead of one.
+          </h2>
+          <div className="flex flex-wrap items-center gap-[18px]">
+            <Link href={ctaHref} className="ds-btn px-[26px] py-4">
+              {bottomCta}
+            </Link>
+            <span className="font-mono text-[11px] tracking-[0.04em] text-muted-foreground">
+              Demo dashboard. No card, no setup call.
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-ink text-ink-dim">
+        <div className="ds-container grid grid-cols-1 gap-10 pb-10 pt-14 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <div className="font-serif text-[27px] tracking-[-0.02em] text-background">Sorano</div>
+            <p className="mb-0 mt-3 max-w-[30ch] font-mono text-[11px] leading-[1.7] tracking-[0.03em]">
+              Autonomous SEO, GEO and X growth for solo founders shipping fast.
+            </p>
+          </div>
+          {footerCols.map((col) => (
+            <div key={col.head} className="flex flex-col gap-3">
+              <div className="font-mono text-[9px] tracking-[0.16em] text-[#8C857A]">{col.head}</div>
+              {col.links.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="font-mono text-[11.5px] tracking-[0.03em] text-[#C9C3B8] hover:text-primary"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="ds-container flex flex-wrap justify-between gap-6 border-t border-ink-rule pb-11 pt-5 font-mono text-[10px] tracking-[0.08em] text-[#8C857A]">
+          <span>© 2026 SORANO.APP</span>
+          <span>BUILT FOR PEOPLE WHO SHIP</span>
+        </div>
+      </footer>
     </main>
   );
 }

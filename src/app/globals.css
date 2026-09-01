@@ -4,37 +4,42 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 60 14% 98%;
-    --card: 0 0% 10%;
-    --card-foreground: 60 14% 98%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 60 14% 98%;
-    --primary: 16 100% 50%;
-    --primary-foreground: 60 14% 98%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 60 14% 98%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 24 5% 64%;
-    --accent: 0 0% 14%;
-    --accent-foreground: 60 14% 98%;
-    --destructive: 16 100% 50%;
-    --destructive-foreground: 60 14% 98%;
-    --border: 12 6% 16%;
-    --input: 12 6% 16%;
-    --ring: 16 100% 50%;
+    --background: 40 27% 96%;
+    --foreground: 36 9% 8%;
+    --card: 40 22% 92%;
+    --card-foreground: 36 9% 8%;
+    --popover: 40 27% 96%;
+    --popover-foreground: 36 9% 8%;
+    --primary: 20 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 22% 92%;
+    --secondary-foreground: 36 9% 8%;
+    --muted: 40 22% 92%;
+    --muted-foreground: 33 6% 42%;
+    --accent: 20 100% 44%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 20 100% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 36 16% 85%;
+    --input: 36 16% 85%;
+    --ring: 20 100% 50%;
     --radius: 0.125rem;
+    --ink: 36 9% 8%;
+    --ink-panel: 33 10% 10%;
+    --ink-rule: 33 9% 15%;
+    --ink-dim: 36 8% 64%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
+  html {
+    color-scheme: light;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: ui-sans-serif, system-ui, sans-serif;
+    @apply bg-background font-sans text-foreground antialiased;
   }
 
   h1,
@@ -45,10 +50,61 @@
     letter-spacing: -0.02em;
   }
 
+  h1 {
+    letter-spacing: -0.03em;
+    line-height: 0.99;
+  }
+
+  h2 {
+    letter-spacing: -0.025em;
+    line-height: 1.06;
+  }
+
   code,
   kbd,
   pre,
   .font-mono {
     font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  ::selection {
+    background: #ffd9c7;
+  }
+}
+
+/*
+  Slop blacklist: gradient heroes, glassmorphism, glowing orbs, blur blobs,
+  emoji bullets, purple/violet, floating 3D mockups, shadow-2xl cards,
+  animated gradient text, invented metrics, icon-per-feature grids,
+  rounded-2xl, marquee logo strips.
+*/
+
+@layer components {
+  .ds-container {
+    @apply mx-auto w-full max-w-[1200px] px-5 md:px-8;
+  }
+
+  .ds-shell {
+    @apply grid grid-cols-1 items-start gap-7 lg:grid-cols-[280px_1fr] lg:gap-12;
+  }
+
+  .ds-kicker {
+    @apply font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground;
+  }
+
+  .ds-btn {
+    @apply inline-block rounded-sm bg-primary px-6 py-[15px] font-mono text-xs tracking-[0.1em] text-white hover:bg-accent;
+  }
+
+  .ds-btn-ink {
+    @apply inline-block rounded-sm bg-ink px-4 py-2.5 font-mono text-[11px] tracking-[0.08em] text-background hover:bg-foreground;
+  }
+
+  .ds-stripe {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      hsl(var(--border)) 0 6px,
+      transparent 6px 12px
+    );
   }
 }
