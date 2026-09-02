@@ -4,6 +4,8 @@ import { isDemoMode } from "@/lib/demo-mode";
 import { CitationSweep } from "@/components/home/citation-sweep";
 import { PlatformTabs } from "@/components/home/platform-tabs";
 import { SectionIndex } from "@/components/home/section-index";
+import { TrendChart } from "@/components/dashboard/trend-chart";
+import type { CitationTrendPoint } from "@/lib/geo/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +41,20 @@ const citations = [
   { engine: "ChatGPT", state: "CITED · POS 2", cited: true },
   { engine: "Perplexity", state: "CITED · POS 4", cited: true },
   { engine: "Claude", state: "CITED · POS 3", cited: true },
+];
+
+const dashboardPreviewData: CitationTrendPoint[] = [
+  { date: "2026-07-06", perplexity: 22.2, chatgpt: 11.1 },
+  { date: "2026-07-13", perplexity: 33.3, chatgpt: 22.2, claude: 11.1 },
+  { date: "2026-07-20", perplexity: 44.4, chatgpt: 22.2, claude: 22.2 },
+  { date: "2026-07-27", perplexity: 55.6, chatgpt: 33.3, claude: 22.2 },
+  { date: "2026-08-03", perplexity: 66.7, chatgpt: 44.4, claude: 33.3 },
+  { date: "2026-08-10", perplexity: 77.8, chatgpt: 44.4, claude: 44.4 },
+];
+const dashboardPreviewSeries = [
+  { key: "perplexity", label: "Perplexity", featured: true },
+  { key: "chatgpt", label: "ChatGPT" },
+  { key: "claude", label: "Claude" },
 ];
 
 const compare = [
@@ -97,6 +113,12 @@ const cadence = [
   },
 ];
 
+const pricing = [
+  { tier: "Free", price: "$0", period: "", limits: "1 project · 8 posts/month", featured: false },
+  { tier: "Starter", price: "$19", period: "/mo", limits: "3 projects · 40 posts/month", featured: true },
+  { tier: "Pro", price: "$49", period: "/mo", limits: "10 projects · 200 posts/month", featured: false },
+];
+
 const faqs = [
   {
     q: "Do I have to write anything?",
@@ -127,6 +149,7 @@ const footerCols = [
       { label: "Posts & hooks", href: "#platform" },
       { label: "Articles & SEO", href: "#platform" },
       { label: "AI visibility", href: "#visibility" },
+      { label: "Pricing", href: "#pricing" },
       { label: "Dashboard demo", href: "/auth/signin" },
     ],
   },
@@ -326,10 +349,39 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section id="dashboard-preview" className="border-b border-border bg-background">
+        <div className="ds-container py-[76px]">
+          <div className="ds-shell mb-10">
+            <div className="ds-kicker pt-2.5">03 - SEE THE DASHBOARD</div>
+            <div>
+              <h2 className="mb-3.5 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
+                This is the exact chart that tracks your citations.
+              </h2>
+              <p className="m-0 max-w-[56ch] text-pretty text-[17px] leading-[1.6] text-ink-muted">
+                Not a mockup — the same component your dashboard renders once you&apos;re tracking a real
+                project.
+              </p>
+            </div>
+          </div>
+
+          <div className="border border-border bg-card p-[30px]">
+            <div className="mb-5 flex items-center justify-between font-mono text-[10px] tracking-[0.14em] text-muted-foreground">
+              <span>WEEKLY CITATION RATE</span>
+              <span>EXAMPLE DATA</span>
+            </div>
+            <TrendChart data={dashboardPreviewData} series={dashboardPreviewSeries} xKey="date" />
+            <p className="mt-4 font-mono text-[11px] tracking-[0.04em] text-muted-foreground">
+              Example project shown. Your dashboard tracks citation rate for your own product across
+              ChatGPT, Perplexity, and Claude.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section id="compare" className="border-b border-border bg-card">
         <div className="ds-container py-[76px]">
           <div className="ds-shell mb-10">
-            <SectionIndex className="ds-kicker pt-2.5">03 - THE ALTERNATIVE</SectionIndex>
+            <SectionIndex className="ds-kicker pt-2.5">04 - THE ALTERNATIVE</SectionIndex>
             <h2 className="m-0 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
               Or you can keep running five tools.
             </h2>
@@ -373,7 +425,7 @@ export default async function HomePage() {
 
       <section className="border-b border-border">
         <div className="ds-container ds-shell py-[72px]">
-          <SectionIndex className="ds-kicker pt-2">04 - WHAT SHIPS WEEKLY</SectionIndex>
+          <SectionIndex className="ds-kicker pt-2">05 - WHAT SHIPS WEEKLY</SectionIndex>
           <div className="border-t border-ink">
             {cadence.map((row) => (
               <div
@@ -393,9 +445,53 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section id="pricing" className="border-b border-border bg-card">
+        <div className="ds-container py-[76px]">
+          <div className="ds-shell mb-10">
+            <div className="ds-kicker pt-2.5">06 - PRICING</div>
+            <div>
+              <h2 className="mb-3.5 max-w-[22ch] text-[27px] md:text-[34px] lg:text-[44px]">
+                Free to try. Cheap to scale.
+              </h2>
+              <p className="m-0 max-w-[56ch] text-pretty text-[17px] leading-[1.6] text-ink-muted">
+                Every tier includes AI post generation and AI search citation tracking. Paid plans only
+                raise how much you can ship — nothing is feature-gated.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-px border border-border bg-border lg:grid-cols-3">
+            {pricing.map((plan) => (
+              <div
+                key={plan.tier}
+                className={`flex flex-col justify-between bg-background p-[30px] ${plan.featured ? "border-2 border-primary" : ""}`}
+              >
+                <div>
+                  <div className="ds-label mb-4">{plan.tier.toUpperCase()}</div>
+                  <div className="mb-1 flex items-baseline gap-1">
+                    <span className="font-serif text-[40px] leading-none tracking-[-0.03em]">{plan.price}</span>
+                    {plan.period && <span className="font-mono text-xs text-muted-foreground">{plan.period}</span>}
+                  </div>
+                  <p className="mb-6 mt-3 text-pretty text-sm leading-[1.5] text-ink-muted">{plan.limits}</p>
+                </div>
+                <Link
+                  href={signedIn ? "/dashboard/billing" : ctaHref}
+                  className={plan.featured ? "ds-btn text-center" : "rounded-sm border border-border px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-ink-muted hover:border-foreground"}
+                >
+                  {signedIn ? "GO TO BILLING" : "SIGN IN TO START"}
+                </Link>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 font-mono text-[11px] tracking-[0.04em] text-muted-foreground">
+            Billed in your local currency at checkout.
+          </p>
+        </div>
+      </section>
+
       <section id="faq" className="border-b border-border bg-card">
         <div className="ds-container ds-shell py-[72px]">
-          <SectionIndex className="ds-kicker pt-2">05 - FAQ</SectionIndex>
+          <SectionIndex className="ds-kicker pt-2">07 - FAQ</SectionIndex>
           <div className="grid gap-px border border-border bg-border">
             {faqs.map((faq) => (
               <div
@@ -502,8 +598,14 @@ function SiteNav({
           <Link href="#visibility" className="text-ink-muted hover:text-accent">
             AI_VISIBILITY
           </Link>
+          <Link href="#dashboard-preview" className="text-ink-muted hover:text-accent">
+            DASHBOARD PREVIEW
+          </Link>
           <Link href="#compare" className="text-ink-muted hover:text-accent">
             COMPARE
+          </Link>
+          <Link href="#pricing" className="text-ink-muted hover:text-accent">
+            PRICING
           </Link>
           <Link href="#faq" className="text-ink-muted hover:text-accent">
             FAQ
