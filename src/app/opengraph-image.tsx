@@ -1,6 +1,4 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import path from "path";
 
 export const runtime = "nodejs";
 export const alt = "Sorano - Autonomous Growth for Indie Builders";
@@ -15,6 +13,8 @@ const HAIRLINE = "#E0DCD3";
 
 const MONO_FONT_URL =
   "https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@5.2.5/latin-400-normal.ttf";
+const SERIF_FONT_URL =
+  "https://cdn.jsdelivr.net/fontsource/fonts/instrument-serif@5.2.5/latin-400-normal.ttf";
 
 function Mark({ size = 72 }: { size?: number }) {
   return (
@@ -32,14 +32,17 @@ function Mark({ size = 72 }: { size?: number }) {
 }
 
 export default async function Image() {
-  const [mono, satoshi] = await Promise.all([
+  const [mono, serif] = await Promise.all([
     fetch(MONO_FONT_URL).then((res) => (res.ok ? res.arrayBuffer() : null)).catch(() => null),
-    readFile(path.join(process.cwd(), "src/fonts/Satoshi-Bold.woff2")).catch(() => null),
+    fetch(SERIF_FONT_URL).then((res) => (res.ok ? res.arrayBuffer() : null)).catch(() => null),
   ]);
 
-  const fonts: { name: string; data: ArrayBuffer | Buffer; style: "normal"; weight: 400 | 700 }[] = [];
+  const fonts: { name: string; data: ArrayBuffer; style: "normal"; weight: 400 }[] = [];
   if (mono) fonts.push({ name: "JetBrains Mono", data: mono, style: "normal", weight: 400 });
-  if (satoshi) fonts.push({ name: "Satoshi", data: satoshi, style: "normal", weight: 700 });
+  if (serif) fonts.push({ name: "Instrument Serif", data: serif, style: "normal", weight: 400 });
+
+  const monoFamily = mono ? "JetBrains Mono" : "monospace";
+  const serifFamily = serif ? "Instrument Serif" : "serif";
 
   return new ImageResponse(
     (
@@ -60,8 +63,7 @@ export default async function Image() {
           <div
             style={{
               display: "flex",
-              fontFamily: satoshi ? "Satoshi" : "sans-serif",
-              fontWeight: 700,
+              fontFamily: serifFamily,
               fontSize: 50,
               letterSpacing: "-0.03em",
               color: INK,
@@ -74,8 +76,7 @@ export default async function Image() {
           <div
             style={{
               display: "flex",
-              fontFamily: satoshi ? "Satoshi" : "sans-serif",
-              fontWeight: 700,
+              fontFamily: serifFamily,
               fontSize: 52,
               lineHeight: 1.1,
               letterSpacing: "-0.03em",
@@ -88,7 +89,7 @@ export default async function Image() {
           <div
             style={{
               display: "flex",
-              fontFamily: mono ? "JetBrains Mono" : "monospace",
+              fontFamily: monoFamily,
               fontSize: 22,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
