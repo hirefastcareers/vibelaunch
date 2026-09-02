@@ -5,6 +5,7 @@ import { CitationSweep } from "@/components/home/citation-sweep";
 import { PlatformTabs } from "@/components/home/platform-tabs";
 import { SectionIndex } from "@/components/home/section-index";
 import { TrendChart } from "@/components/dashboard/trend-chart";
+import { Logo } from "@/components/logo";
 import type { CitationTrendPoint } from "@/lib/geo/analytics";
 
 export const dynamic = "force-dynamic";
@@ -527,7 +528,7 @@ export default async function HomePage() {
       <footer className="bg-ink text-ink-dim">
         <div className="ds-container grid grid-cols-1 gap-10 pb-10 pt-14 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <div className="font-serif text-[27px] tracking-[-0.02em] text-background">Sorano</div>
+            <Logo size={32} ink="#F5F3F0" />
             <p className="mb-0 mt-3 max-w-[30ch] font-mono text-[11px] leading-[1.7] tracking-[0.03em]">
               Autonomous SEO, GEO and X growth for solo founders shipping fast.
             </p>
@@ -585,9 +586,9 @@ function SiteNav({
   return (
     <nav className="sticky top-0 z-20 border-b border-border bg-background/94 backdrop-blur-[8px]">
       <div className="ds-container flex h-auto flex-wrap items-center justify-between gap-8 py-3 lg:h-[66px] lg:py-0">
-        <Link href="/" className="flex items-baseline gap-[9px]">
-          <span className="font-serif text-[27px] tracking-[-0.02em]">Sorano</span>
-          <span className="pb-[3px] font-mono text-[9px] tracking-[0.14em] text-muted-foreground">
+        <Link href="/" className="flex items-center gap-[9px]">
+          <Logo size={32} />
+          <span className="font-mono text-[9px] tracking-[0.14em] text-muted-foreground">
             SEO · GEO · X
           </span>
         </Link>

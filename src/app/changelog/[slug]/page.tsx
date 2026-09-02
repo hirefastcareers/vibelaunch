@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import { getBaseUrl } from "@/lib/env";
 import { buildGeoJsonLd, serializeJsonLd } from "@/lib/geo/llm-schema";
+import { Logo } from "@/components/logo";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +78,9 @@ export default async function ChangelogPage({ params }: PageProps) {
 
   return (
     <article className="max-w-3xl mx-auto px-4 py-12">
+      <Link href="/" className="mb-10 inline-flex">
+        <Logo size={28} />
+      </Link>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}

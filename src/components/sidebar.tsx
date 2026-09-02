@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/components/logo";
 
 const navItems = [
   { href: "/dashboard", label: "Command Center", key: "01" },
@@ -27,7 +28,9 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
   return (
     <aside className="flex h-full w-64 flex-col border-r border-border bg-card">
       <div className="flex h-14 items-center px-4">
-        <span className="font-serif text-xl tracking-tight">Sorano</span>
+        <Link href="/dashboard" className="flex items-center">
+          <Logo size={28} />
+        </Link>
       </div>
 
       <Separator />

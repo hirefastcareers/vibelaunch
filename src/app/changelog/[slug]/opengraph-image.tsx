@@ -46,6 +46,21 @@ function clamp(text: string, max: number): string {
   return `${trimmed.slice(0, max - 1).trimEnd()}…`;
 }
 
+function Mark({ size = 36 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 200 200"
+      fill="none"
+      style={{ display: "flex" }}
+    >
+      <path d="M159.4 159.4 A84 84 0 1 1 159.4 40.6" stroke="#F24100" strokeWidth={26} />
+      <path d="M132.53 132.53 A46 46 0 1 1 132.53 67.47" stroke={INK} strokeWidth={26} />
+    </svg>
+  );
+}
+
 function FallbackCard({
   monoFamily,
   serifFamily,
@@ -66,17 +81,20 @@ function FallbackCard({
         justifyContent: "center",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          fontFamily: serifFamily,
-          fontSize: 72,
-          lineHeight: 1.08,
-          letterSpacing: -1.4,
-          color: INK,
-        }}
-      >
-        Sorano
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <Mark size={56} />
+        <div
+          style={{
+            display: "flex",
+            fontFamily: serifFamily,
+            fontSize: 72,
+            lineHeight: 1.08,
+            letterSpacing: -1.4,
+            color: INK,
+          }}
+        >
+          Sorano
+        </div>
       </div>
       <div
         style={{

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { Logo } from "@/components/logo";
 
 interface SignInFormProps {
   demoMode?: boolean;
@@ -10,6 +12,9 @@ export default function SignInForm({ demoMode = false }: SignInFormProps) {
   return (
     <main className="min-h-screen flex items-center px-6">
       <div className="bg-card p-8 rounded-lg border border-border shadow-none max-w-md w-full">
+        <Link href="/" className="mb-6 inline-flex">
+          <Logo size={36} />
+        </Link>
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
           AUTH
         </p>

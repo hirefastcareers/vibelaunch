@@ -30,6 +30,11 @@
     --ink-dim: 36 8% 64%;
     --ink-muted: 37 10% 26%;
     --surface-muted: 39 13% 75%;
+    --logo-accent: #f24100;
+    --logo-ink: #242424;
+    --logo-ink-inverse: #f5f3f0;
+    --logo-surface-dark: #141414;
+    --logo-font: var(--font-logo), "Satoshi", system-ui, -apple-system, sans-serif;
   }
 
   * {
