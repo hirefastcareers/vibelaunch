@@ -2,15 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EriBadge } from "@/components/eri-badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +9,8 @@ import { StatusPill } from "@/components/status-pill";
 import { formatRelativeTime } from "@/lib/utils";
 import { GeoCard } from "@/components/dashboard/geo-card";
 import { DiagnosticCard } from "@/components/dashboard/diagnostic-card";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { TrendChart } from "@/components/dashboard/trend-chart";
 
 interface DashboardStats {
   stats: {
@@ -26,6 +19,8 @@ interface DashboardStats {
     seoPagesPublished: number;
     totalImpressions: number;
     publishedCount: number;
+    impressionsTrend: number | null;
+    eriTrendPct: number | null;
   };
   topPosts: Array<{
     id: string;
@@ -36,29 +31,7 @@ interface DashboardStats {
     xPostUrl: string | null;
     mediaUrls: string[];
   }>;
-  followerGrowth: Array<{ date: string; followers: number; eri: number }>;
-}
-
-function Metric({
-  code,
-  value,
-  hint,
-  id,
-}: {
-  code: string;
-  value: string | number;
-  hint: string;
-  id?: string;
-}) {
-  return (
-    <div id={id} className={`bg-card p-4 ${id ? "scroll-mt-8" : ""}`}>
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-        {code}
-      </p>
-      <div className="font-mono text-2xl tabular-nums mt-3">{value}</div>
-      <p className="font-mono text-[10px] text-muted-foreground mt-2">{hint}</p>
-    </div>
-  );
+  eriTrend: Array<{ date: string; eri: number }>;
 }
 
 export default function CommandCenterPage() {
@@ -87,6 +60,8 @@ export default function CommandCenterPage() {
   }
 
   const stats = data?.stats;
+  const eriTrend = data?.eriTrend ?? [];
+  const showEriChart = eriTrend.length >= 2;
 
   return (
     <div className="p-6 space-y-8">
@@ -100,29 +75,29 @@ export default function CommandCenterPage() {
         </p>
       </div>
 
-      <div className="grid gap-px bg-border border border-border md:grid-cols-2 lg:grid-cols-5">
-        <Metric
-          code="IMP_7D"
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+        <StatCard
+          label="IMP_7D"
           value={(stats?.impressionsVelocity ?? 0).toLocaleString()}
-          hint="Impressions, last 7 days"
+          trend={stats?.impressionsTrend ?? undefined}
         />
-        <Metric
-          code="VIRALITY"
+        <StatCard
+          label="VIRALITY"
           value={stats?.avgEri ?? 0}
-          hint={`Across ${stats?.publishedCount ?? 0} published posts`}
+          trend={stats?.eriTrendPct ?? undefined}
         />
-        <Metric
-          id="articles"
-          code="INDEXED"
-          value={stats?.seoPagesPublished ?? 0}
-          hint="Articles on Google"
-        />
-        <Metric
-          code="IMP_ALL"
+        <div id="articles" className="scroll-mt-8">
+          <StatCard
+            label="INDEXED"
+            value={stats?.seoPagesPublished ?? 0}
+            className="h-full"
+          />
+        </div>
+        <StatCard
+          label="IMP_ALL"
           value={(stats?.totalImpressions ?? 0).toLocaleString()}
-          hint="Impressions, all time"
         />
-        <Metric code="LEARN" value="ACTIVE" hint="Learning from viral posts" />
+        <StatCard label="LEARN" value="ACTIVE" />
       </div>
 
       <div id="ai-search" className="scroll-mt-8">
@@ -133,42 +108,26 @@ export default function CommandCenterPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Follower Growth Trajectory</CardTitle>
+          <CardTitle className="text-xl">ERI Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={data?.followerGrowth ?? []}>
-              <CartesianGrid strokeDasharray="1 4" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="date"
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={11}
-                fontFamily="var(--font-mono)"
-                tickFormatter={(v) => v.slice(5)}
-              />
-              <YAxis
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={11}
-                fontFamily="var(--font-mono)"
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "2px",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 12,
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="followers"
-                stroke="hsl(var(--primary))"
-                strokeWidth={1.5}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {showEriChart ? (
+            <TrendChart
+              data={eriTrend}
+              series={[{ key: "eri", label: "Avg ERI", featured: true }]}
+              xKey="date"
+            />
+          ) : (
+            <div>
+              <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+                [EMPTY]
+              </p>
+              <h2 className="text-2xl">Not enough data yet</h2>
+              <p className="text-muted-foreground mt-1 text-sm">
+                ERI snapshots build up as the analytics cron runs against published posts.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

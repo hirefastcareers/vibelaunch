@@ -185,6 +185,12 @@ export const MOCK_QUEUE = {
   ],
 };
 
+function mockDay(daysAgo: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString().split("T")[0];
+}
+
 export const MOCK_ANALYTICS = {
   stats: {
     impressionsVelocity: 18400,
@@ -193,6 +199,8 @@ export const MOCK_ANALYTICS = {
     seoPagesPublished: 3,
     postCount: 10,
     publishedCount: 5,
+    impressionsTrend: 14.2,
+    eriTrendPct: 8.7,
   },
   topPosts: [...MOCK_QUEUE.published]
     .sort((a, b) => (b.eri ?? 0) - (a.eri ?? 0))
@@ -206,15 +214,16 @@ export const MOCK_ANALYTICS = {
       xPostUrl: p.xPostUrl,
       mediaUrls: p.mediaUrls,
     })),
-  followerGrowth: Array.from({ length: 14 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (13 - i));
-    return {
-      date: date.toISOString().split("T")[0],
-      followers: 380 + i * 42 + Math.floor(i * i * 2),
-      eri: 1.8 + i * 0.28,
-    };
-  }),
+  eriTrend: [
+    { date: mockDay(27), eri: 3.1 },
+    { date: mockDay(23), eri: 3.45 },
+    { date: mockDay(19), eri: 3.8 },
+    { date: mockDay(15), eri: 4.2 },
+    { date: mockDay(11), eri: 4.55 },
+    { date: mockDay(7), eri: 4.9 },
+    { date: mockDay(4), eri: 5.15 },
+    { date: mockDay(1), eri: 5.6 },
+  ],
   projects: [{ id: MOCK_PROJECT.id, name: MOCK_PROJECT.name }],
 };
 

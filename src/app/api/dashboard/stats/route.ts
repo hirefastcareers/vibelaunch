@@ -69,13 +69,31 @@ export async function GET() {
       mediaUrls: p.mediaUrls,
     }));
 
-  const followerGrowth = snapshots.length > 0
-    ? snapshots.map((s, i) => ({
-        date: s.snapshotAt.toISOString().split("T")[0],
-        followers: Math.round(s.avgEri * 100 + s.postCount * 50 + i * 12),
-        eri: s.avgEri,
-      }))
-    : generatePlaceholderGrowth();
+  const priorWeekImpressions = publishedPosts
+    .filter(
+      (p) =>
+        p.publishedAt &&
+        p.publishedAt > new Date(Date.now() - 14 * 86400000) &&
+        p.publishedAt <= new Date(Date.now() - 7 * 86400000)
+    )
+    .reduce((sum, p) => sum + (p.analytics?.impressions ?? 0), 0);
+  const impressionsTrend =
+    priorWeekImpressions > 0
+      ? Math.round(((recentImpressions - priorWeekImpressions) / priorWeekImpressions) * 1000) / 10
+      : null;
+
+  const prevEri = snapshots.length >= 2 ? snapshots[snapshots.length - 2].avgEri : 0;
+  const eriTrendPct =
+    snapshots.length >= 2
+      ? Math.round(
+          ((snapshots[snapshots.length - 1].avgEri - prevEri) / (prevEri || 1)) * 1000
+        ) / 10
+      : null;
+
+  const eriTrend = snapshots.map((s) => ({
+    date: s.snapshotAt.toISOString().split("T")[0],
+    eri: Math.round(s.avgEri * 100) / 100,
+  }));
 
   return NextResponse.json({
     stats: {
@@ -85,22 +103,11 @@ export async function GET() {
       seoPagesPublished: changelogs,
       postCount: posts.length,
       publishedCount: publishedPosts.length,
+      impressionsTrend,
+      eriTrendPct,
     },
     topPosts,
-    followerGrowth,
+    eriTrend,
     projects,
-  });
-}
-
-function generatePlaceholderGrowth() {
-  const days = 14;
-  return Array.from({ length: days }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (days - 1 - i));
-    return {
-      date: date.toISOString().split("T")[0],
-      followers: 120 + i * 8 + Math.floor(Math.random() * 15),
-      eri: 0,
-    };
   });
 }
