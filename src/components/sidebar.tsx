@@ -13,6 +13,7 @@ const navItems = [
   { href: "/dashboard/replies", label: "Smart Replies", key: "05" },
   { href: "/dashboard/diagnostics", label: "App Health & Audits", key: "06" },
   { href: "/onboard", label: "Onboard Project", key: "07" },
+  { href: "/dashboard/billing", label: "Billing", key: "08" },
 ];
 
 interface SidebarProps {

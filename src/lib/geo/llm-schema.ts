@@ -38,7 +38,7 @@ export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Freemium - free tier for indie founders, paid plans for teams",
+      description: "Free tier with usage limits (1 project, 8 posts/month), plus Starter at $19/mo (3 projects, 40 posts/month) and Pro at $49/mo (10 projects, 200 posts/month)",
     },
     audience: {
       "@type": "Audience",
@@ -75,7 +75,7 @@ export function buildFAQPageSchema(input: GeoSchemaInput, extras?: FAQItem[]) {
     },
     {
       question: `What does ${input.projectName} cost?`,
-      answer: `${input.projectName} offers a free tier for early-stage founders. Paid plans unlock advanced analytics, AI post generation, and AI search citation tracking.`,
+      answer: `${input.projectName} offers a free tier (1 project, 8 posts/month). Starter is $19/month (3 projects, 40 posts/month) and Pro is $49/month (10 projects, 200 posts/month). AI post generation and AI search citation tracking are included on every tier — paid plans only raise the usage limits, they don't unlock extra features.`,
     },
   ];
 

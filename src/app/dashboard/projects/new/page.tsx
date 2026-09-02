@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { LimitHitNotice } from "@/components/limit-hit-notice";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<string | undefined>();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setErrorCode(undefined);
 
     const form = new FormData(e.currentTarget);
     const name = form.get("name") as string;
@@ -33,7 +36,10 @@ export default function NewProjectPage() {
 
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error?.toString() ?? "Failed to create project");
+      setErrorCode(typeof data.code === "string" ? data.code : undefined);
+      setError(
+        typeof data.error === "string" ? data.error : "Failed to create project",
+      );
       setLoading(false);
       return;
     }
@@ -47,7 +53,9 @@ export default function NewProjectPage() {
       <h1 className="text-4xl mb-8">New Project</h1>
       <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-sm border border-border">
         {error && (
-          <div className="p-3 border border-border font-mono text-[12px] text-muted-foreground">{error}</div>
+          <div className="p-3 border border-border font-mono text-[12px] text-muted-foreground">
+            <LimitHitNotice code={errorCode} fallback={error} />
+          </div>
         )}
         <div>
           <label className="block font-mono text-[11px] tracking-wider text-muted-foreground mb-1">NAME</label>

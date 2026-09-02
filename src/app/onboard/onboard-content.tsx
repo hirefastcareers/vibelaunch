@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { LimitHitNotice } from "@/components/limit-hit-notice";
 
 const TONES = [
   { value: "build-in-public", label: "Build in Public" },
@@ -26,6 +27,7 @@ export default function OnboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<string | undefined>();
   const [keywords, setKeywords] = useState("");
   const [tone, setTone] = useState("build-in-public");
 
@@ -33,6 +35,7 @@ export default function OnboardPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setErrorCode(undefined);
 
     const form = new FormData(e.currentTarget);
     const keywordList = keywords
@@ -54,6 +57,7 @@ export default function OnboardPage() {
 
       const data = await res.json();
       if (!res.ok) {
+        setErrorCode(typeof data.code === "string" ? data.code : undefined);
         setError(typeof data.error === "string" ? data.error : "Onboarding failed");
         return;
       }
@@ -89,7 +93,7 @@ export default function OnboardPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="rounded-sm border border-border p-3 font-mono text-[12px] text-muted-foreground">
-                {error}
+                <LimitHitNotice code={errorCode} fallback={error} />
               </div>
             )}
 

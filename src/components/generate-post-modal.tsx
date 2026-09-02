@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { LimitHitNotice } from "@/components/limit-hit-notice";
 
 interface GeneratePostModalProps {
   open: boolean;
@@ -38,11 +39,18 @@ export function GeneratePostModal({
   const [tone, setTone] = useState("casual");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
+  const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<string | undefined>();
+  const [queueing, setQueueing] = useState(false);
+  const [queued, setQueued] = useState(false);
 
   async function handleGenerate() {
     if (!projectId || !topic) return;
     setLoading(true);
     setResult("");
+    setError("");
+    setErrorCode(undefined);
+    setQueued(false);
 
     try {
       const res = await fetch("/api/generate", {
@@ -51,12 +59,45 @@ export function GeneratePostModal({
         body: JSON.stringify({ projectId, topic, tone }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setErrorCode(typeof data.code === "string" ? data.code : undefined);
+        setError(typeof data.error === "string" ? data.error : "Generation failed");
+        return;
+      }
       if (data.generated?.content) {
         setResult(data.generated.content);
         onGenerated?.(data.generated.content);
       }
+    } catch {
+      setError("Network error - please try again");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleAddToQueue() {
+    if (!projectId || !result) return;
+    setQueueing(true);
+    setError("");
+    setErrorCode(undefined);
+
+    try {
+      const res = await fetch(`/api/projects/${projectId}/posts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: result }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorCode(typeof data.code === "string" ? data.code : undefined);
+        setError(typeof data.error === "string" ? data.error : "Could not add to queue");
+        return;
+      }
+      setQueued(true);
+    } catch {
+      setError("Network error - please try again");
+    } finally {
+      setQueueing(false);
     }
   }
 
@@ -109,22 +150,49 @@ export function GeneratePostModal({
             </Select>
           </div>
 
+          {error && (
+            <div className="rounded-sm border border-border p-3 font-mono text-[12px] text-muted-foreground">
+              <LimitHitNotice code={errorCode} fallback={error} />
+            </div>
+          )}
+
           {result && (
             <div className="rounded-sm border border-border bg-muted p-4 font-mono text-sm">
               {result}
             </div>
           )}
 
-          <Button onClick={handleGenerate} disabled={loading || !topic} className="w-full font-mono text-xs tracking-wider">
-            {loading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Generate Post"
+          <div className="flex flex-col gap-2">
+            <Button onClick={handleGenerate} disabled={loading || !topic} className="w-full font-mono text-xs tracking-wider">
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Post"
+              )}
+            </Button>
+            {result && (
+              <Button
+                variant="secondary"
+                onClick={handleAddToQueue}
+                disabled={queueing || queued}
+                className="w-full font-mono text-xs tracking-wider"
+              >
+                {queueing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : queued ? (
+                  "Added to queue"
+                ) : (
+                  "Add to queue"
+                )}
+              </Button>
             )}
-          </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

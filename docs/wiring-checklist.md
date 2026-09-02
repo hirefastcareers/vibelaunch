@@ -39,5 +39,19 @@ Everything below is unconfigured. The app runs in demo mode (see src/lib/demo-mo
 ## Cron protection
 - [ ] `CRON_SECRET` — random string, no external account needed. Worth setting now even before other services are wired, since it's free and Vercel auto-injects it as the Authorization header on cron invocations (see vercel.json).
 
+## Billing (Dodo Payments)
+- [ ] `DODO_PAYMENTS_API_KEY`
+- [ ] `DODO_PAYMENTS_WEBHOOK_KEY`
+- [ ] `DODO_PAYMENTS_ENVIRONMENT` — set to `live_mode` for production
+- [ ] `DODO_PAYMENTS_RETURN_URL`
+- [ ] Create "Sorano Starter" product — $19.00 USD/month recurring subscription
+- [ ] Create "Sorano Pro" product — $49.00 USD/month recurring subscription
+- [ ] `DODO_STARTER_PRODUCT_ID` — paste after creating the Starter product above
+- [ ] `DODO_PRO_PRODUCT_ID` — paste after creating the Pro product above
+- [ ] Dodo Dashboard → Settings → Business → enable **Adaptive Currency** (auto-detects customer's country at checkout, charges in their local currency — e.g. GBP for UK customers — at live exchange rates, zero code required)
+- [ ] Decide on Adaptive Currency's **Fees Inclusive** sub-toggle: off (default) means the customer pays a 2-4% FX fee on top of the local-currency price; on means you absorb it out of settlement instead so the customer sees a cleaner number. Recommendation: leave off for now (matches how most bootstrapped SaaS handle this), revisit if conversion data suggests otherwise.
+  Gates: checkout route (src/app/checkout/route.ts), customer portal (src/app/customer-portal/route.ts), webhook handler (src/app/api/webhook/dodo-payments/route.ts).
+  NOTE: the pricing page itself displays USD prices with a note that billing happens in the customer's local currency at checkout — it does not attempt to show a pre-converted local-currency estimate, to avoid a displayed price drifting from what Dodo actually charges (see docs/deferred-work.md for the reasoning if it's logged there).
+
 ---
 Once all of the above are set in Vercel's environment variables and a deploy has run, isDemoMode() (src/lib/demo-mode.ts) will automatically stop returning true, and the app switches from demo data to live data with no code changes needed.

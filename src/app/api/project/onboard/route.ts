@@ -6,6 +6,7 @@ import { scrapeUrl } from "@/lib/scraper/url-scraper";
 import { slugify } from "@/lib/utils";
 import { isDemoMode, demoDelay } from "@/lib/demo-mode";
 import { MOCK_PROJECT, MOCK_SCRAPED_CONTEXT } from "@/lib/mock-data";
+import { assertCanCreateProject, UsageLimitError } from "@/lib/billing/limits";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,18 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
+  }
+
+  try {
+    await assertCanCreateProject(session.user.id);
+  } catch (err) {
+    if (err instanceof UsageLimitError) {
+      return NextResponse.json(
+        { error: err.message, code: err.code },
+        { status: 403 },
+      );
+    }
+    throw err;
   }
 
   const scraped = await scrapeUrl(targetUrl);

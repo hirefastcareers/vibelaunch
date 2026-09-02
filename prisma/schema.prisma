@@ -12,18 +12,31 @@ datasource db {
 // ─── Auth (NextAuth) ───────────────────────────────────────────────────────
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  xUserId       String?   @unique
-  xUsername     String?
-  accounts      Account[]
-  sessions      Session[]
-  projects      Project[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                  String    @id @default(cuid())
+  name                String?
+  email               String?   @unique
+  emailVerified       DateTime?
+  image               String?
+  xUserId             String?   @unique
+  xUsername           String?
+  planTier            PlanTier  @default(FREE)
+  dodoCustomerId      String?   @unique
+  dodoSubscriptionId  String?
+  // Mirrors Dodo subscription status strings directly (e.g. "active",
+  // "on_hold", "cancelled", "expired", "failed") rather than a closed enum.
+  subscriptionStatus  String?
+  planRenewsAt        DateTime?
+  accounts            Account[]
+  sessions            Session[]
+  projects            Project[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+enum PlanTier {
+  FREE
+  STARTER
+  PRO
 }
 
 model Account {
