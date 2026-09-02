@@ -67,20 +67,55 @@ export async function publishToX(
   };
 }
 
+const SUPPORTED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+]);
+
+const IMAGE_EXTENSIONS: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/gif": "gif",
+  "image/webp": "webp",
+};
+
+function normalizeMediaType(header: string | null): string {
+  return (header ?? "").split(";")[0].trim().toLowerCase();
+}
+
 async function uploadMedia(accessToken: string, mediaUrl: string): Promise<string> {
   const imageResponse = await fetch(mediaUrl);
   if (!imageResponse.ok) {
     throw new Error(`Failed to fetch media: ${mediaUrl}`);
   }
-  const buffer = Buffer.from(await imageResponse.arrayBuffer());
 
-  const uploadResponse = await fetch("https://upload.twitter.com/1.1/media/upload.json", {
+  const mediaType = normalizeMediaType(imageResponse.headers.get("content-type"));
+  if (!SUPPORTED_IMAGE_TYPES.has(mediaType)) {
+    throw new XApiError(
+      "Video/non-image media upload isn't implemented yet — only JPEG/PNG/GIF/WEBP images are supported",
+      422
+    );
+  }
+
+  const bytes = new Uint8Array(await imageResponse.arrayBuffer());
+  const form = new FormData();
+  form.append(
+    "media",
+    new Blob([bytes], { type: mediaType }),
+    `image.${IMAGE_EXTENSIONS[mediaType]}`
+  );
+  form.append("media_category", "tweet_image");
+  form.append("media_type", mediaType);
+
+  // v2 simple (non-chunked) image upload: multipart/form-data with media +
+  // media_category, not a raw binary POST. fetch sets the multipart boundary;
+  // do not override Content-Type (that was the old octet-stream bug).
+  const uploadResponse = await fetch("https://api.x.com/2/media/upload", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/octet-stream",
-    },
-    body: buffer,
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
   });
 
   if (!uploadResponse.ok) {
@@ -88,8 +123,12 @@ async function uploadMedia(accessToken: string, mediaUrl: string): Promise<strin
     throw new XApiError(`Media upload failed: ${uploadResponse.status} ${error}`, uploadResponse.status);
   }
 
-  const uploadData = (await uploadResponse.json()) as { media_id_string: string };
-  return uploadData.media_id_string;
+  const uploadData = (await uploadResponse.json()) as { data?: { id?: string } };
+  const mediaId = uploadData.data?.id;
+  if (!mediaId) {
+    throw new XApiError("Media upload failed: response missing media id", 502);
+  }
+  return mediaId;
 }
 
 /**
