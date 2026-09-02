@@ -55,3 +55,63 @@ Dark sections are opt-in per section, not global. Do not put `class="dark"` on `
 ## 3. Banned (the slop list)
 
 Gradient hero backgrounds, glassmorphism, glowing orbs or blurred blobs, emoji bullets, purple/violet, floating 3D mockups, `shadow-2xl` cards, animated gradient text, "Trusted by 10,000+" with no logos, invented metrics, icon-per-feature grids, `rounded-2xl` everything, marquee logo strips.
+
+## Data visualization components
+
+Pass 1 of the visual overhaul. These live in `src/components/ui/` and `src/components/dashboard/` and are not wired into pages yet. Grounded in Peec / Ahrefs / Semrush layout patterns, but the palette does not expand: primary orange (`#FF5500` family) is the only accent; ink / ink-muted / surface-muted / muted-foreground do everything else. No new colors, no gradients, no rainbow multi-series charts, no red/green semantic colors, no drop shadows.
+
+**Trend direction.** The landing page already set the rule: `<span className="font-mono text-[11px] text-accent">▲ +14 PTS</span>`. Positive movement is accent orange + up arrow. Negative and zero stay `text-muted-foreground` (down arrow only when negative). Do not introduce red for declines.
+
+**Multi-series charts.** Featured / "this project" series: `--primary`, solid. Comparison series: `--ink`, `--ink-muted`, `--surface-muted` in that order. If more than two comparison series need distinguishing, add dash patterns (`6 4`, then `2 3`) — do not add a fourth hue. Grid, axis text, and tooltip chrome use `--border`, `--muted-foreground`, `--background` / `--card` only. Never leave Recharts default blues/greens in place.
+
+### TrendBadge — `src/components/ui/trend-badge.tsx`
+
+Use next to a metric whenever you need period-over-period movement. Same type as the landing hero: `font-mono text-[11px]`.
+
+```
+value > 0   →  text-accent            "▲ +14%"
+value < 0   →  text-muted-foreground  "▼ -3%"
+value === 0 →  text-muted-foreground  "0%"
+```
+
+Props: `{ value: number; suffix?: string }` (`suffix` defaults to `"%"`; pass `" PTS"` to match the landing precedent).
+
+### StatCard — `src/components/dashboard/stat-card.tsx`
+
+Compact overview metric (Semrush Overview panel). Hairline box matching `Card`: `rounded-sm border border-border bg-card p-4 shadow-none`. Label is `ds-label` (mono uppercase muted). Value is a large serif number. Optional `TrendBadge` sits on the baseline; optional sparkline is a 44px Recharts line with no axes, labels, or tooltip — shape only, stroked in `--primary`.
+
+Props: `{ label: string; value: string | number; trend?: number; sparkline?: number[] }`
+
+### TrendChart — `src/components/dashboard/trend-chart.tsx`
+
+Client-only multi-series line chart (Ahrefs Brand Radar). Custom legend toggles series via Recharts v3 `Line.hide` (hidden series stay in the legend). Hover tooltip shows exact values. Click legend items to show/hide.
+
+Props: `{ data: Array<Record<string, number | string>>; series: Array<{ key: string; label: string; featured?: boolean }>; xKey: string }`
+
+- `featured: true` → `--primary`, solid, slightly heavier stroke.
+- Other series → ink / ink-muted / surface-muted; dash only when there are more than two non-featured series.
+- Tooltip: `bg-card border-border`, no shadow. Axis ticks: mono 11px `--muted-foreground`. Grid: `--border` hairlines, horizontal only.
+
+### DataPill — `src/components/ui/data-pill.tsx`
+
+Categorical / type tags in tables (Peec "UGC" / "Editorial"). Does not replace `StatusPill` — that stays for operational status (`ok` / `warn` / `fail` / `neutral`). Same shell as StatusPill (`rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider`). Categories are distinguished by fill vs outline, not by extra hues. Pass `tone`, never ad-hoc color classes at the call site.
+
+```
+tone="filled"  →  ink-muted fill, paper text
+tone="soft"    →  surface-muted fill, ink text
+tone="outline" →  border-only, muted text   (default)
+```
+
+Props: `{ children: ReactNode; tone?: "filled" | "soft" | "outline" }`
+
+### IconFeatureCard — `src/components/ui/icon-feature-card.tsx`
+
+Small icon + serif label + muted description in a hairline box (Peec feature card, adapted). Icon is lucide-react, ink-colored, 16px — not orange. Padding/radius match `Card` (`p-4`, `rounded-sm`). Do not use this as a 3-up marketing grid on the homepage; that remains banned. Fine inside product UI where a short capability needs a name and a sentence.
+
+Props: `{ icon: LucideIcon; label: string; description: string }`
+
+### SegmentedTabs — `src/components/ui/segmented-tabs.tsx`
+
+Single-select control for switching data views ("Mentions / Impressions", provider filters). Pill-style grouping adapted to Sorano's 2px radius: `rounded-sm`, not fully rounded. Active segment is `bg-ink text-background` (not orange — orange stays on CTAs and live/trend markers). Labels are mono 11px uppercase.
+
+Props: `{ options: Array<{ value: string; label: string }>; value: string; onChange: (value: string) => void }`
