@@ -59,10 +59,10 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
       <div className="p-3 space-y-3 border-t border-border">
         <button
           onClick={onOpenCommandPalette}
-          className="flex w-full items-center justify-between rounded-sm border border-border bg-transparent px-3 py-2 text-xs text-muted-foreground hover:bg-accent transition-colors"
+          className="flex w-full items-center justify-between rounded-full border border-border bg-transparent px-4 py-2 text-xs text-muted-foreground hover:bg-accent transition-colors"
         >
           <span className="font-mono text-[10px] tracking-wider">QUICK ACTIONS</span>
-          <kbd className="rounded-sm border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">
+          <kbd className="rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[10px]">
             ⌘K
           </kbd>
         </button>

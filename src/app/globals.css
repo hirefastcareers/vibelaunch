@@ -23,7 +23,7 @@
     --border: 36 16% 85%;
     --input: 36 16% 85%;
     --ring: 16 100% 50%;
-    --radius: 0.125rem;
+    --radius: 0.5rem;
     --ink: 36 9% 8%;
     --ink-panel: 33 10% 10%;
     --ink-rule: 33 9% 15%;
@@ -99,11 +99,11 @@
   }
 
   .ds-btn {
-    @apply inline-block rounded-sm bg-primary px-6 py-[15px] font-mono text-xs tracking-[0.1em] text-primary-foreground transition-colors duration-150 hover:bg-accent;
+    @apply inline-block rounded-full bg-primary px-6 py-[15px] font-mono text-xs tracking-[0.1em] text-primary-foreground transition-colors duration-150 hover:bg-accent;
   }
 
   .ds-btn-ink {
-    @apply inline-block rounded-sm bg-ink px-4 py-2.5 font-mono text-[11px] tracking-[0.08em] text-background transition-colors duration-150 hover:bg-foreground;
+    @apply inline-block rounded-full bg-ink px-5 py-2.5 font-mono text-[11px] tracking-[0.08em] text-background transition-colors duration-150 hover:bg-foreground;
   }
 
   .ds-stripe {

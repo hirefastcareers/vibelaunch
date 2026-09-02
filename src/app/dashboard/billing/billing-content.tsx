@@ -53,7 +53,7 @@ export default function BillingContent({
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
           BILLING
         </p>
-        <h1 className="text-4xl">Billing</h1>
+        <h1 className="text-5xl">Billing</h1>
         <p className="text-muted-foreground text-sm mt-1">
           Project and monthly post limits. Everything else stays available on every plan.
         </p>

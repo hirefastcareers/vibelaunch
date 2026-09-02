@@ -92,14 +92,14 @@ export default function RepliesPage() {
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
           REPLIES
         </p>
-        <h1 className="text-4xl">Smart Reply Assistant</h1>
+        <h1 className="text-5xl">Smart Reply Assistant</h1>
         <p className="text-muted-foreground mt-1 text-sm">
           Monitor keyword feeds and generate context-aware, non-spammy replies
         </p>
       </div>
 
       {Object.keys(feeds).length === 0 && (
-        <div className="rounded-sm border border-border bg-card p-6">
+        <div className="rounded-lg border border-border bg-card p-6">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             {configured ? "EMPTY" : "NOT CONFIGURED"}
           </p>
@@ -124,7 +124,7 @@ export default function RepliesPage() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-sm border border-border p-4 space-y-3"
+                  className="rounded-lg border border-border p-4 space-y-3"
                 >
                   <div>
                     <span className="text-sm font-mono text-muted-foreground">{item.author}</span>

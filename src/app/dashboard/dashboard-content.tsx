@@ -49,7 +49,7 @@ export default function CommandCenterPage() {
     return (
       <div className="p-6 space-y-10">
         <Skeleton className="h-8 w-48" />
-        <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-32 rounded-none" />
           ))}
@@ -73,7 +73,7 @@ export default function CommandCenterPage() {
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             OPS
           </p>
-          <h1 className="text-4xl">Command Center</h1>
+          <h1 className="text-5xl">Command Center</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Launch metrics and top-performing content
           </p>
@@ -81,7 +81,7 @@ export default function CommandCenterPage() {
         <StatusPill tone="ok">[LEARNING ACTIVE]</StatusPill>
       </div>
 
-      <div className="grid gap-px border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="IMP_7D"
           value={(stats?.impressionsVelocity ?? 0).toLocaleString()}

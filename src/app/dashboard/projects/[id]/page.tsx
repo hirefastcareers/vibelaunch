@@ -32,7 +32,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
       <header className="mt-4 mb-8">
         <div className="flex items-center gap-3">
-          <h1 className="text-4xl">{project.name}</h1>
+          <h1 className="text-5xl">{project.name}</h1>
           <StatusPill>{`[${project.status}]`}</StatusPill>
         </div>
         {project.tagline && <p className="mt-2 text-muted-foreground">{project.tagline}</p>}

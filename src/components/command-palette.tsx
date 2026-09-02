@@ -47,7 +47,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-hidden p-0 shadow-none max-w-lg rounded-sm">
+      <DialogContent className="overflow-hidden p-0 shadow-none max-w-lg rounded-lg">
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
           <div className="flex items-center border-b px-3">
             <Command.Input

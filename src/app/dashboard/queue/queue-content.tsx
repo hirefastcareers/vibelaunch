@@ -181,7 +181,7 @@ export default function QueueStudioPage() {
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             QUEUE
           </p>
-          <h1 className="text-4xl">AI Post Generator & Hooks</h1>
+          <h1 className="text-5xl">AI Post Generator & Hooks</h1>
           <p className="text-muted-foreground mt-1 text-sm">
             Draft, schedule, and publish posts that learn from what already went viral
           </p>

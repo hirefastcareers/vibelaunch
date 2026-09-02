@@ -74,7 +74,7 @@ export default function DiagnosticsPage() {
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             HEALTH
           </p>
-          <h1 className="text-4xl">App Health & Audits</h1>
+          <h1 className="text-5xl">App Health & Audits</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Checks Google indexing, AI learning, media, and whether ChatGPT and Perplexity mention you.
           </p>

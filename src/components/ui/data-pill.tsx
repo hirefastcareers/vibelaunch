@@ -19,7 +19,7 @@ export function DataPill({ children, tone = "outline", className }: DataPillProp
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
         TONE[tone],
         className
       )}

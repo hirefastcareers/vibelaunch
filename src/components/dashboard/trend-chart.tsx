@@ -81,7 +81,7 @@ function TrendTooltip({ active, payload, label }: TooltipContentProps) {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-sm border border-border bg-card px-2.5 py-2 text-card-foreground shadow-none">
+    <div className="rounded-md border border-border bg-card px-2.5 py-2 text-card-foreground shadow-none">
       <p className="mb-1.5 font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
         {label}
       </p>

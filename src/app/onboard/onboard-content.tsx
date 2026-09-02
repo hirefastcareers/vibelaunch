@@ -76,7 +76,7 @@ export default function OnboardPage() {
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
           ONBOARD
         </p>
-        <h1 className="text-4xl mb-2">Autonomous Growth for Indie Builders</h1>
+        <h1 className="text-5xl mb-2">Autonomous Growth for Indie Builders</h1>
         <p className="text-muted-foreground">
           Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically.
         </p>

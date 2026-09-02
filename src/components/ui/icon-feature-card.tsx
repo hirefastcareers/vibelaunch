@@ -12,7 +12,7 @@ export function IconFeatureCard({ icon: Icon, label, description, className }: I
   return (
     <div
       className={cn(
-        "rounded-sm border border-border bg-card p-4 text-card-foreground shadow-none",
+        "rounded-lg border border-border bg-card p-4 text-card-foreground shadow-none",
         className
       )}
     >

@@ -8,6 +8,16 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    borderRadius: {
+      none: "0px",
+      sm: "8px",
+      DEFAULT: "8px",
+      md: "12px",
+      lg: "16px",
+      xl: "20px",
+      "2xl": "24px",
+      full: "9999px",
+    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -56,11 +66,6 @@ const config: Config = {
         serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
         sans: ["ui-sans-serif", "system-ui", "sans-serif"],
-      },
-      borderRadius: {
-        lg: "2px",
-        md: "2px",
-        sm: "2px",
       },
       boxShadow: {
         sm: "none",

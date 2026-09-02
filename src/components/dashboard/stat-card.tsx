@@ -23,13 +23,13 @@ export function StatCard({ label, value, trend, sparkline, className, id }: Stat
     <div
       id={id}
       className={cn(
-        "rounded-sm border border-border bg-card px-6 py-7 text-card-foreground shadow-none",
+        "rounded-lg border border-border bg-card px-6 py-7 text-card-foreground shadow-none",
         className
       )}
     >
       <p className="ds-label">{label}</p>
       <div className="mt-3 flex items-baseline gap-2.5">
-        <span className="font-serif text-4xl leading-none tracking-[-0.02em]">{value}</span>
+        <span className="font-serif text-[32px] leading-none tracking-[-0.03em] sm:text-[40px]">{value}</span>
         {trend != null && <TrendBadge value={trend} />}
       </div>
       {showSpark && sparkData && (

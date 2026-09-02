@@ -1,6 +1,6 @@
 # Sorano design language
 
-Fonts stay as they are (`Instrument_Serif` + `JetBrains_Mono` in `layout.tsx`). Only the palette flips: light warm paper base, near-black ink, one orange accent. Keep `borderRadius: 2px` and `boxShadow: none` from the current Tailwind config.
+Fonts stay as they are (`Instrument_Serif` + `JetBrains_Mono` in `layout.tsx`). Only the palette flips: light warm paper base, near-black ink, one orange accent. Keep `boxShadow: none`. Corner radius is rounded, not sharp — see the radius rule in section 2.
 
 Dark sections are opt-in per section, not global. Do not put `class="dark"` on `<html>`.
 
@@ -28,7 +28,7 @@ Dark sections are opt-in per section, not global. Do not put `class="dark"` on `
     --border: 36 16% 85%;            /* #E0DCD3 hairline */
     --input: 36 16% 85%;
     --ring: 20 100% 50%;
-    --radius: 0.125rem;
+    --radius: 0.5rem;
 
     --ink: 36 9% 8%;                 /* #171512 section bg */
     --ink-panel: 33 10% 10%;         /* #1E1B17 panel inside dark band */
@@ -40,14 +40,15 @@ Dark sections are opt-in per section, not global. Do not put `class="dark"` on `
 
 ## 2. Rules of the system
 
-- **Hairlines, not cards.** Sections separate with `border-b border-border`. Grids are `gap-px bg-border` with `bg-background` children. No shadows, no rounded cards, no glow.
+- **Rounded, not sharp.** Cards, panels, and modals use 16–20px radius (`rounded-lg` / `rounded-xl`). Inputs and form controls use 8–12px (`rounded-sm` / `rounded-md`). Buttons, badges, and status pills use full rounding (`rounded-full`). This replaced the earlier sharp-corner (2px) system. Adopted from an external SaaS-style reference, but scoped to radius and type-scale confidence ONLY — the reference's custom fonts (AeonikPro/DotConnect), second accent color (a blue), and 3D-render imagery were explicitly NOT adopted. Sorano keeps its serif+mono typography, single-accent-orange discipline, and photography-free/render-free visual language.
+- **Cards are legitimate.** This supersedes the earlier "hairlines, not cards" rule. Hairline dividers (`border-b border-border`, `gap-px bg-border` grids) are still the right way to separate rows and KPI cells, but rounded cards/panels are an embraced component — not something to avoid. No shadows, no glow.
 - **Two container columns.** Every section body is `grid grid-cols-[260px_1fr] gap-12` (homepage mock uses `280px` / `max-w-[1200px]`). Left column is a monospace section index (`01 - THE LOOP`), right column is the content. Container is `max-w-[1120px] px-8` (homepage mock: `max-w-[1200px] px-8`).
 - **Type roles.** Serif = headlines and any single-line label that carries meaning (`text-[42px] leading-[1.08] tracking-[-0.02em]`). Mono = eyebrows, metadata, statuses, nav, buttons, footer (`text-[10px] tracking-[0.14em] uppercase`). Sans = body copy only.
 - **Accent budget.** Orange only on: the primary CTA, section index numbers, live/status markers. Never as a background wash, never as a gradient.
 - **Backgrounds.** Exactly three: paper `bg-background`, panel `bg-card`, ink `bg-ink`. Alternate paper/panel down the page; use ink at most twice.
 - **Numbers as structure.** Sections are numbered `01`-`05`; list items get `OUTPUT_01`, `MODULE 02`. This carries the "engine" feeling without terminal cosplay.
 - **Data rows over feature cards.** Comparable facts go in a bordered table-style row list (`grid-cols-[200px_1fr_120px]`), not in a 3-up card grid.
-- **Buttons.** `bg-primary text-white font-mono text-xs tracking-[0.1em] px-6 py-4 rounded-sm hover:bg-accent`. Secondary is a text link with `border-b border-border`.
+- **Buttons.** `bg-primary text-white font-mono text-xs tracking-[0.1em] px-6 py-4 rounded-full hover:bg-accent`. Secondary is a text link with `border-b border-border`, or an outline pill (`rounded-full border border-border`).
 - **Responsive.** Write mobile-first. At `lg:` the `[280px_1fr]` section shell and the hero become two columns, 4-up grids go 4-up (2-up at `md:`), and `h1`/`h2` step up. At the mobile default, everything is single-column, container padding is 20px, and `h1`/`h2`/`h3` step to 37/27/21px.
 - **Muted text floor.** `#8C857A` is the lightest tone allowed on paper, and only for decorative indices. Anything information-carrying (timestamps, frequencies, metadata) uses `#6B655C` or darker. `#A8A199` (`ink-dim`) is for dark bands only.
 - **Image placeholders.** Diagonal 6px stripe fill + a mono caption naming what belongs there. Replace with real screenshots before launch. No illustrated abstractions.
@@ -82,7 +83,7 @@ Props: `{ value: number; suffix?: string }` (`suffix` defaults to `"%"`; pass `"
 
 ### StatCard — `src/components/dashboard/stat-card.tsx`
 
-Compact overview metric (Semrush Overview panel). Hairline box matching `Card`: `rounded-sm border border-border bg-card px-6 py-7 shadow-none`. Label is `ds-label` (mono uppercase muted). Value is a serif number at `text-4xl`. Optional `TrendBadge` sits on the baseline; optional sparkline is a 44px Recharts line with no axes, labels, or tooltip — shape only, stroked in `--primary`. In a KPI row, drop the individual card border and sit the cards in a `gap-px bg-border` hairline grid so the padding — not a 1px gap — is what gives them air.
+Compact overview metric (Semrush Overview panel). Hairline box matching `Card`: `rounded-lg border border-border bg-card px-6 py-7 shadow-none`. Label is `ds-label` (mono uppercase muted). Value is a serif number at `text-[40px]` (`text-[32px]` below `sm` so large figures don't overflow a stacked KPI cell). Optional `TrendBadge` sits on the baseline; optional sparkline is a 44px Recharts line with no axes, labels, or tooltip — shape only, stroked in `--primary`. In a KPI row, drop the individual card border and sit the cards in a `gap-px bg-border` hairline grid so the padding — not a 1px gap — is what gives them air.
 
 Props: `{ label: string; value: string | number; trend?: number; sparkline?: number[] }`
 
@@ -98,7 +99,7 @@ Props: `{ data: Array<Record<string, number | string>>; series: Array<{ key: str
 
 ### DataPill — `src/components/ui/data-pill.tsx`
 
-Categorical / type tags in tables (Peec "UGC" / "Editorial"). Does not replace `StatusPill` — that stays for operational status (`ok` / `warn` / `fail` / `neutral`). Same shell as StatusPill (`rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider`). Categories are distinguished by fill vs outline, not by extra hues. Pass `tone`, never ad-hoc color classes at the call site.
+Categorical / type tags in tables (Peec "UGC" / "Editorial"). Does not replace `StatusPill` — that stays for operational status (`ok` / `warn` / `fail` / `neutral`). Same shell as StatusPill (`rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider`). Categories are distinguished by fill vs outline, not by extra hues. Pass `tone`, never ad-hoc color classes at the call site.
 
 ```
 tone="filled"  →  ink-muted fill, paper text
@@ -110,12 +111,12 @@ Props: `{ children: ReactNode; tone?: "filled" | "soft" | "outline" }`
 
 ### IconFeatureCard — `src/components/ui/icon-feature-card.tsx`
 
-Small icon + serif label + muted description in a hairline box (Peec feature card, adapted). Icon is lucide-react, ink-colored, 16px — not orange. Padding/radius match `Card` (`p-4`, `rounded-sm`). Do not use this as a 3-up marketing grid on the homepage; that remains banned. Fine inside product UI where a short capability needs a name and a sentence.
+Small icon + serif label + muted description in a hairline box (Peec feature card, adapted). Icon is lucide-react, ink-colored, 16px — not orange. Padding/radius match `Card` (`p-4`, `rounded-lg`). Do not use this as a 3-up marketing grid on the homepage; that remains banned. Fine inside product UI where a short capability needs a name and a sentence.
 
 Props: `{ icon: LucideIcon; label: string; description: string }`
 
 ### SegmentedTabs — `src/components/ui/segmented-tabs.tsx`
 
-Single-select control for switching data views ("Mentions / Impressions", provider filters). Pill-style grouping adapted to Sorano's 2px radius: `rounded-sm`, not fully rounded. Active segment is `bg-ink text-background` (not orange — orange stays on CTAs and live/trend markers). Labels are mono 11px uppercase.
+Single-select control for switching data views ("Mentions / Impressions", provider filters). Pill-style grouping at the control radius: `rounded-sm` (8px) on the track, not `rounded-full`. Active segment is `bg-ink text-background` (not orange — orange stays on CTAs and live/trend markers). Labels are mono 11px uppercase.
 
 Props: `{ options: Array<{ value: string; label: string }>; value: string; onChange: (value: string) => void }`

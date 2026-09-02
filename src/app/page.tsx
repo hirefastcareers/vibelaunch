@@ -212,7 +212,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="#platform"
-                className="rounded-sm border border-border px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-ink-muted hover:border-foreground"
+                className="rounded-full border border-border px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-ink-muted hover:border-foreground"
               >
                 SEE THE PLATFORM
               </Link>
@@ -476,7 +476,7 @@ export default async function HomePage() {
                 </div>
                 <Link
                   href={signedIn ? "/dashboard/billing" : ctaHref}
-                  className={plan.featured ? "ds-btn text-center" : "rounded-sm border border-border px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-ink-muted hover:border-foreground"}
+                  className={plan.featured ? "ds-btn text-center" : "rounded-full border border-border px-5 py-3.5 text-center font-mono text-xs tracking-[0.1em] text-ink-muted hover:border-foreground"}
                 >
                   {signedIn ? "GO TO BILLING" : "SIGN IN TO START"}
                 </Link>

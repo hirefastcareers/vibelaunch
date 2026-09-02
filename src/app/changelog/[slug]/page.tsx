@@ -111,7 +111,7 @@ export default async function ChangelogPage({ params }: PageProps) {
             {entry.keywords.map((kw) => (
               <span
                 key={kw}
-                className="px-1.5 py-0.5 border border-border font-mono text-[10px] tracking-wider text-muted-foreground rounded-sm"
+                className="px-2.5 py-0.5 border border-border font-mono text-[10px] tracking-wider text-muted-foreground rounded-full"
               >
                 {kw}
               </span>

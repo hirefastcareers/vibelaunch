@@ -50,8 +50,8 @@ export default function NewProjectPage() {
 
   return (
     <main className="min-h-screen max-w-xl mx-auto px-4 py-12">
-      <h1 className="text-4xl mb-8">New Project</h1>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-sm border border-border">
+      <h1 className="text-5xl mb-8">New Project</h1>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 rounded-lg border border-border">
         {error && (
           <div className="p-3 border border-border font-mono text-[12px] text-muted-foreground">
             <LimitHitNotice code={errorCode} fallback={error} />
@@ -85,7 +85,7 @@ export default function NewProjectPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-primary text-primary-foreground rounded-sm hover:bg-primary/90 disabled:opacity-50 font-mono text-xs tracking-wider"
+          className="w-full py-2 px-5 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 disabled:opacity-50 font-mono text-xs tracking-wider"
         >
           {loading ? "CREATING..." : "CREATE PROJECT"}
         </button>

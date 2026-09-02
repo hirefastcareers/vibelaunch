@@ -41,7 +41,7 @@ export function CheckoutButton({
         className={
           primary
             ? "ds-btn text-center"
-            : "rounded-sm border border-border px-6 py-[15px] text-center font-mono text-xs tracking-[0.1em] text-muted-foreground hover:border-foreground"
+            : "rounded-full border border-border px-6 py-[15px] text-center font-mono text-xs tracking-[0.1em] text-muted-foreground hover:border-foreground"
         }
       >
         {pending ? "REDIRECTING..." : children}
