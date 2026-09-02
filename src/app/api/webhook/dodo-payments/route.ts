@@ -1,3 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
 import { Webhooks } from "@dodopayments/nextjs";
 import type { Subscription } from "@dodopayments/core";
 import { prisma } from "@/lib/prisma";
@@ -81,10 +82,8 @@ async function updateUserFromSubscription(
   await prisma.user.update({ where: { id: user.id }, data: fields });
 }
 
-export const POST = Webhooks({
-  webhookKey: process.env.DODO_PAYMENTS_WEBHOOK_KEY ?? "",
-
-  onSubscriptionActive: async (payload) => {
+const webhookEventHandlers = {
+  onSubscriptionActive: async (payload: SubscriptionEvent) => {
     const { data } = payload;
     const planTier = planTierFromProductId(data.product_id);
     if (!planTier) {
@@ -103,14 +102,14 @@ export const POST = Webhooks({
     });
   },
 
-  onSubscriptionRenewed: async (payload) => {
+  onSubscriptionRenewed: async (payload: SubscriptionEvent) => {
     await updateUserFromSubscription(payload, {
       subscriptionStatus: payload.data.status ?? "active",
       planRenewsAt: payload.data.next_billing_date,
     });
   },
 
-  onSubscriptionPlanChanged: async (payload) => {
+  onSubscriptionPlanChanged: async (payload: SubscriptionEvent) => {
     const planTier = planTierFromProductId(payload.data.product_id);
     if (!planTier) {
       console.error(
@@ -127,34 +126,64 @@ export const POST = Webhooks({
     });
   },
 
-  onSubscriptionCancelled: async (payload) => {
+  onSubscriptionCancelled: async (payload: SubscriptionEvent) => {
     // Do not downgrade planTier here — access continues until period end.
     await updateUserFromSubscription(payload, {
       subscriptionStatus: "cancelled",
     });
   },
 
-  onSubscriptionExpired: async (payload) => {
+  onSubscriptionExpired: async (payload: SubscriptionEvent) => {
     await updateUserFromSubscription(payload, {
       planTier: "FREE",
       subscriptionStatus: "expired",
     });
   },
 
-  onSubscriptionFailed: async (payload) => {
+  onSubscriptionFailed: async (payload: SubscriptionEvent) => {
     // Payment failure signal only — leave planTier as-is (grace period).
     await updateUserFromSubscription(payload, {
       subscriptionStatus: "failed",
     });
   },
 
-  onSubscriptionOnHold: async (payload) => {
+  onSubscriptionOnHold: async (payload: SubscriptionEvent) => {
     await updateUserFromSubscription(payload, {
       subscriptionStatus: "on_hold",
     });
   },
 
-  onPayload: async (payload) => {
+  onPayload: async (payload: { type: string }) => {
     console.info("[dodo-webhook]", payload.type);
   },
-});
+};
+
+type DodoWebhookHandler = (
+  req: NextRequest,
+) => Promise<NextResponse<unknown>>;
+
+let cachedHandler: DodoWebhookHandler | null = null;
+let cachedWebhookKey: string | undefined;
+
+function getWebhookHandler(): DodoWebhookHandler | null {
+  const webhookKey = process.env.DODO_PAYMENTS_WEBHOOK_KEY?.trim();
+  if (!webhookKey) return null;
+  if (cachedHandler && cachedWebhookKey === webhookKey) return cachedHandler;
+  cachedWebhookKey = webhookKey;
+  cachedHandler = Webhooks({ webhookKey, ...webhookEventHandlers });
+  return cachedHandler;
+}
+
+// Adapter constructs Standard Webhooks at factory time and throws
+// "Secret can't be empty" — do not call Webhooks() at module load or
+// `next build` page-data collection fails when the env var is unset.
+export async function POST(req: NextRequest) {
+  const handler = getWebhookHandler();
+  if (!handler) {
+    return NextResponse.json(
+      { error: "Dodo webhook key is not configured" },
+      { status: 503 },
+    );
+  }
+  return handler(req);
+}
