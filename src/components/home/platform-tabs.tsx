@@ -126,9 +126,9 @@ const modules = [
       },
       {
         main: '"GEO tools for small SaaS"',
-        sub: "AI OVERVIEW · NOT PRESENT",
-        state: "GAP",
-        tint: "muted" as const,
+        sub: "CLAUDE · POSITION 3",
+        state: "CITED",
+        tint: "accent" as const,
       },
       {
         main: '"changelog SEO automation"',
@@ -151,7 +151,7 @@ const modules = [
     meta: "WEEKLY AUDIT · PLAYWRIGHT CAPTURE",
     screen: "HEALTH REPORT",
     screenMeta: "WEEK 34",
-    screenFoot: "2 issues need you",
+    screenFoot: "1 issue needs you",
     rows: [
       {
         main: "Indexing coverage",
@@ -173,9 +173,9 @@ const modules = [
       },
       {
         main: "AI citation coverage",
-        sub: "2 OF 3 ENGINES",
-        state: "WATCH",
-        tint: "muted" as const,
+        sub: "3 OF 3 ENGINES",
+        state: "PASS",
+        tint: "accent" as const,
       },
     ],
   },

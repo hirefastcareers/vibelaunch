@@ -6,7 +6,7 @@ import { MOCK_CRON_ANALYTICS } from "@/lib/mock-data";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: NextRequest) {
+async function handleCron(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
@@ -33,10 +33,10 @@ export async function POST(req: NextRequest) {
   });
 }
 
-export async function GET() {
-  return NextResponse.json({
-    endpoint: "/api/cron/analytics",
-    description: "Analytics cron - ERI snapshots and vector reinforcement",
-    method: "POST",
-  });
+export async function GET(req: NextRequest) {
+  return handleCron(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleCron(req);
 }

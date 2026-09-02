@@ -57,4 +57,4 @@ npm run build        # production build
 - Vercel recommended for Next.js hosting
 - Use Neon or Supabase for PostgreSQL with pgvector
 - Configure QStash callback URL to production domain
-- Set up Vercel Cron for `/api/cron/eri` (daily)
+- Set up Vercel Cron for `/api/cron/analytics` (every 6 hours) and `/api/cron/diagnostics` (daily)

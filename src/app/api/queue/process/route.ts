@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyQStashSignature } from "@/lib/queue/qstash";
-import { publishToX } from "@/lib/x/publish";
+import { publishToX, XApiError, XAuthError } from "@/lib/x/publish";
 import { prisma } from "@/lib/prisma";
 import { storePostEmbedding } from "@/lib/vector/embeddings";
+
+function formatPublishError(err: unknown): string {
+  if (err instanceof XAuthError) {
+    return `[AUTH:${err.code}] ${err.message}`;
+  }
+  if (err instanceof XApiError) {
+    return `[API:${err.status}] ${err.message}`;
+  }
+  return err instanceof Error ? err.message : String(err);
+}
 
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("upstash-signature") ?? "";
@@ -52,16 +62,18 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ post: updated });
   } catch (err) {
+    const errorMessage = formatPublishError(err);
+
     await prisma.post.update({
       where: { id: post.id },
       data: {
         status: "FAILED",
-        errorMessage: err instanceof Error ? err.message : String(err),
+        errorMessage,
       },
     });
 
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Publish failed" },
+      { error: errorMessage },
       { status: 500 }
     );
   }

@@ -7,6 +7,11 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   if (isDemoMode()) {
     await demoDelay();
+    return NextResponse.json({
+      feeds: MOCK_SMART_REPLIES_FEED,
+      configured: true,
+    });
   }
-  return NextResponse.json({ feeds: MOCK_SMART_REPLIES_FEED });
+
+  return NextResponse.json({ feeds: {}, configured: false });
 }

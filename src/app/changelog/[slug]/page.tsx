@@ -31,7 +31,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "article",
       publishedTime: entry.publishedAt?.toISOString(),
       url: canonicalUrl,
-      images: [{ url: `${baseUrl}/api/media/generate?type=code-card&id=${entry.slug}` }],
     },
   };
 }

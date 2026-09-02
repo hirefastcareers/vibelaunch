@@ -9,7 +9,7 @@ User → Next.js App Router
          │     ├── /api/projects     (CRUD)
          │     ├── /api/posts        (create + publish queue)
          │     ├── /api/queue/process (QStash webhook)
-         │     ├── /api/cron/eri     (analytics cron)
+         │     ├── /api/cron/analytics (ERI + embedding reinforcement)
          │     ├── /api/generate     (adaptive content)
          │     └── /api/seo/publish  (changelog + indexing)
          └── Pages

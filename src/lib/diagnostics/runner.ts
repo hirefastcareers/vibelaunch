@@ -103,22 +103,53 @@ export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteR
   }
 }
 
+const CAPTURE_FRESH_MS = 24 * 60 * 60 * 1000;
+
 export async function runMediaValidation(projectId: string): Promise<TestSuiteResult> {
   if (isDemoMode()) return getMockTestResults("media_render") as TestSuiteResult;
 
   try {
     const project = await db.project.findUnique({ where: { id: projectId } });
-    const hasValidUrl = !!project?.websiteUrl;
+
+    if (!project?.websiteUrl) {
+      return {
+        suite: "media_render",
+        status: "failed",
+        score: 0,
+        details: {
+          playwrightConfigured: true,
+          targetUrl: project?.websiteUrl ?? null,
+          viewportSize: "1280x720",
+        },
+      };
+    }
+
+    const capturedAt = project.lastCapturedAt;
+    const stale = !capturedAt || Date.now() - capturedAt.getTime() > CAPTURE_FRESH_MS;
+
+    const details = {
+      playwrightConfigured: true,
+      targetUrl: project.websiteUrl,
+      viewportSize: "1280x720",
+      lastCaptureUrl: project.lastCaptureUrl ?? null,
+      lastCapturedAt: capturedAt ? capturedAt.toISOString() : null,
+      stale,
+    };
+
+    if (stale) {
+      return {
+        suite: "media_render",
+        status: "warning",
+        score: 40,
+        details,
+      };
+    }
 
     return {
       suite: "media_render",
-      status: hasValidUrl ? "passed" : "failed",
-      score: hasValidUrl ? 100 : 0,
-      details: {
-        playwrightConfigured: true,
-        targetUrl: project?.websiteUrl ?? null,
-        viewportSize: "1280x720",
-      },
+      status: "passed",
+      score: 100,
+      details,
     };
   } catch (error: unknown) {
     return {

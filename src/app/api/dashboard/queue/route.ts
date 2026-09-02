@@ -37,10 +37,13 @@ export async function GET() {
     projectName: p.project.name,
     eri: p.analytics?.eri ?? null,
     xPostUrl: p.xPostUrl,
+    errorMessage: p.errorMessage,
   }));
 
   return NextResponse.json({
-    pending: mapped.filter((p) => ["DRAFT", "QUEUED"].includes(p.status)),
+    pending: mapped.filter((p) =>
+      ["DRAFT", "QUEUED", "FAILED", "PUBLISHING"].includes(p.status)
+    ),
     scheduled: mapped.filter((p) => p.status === "SCHEDULED"),
     published: mapped.filter((p) => p.status === "PUBLISHED"),
   });

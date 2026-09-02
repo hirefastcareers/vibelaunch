@@ -69,8 +69,10 @@ model Project {
   slug        String   @unique
   description String?
   tagline     String?
-  websiteUrl  String?
-  tone        String?
+  websiteUrl     String?
+  lastCaptureUrl String?
+  lastCapturedAt DateTime?
+  tone           String?
   keywords    String[] @default([])
   status      ProjectStatus @default(DRAFT)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)

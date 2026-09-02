@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ interface QueuePost {
   projectName: string;
   eri: number | null;
   xPostUrl: string | null;
+  errorMessage?: string | null;
 }
 
 interface QueueData {
@@ -38,8 +40,46 @@ function statusTag(status: string) {
     pending: "[PENDING]",
     scheduled: "[SCHED]",
     published: "[LIVE]",
+    FAILED: "[FAILED]",
+    PUBLISHING: "[PUBLISHING]",
   };
   return map[status] ?? `[${status.toUpperCase()}]`;
+}
+
+function stripErrorPrefix(errorMessage: string): string {
+  return errorMessage.replace(/^\[(?:AUTH:[^\]]+|API:\d+)\]\s*/, "");
+}
+
+function PublishError({ errorMessage }: { errorMessage: string }) {
+  if (errorMessage.startsWith("[AUTH:")) {
+    return (
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px]">
+        <span className="text-muted-foreground">
+          Your X connection expired - reconnect to keep publishing
+        </span>
+        <Link
+          href="/auth/signin"
+          className="text-primary tracking-wider hover:underline"
+        >
+          RECONNECT
+        </Link>
+      </div>
+    );
+  }
+
+  if (errorMessage.startsWith("[API:429]")) {
+    return (
+      <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+        Rate limited by X - this will retry automatically
+      </p>
+    );
+  }
+
+  return (
+    <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+      {stripErrorPrefix(errorMessage)}
+    </p>
+  );
 }
 
 function MediaThumbnail({ urls }: { urls: string[] }) {
@@ -72,6 +112,7 @@ function PostCard({ post }: { post: QueuePost }) {
             {post.eri !== null && <EriBadge eri={post.eri} />}
           </div>
           <p className="text-sm font-mono line-clamp-2">{post.content}</p>
+          {post.errorMessage ? <PublishError errorMessage={post.errorMessage} /> : null}
           <div className="flex items-center gap-3 mt-2 font-mono text-[10px] text-muted-foreground">
             {post.scheduledAt && <span>{new Date(post.scheduledAt).toLocaleString()}</span>}
             {post.publishedAt && <span>{formatRelativeTime(post.publishedAt)}</span>}

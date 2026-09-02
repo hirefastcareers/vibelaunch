@@ -1,8 +1,18 @@
 import { prisma } from "@/lib/prisma";
+import { getValidAccessToken } from "@/lib/x/token";
+
+export { XAuthError } from "@/lib/x/token";
 
 export interface XPostResult {
   id: string;
   url: string;
+}
+
+export class XApiError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+    this.name = "XApiError";
+  }
 }
 
 /**
@@ -13,18 +23,12 @@ export async function publishToX(
   content: string,
   mediaUrls?: string[]
 ): Promise<XPostResult> {
-  const account = await prisma.account.findFirst({
-    where: { userId, provider: "twitter" },
-  });
-
-  if (!account?.access_token) {
-    throw new Error("X account not connected or token expired");
-  }
+  const accessToken = await getValidAccessToken(userId);
 
   const mediaIds: string[] = [];
   if (mediaUrls?.length) {
     for (const url of mediaUrls) {
-      const mediaId = await uploadMedia(account.access_token, url);
+      const mediaId = await uploadMedia(accessToken, url);
       mediaIds.push(mediaId);
     }
   }
@@ -37,7 +41,7 @@ export async function publishToX(
   const response = await fetch("https://api.twitter.com/2/tweets", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${account.access_token}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(tweetBody),
@@ -45,7 +49,7 @@ export async function publishToX(
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`X API error: ${response.status} ${error}`);
+    throw new XApiError(`X API error: ${response.status} ${error}`, response.status);
   }
 
   const data = (await response.json()) as { data: { id: string } };
@@ -81,7 +85,7 @@ async function uploadMedia(accessToken: string, mediaUrl: string): Promise<strin
 
   if (!uploadResponse.ok) {
     const error = await uploadResponse.text();
-    throw new Error(`Media upload failed: ${error}`);
+    throw new XApiError(`Media upload failed: ${uploadResponse.status} ${error}`, uploadResponse.status);
   }
 
   const uploadData = (await uploadResponse.json()) as { media_id_string: string };
@@ -100,13 +104,7 @@ export async function fetchTweetMetrics(
   retweets: number;
   replies: number;
 }> {
-  const account = await prisma.account.findFirst({
-    where: { userId, provider: "twitter" },
-  });
-
-  if (!account?.access_token) {
-    throw new Error("X account not connected");
-  }
+  const accessToken = await getValidAccessToken(userId);
 
   const params = new URLSearchParams({
     ids: tweetId,
@@ -116,12 +114,13 @@ export async function fetchTweetMetrics(
   const response = await fetch(
     `https://api.twitter.com/2/tweets?${params}`,
     {
-      headers: { Authorization: `Bearer ${account.access_token}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
     }
   );
 
   if (!response.ok) {
-    return { impressions: 0, likes: 0, retweets: 0, replies: 0 };
+    const error = await response.text();
+    throw new XApiError(`X API error: ${response.status} ${error}`, response.status);
   }
 
   const data = (await response.json()) as {

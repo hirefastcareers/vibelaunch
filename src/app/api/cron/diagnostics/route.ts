@@ -5,7 +5,7 @@ import { runDiagnosticsForAllProjects } from "@/lib/diagnostics/agent";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: NextRequest) {
+async function handleCron(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
@@ -30,11 +30,10 @@ export async function POST(req: NextRequest) {
   });
 }
 
-export async function GET() {
-  return NextResponse.json({
-    endpoint: "/api/cron/diagnostics",
-    description: "Autonomous diagnostic agent - SEO, vector, media, and GEO audits",
-    method: "POST",
-    suites: ["seo_audit", "feedback_loop", "media_render", "geo_audit"],
-  });
+export async function GET(req: NextRequest) {
+  return handleCron(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleCron(req);
 }

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+
+export const runtime = "nodejs";
+// Video recording plays out in real time (default 15s) plus Chromium launch,
+// navigation, and Blob upload — routinely past Vercel Hobby's 10s limit.
+// Intended for a plan whose maxDuration is at least 60s. A QStash job (like
+// site-capture) would be the follow-up if this starts timing out in production.
+export const maxDuration = 60;
 
 const generateSchema = z.object({
   type: z.enum(["video", "code-card"]),
@@ -29,6 +35,7 @@ export async function POST(req: NextRequest) {
     if (!url) {
       return NextResponse.json({ error: "url required for video" }, { status: 400 });
     }
+    // Sync recording: default 15s of scroll + launch/nav/upload. See maxDuration above.
     const { recordSiteVideo } = await import("@/lib/media/video-recorder");
     const result = await recordSiteVideo({ url });
     return NextResponse.json({ type: "video", ...result });

@@ -50,7 +50,7 @@ Sorano is a full-stack autonomous growth and GEO engine for founders - continuou
 ## Phase 3: Analytics & AI
 
 ### ERI Analytics Cron
-- `POST /api/cron/eri` - fetches metrics, creates EriSnapshots
+- `GET /api/cron/analytics` - fetches metrics, creates EriSnapshots, reinforces embeddings (POST alias)
 - ERI formula: `(likes + retweets*2 + replies*1.5 + clicks*0.5) / impressions * 100`
 
 ### Vector Reinforcement
@@ -111,7 +111,7 @@ Sorano is a full-stack autonomous growth and GEO engine for founders - continuou
 - `src/lib/diagnostics/runner.ts` - `runFullDiagnosticSuite()` with parallel suite execution and live HTML SEO audit
 - `src/lib/diagnostics/agent.ts` - wraps runner for API/cron consumption
 - `getMockTestResults()` in `lib/demo-mode.ts` - per-suite demo responses
-- `POST /api/cron/diagnostics` - autonomous verification across all active projects
+- `GET /api/cron/diagnostics` - autonomous verification across all active projects (POST alias)
 - `GET /api/diagnostics/runs` - fetch latest test run results
 - `POST /api/diagnostics/run` - trigger manual diagnostic scan
 

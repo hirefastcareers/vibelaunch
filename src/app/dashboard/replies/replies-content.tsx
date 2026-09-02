@@ -19,6 +19,7 @@ type Feeds = Record<string, FeedItem[]>;
 
 export default function RepliesPage() {
   const [feeds, setFeeds] = useState<Feeds>({});
+  const [configured, setConfigured] = useState(false);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -29,6 +30,7 @@ export default function RepliesPage() {
       .then((r) => r.json())
       .then((data) => {
         setFeeds(data.feeds ?? {});
+        setConfigured(data.configured ?? false);
         const prefill: Record<string, string> = {};
         for (const [keyword, items] of Object.entries(data.feeds ?? {})) {
           for (const item of items as FeedItem[]) {
@@ -95,6 +97,19 @@ export default function RepliesPage() {
           Monitor keyword feeds and generate context-aware, non-spammy replies
         </p>
       </div>
+
+      {Object.keys(feeds).length === 0 && (
+        <div className="rounded-sm border border-border bg-card p-6">
+          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+            {configured ? "[EMPTY]" : "[NOT CONFIGURED]"}
+          </p>
+          <h2 className="text-2xl">No live feed</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Smart replies aren't connected to a live feed yet. Add X API
+            credentials to start tracking keyword mentions.
+          </p>
+        </div>
+      )}
 
       {Object.entries(feeds).map(([keyword, items]) => (
         <Card key={keyword}>

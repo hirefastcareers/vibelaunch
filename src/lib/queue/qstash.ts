@@ -43,6 +43,28 @@ export async function enqueuePost(
   return result.messageId;
 }
 
+export interface QueueSiteCapturePayload {
+  projectId: string;
+}
+
+/**
+ * Enqueue a site screenshot capture via QStash.
+ */
+export async function enqueueSiteCapture(
+  payload: QueueSiteCapturePayload
+): Promise<string> {
+  const client = getQStashClient();
+  const callbackUrl = `${getBaseUrl()}/api/media/capture/process`;
+
+  const result = await client.publishJSON({
+    url: callbackUrl,
+    body: payload,
+    retries: 3,
+  });
+
+  return result.messageId;
+}
+
 /**
  * Verify QStash webhook signature.
  */

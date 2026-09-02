@@ -12,7 +12,6 @@ const integrations = [
   "GOOGLE SEARCH CONSOLE",
   "CHATGPT",
   "PERPLEXITY",
-  "AI OVERVIEWS",
   "PLAYWRIGHT",
 ];
 
@@ -39,7 +38,7 @@ const promptStats = [
 const citations = [
   { engine: "ChatGPT", state: "CITED · POS 2", cited: true },
   { engine: "Perplexity", state: "CITED · POS 4", cited: true },
-  { engine: "Google AI Overview", state: "NOT CITED", cited: false },
+  { engine: "Claude", state: "CITED · POS 3", cited: true },
 ];
 
 const compare = [
@@ -235,7 +234,7 @@ export default async function HomePage() {
                 ))}
               </div>
               <div className="ds-label flex flex-wrap justify-between gap-2 border-t border-border px-5 py-3">
-                <span>SOURCE: CHATGPT · PERPLEXITY · AI OVERVIEWS</span>
+                <span>SOURCE: CHATGPT · PERPLEXITY · CLAUDE</span>
                 <span>N=240 PROMPTS</span>
               </div>
             </div>

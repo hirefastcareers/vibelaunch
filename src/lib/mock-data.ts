@@ -47,6 +47,21 @@ export const MOCK_QUEUE = {
       xPostUrl: null as string | null,
     },
     {
+      id: "demo-pending-failed",
+      content:
+        "Tried to ship the v1.4 capture thread automatically. Publish stopped because the X session needs a reconnect.",
+      status: "FAILED",
+      mediaUrls: [] as string[],
+      scheduledAt: null as string | null,
+      publishedAt: null as string | null,
+      projectId: MOCK_PROJECT.id,
+      projectName: "Sorano",
+      eri: null as number | null,
+      xPostUrl: null as string | null,
+      errorMessage:
+        "[AUTH:REAUTH_REQUIRED] X session expired and cannot be refreshed automatically",
+    },
+    {
       id: "demo-pending-2",
       content:
         "Draft: Why ERI beats raw impressions for indie launches. Thread outline: 1) vanity metrics 2) engagement index 3) vector learning loop",
