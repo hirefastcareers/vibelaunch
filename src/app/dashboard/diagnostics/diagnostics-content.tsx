@@ -72,7 +72,7 @@ export default function DiagnosticsPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            [HEALTH]
+            HEALTH
           </p>
           <h1 className="text-4xl">App Health & Audits</h1>
           <p className="text-muted-foreground text-sm mt-1">

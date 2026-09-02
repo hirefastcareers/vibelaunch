@@ -104,12 +104,12 @@ export function DiagnosticCard() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            [AUDIT]
+          <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+            AUDIT
           </p>
-          <CardTitle className="text-xl">App Health Checks</CardTitle>
+          <CardTitle className="mt-1 text-lg">App Health Checks</CardTitle>
         </div>
         <Button
           variant="outline"

@@ -90,7 +90,7 @@ export default function RepliesPage() {
     <div className="p-6 space-y-6">
       <div>
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-          [REPLIES]
+          REPLIES
         </p>
         <h1 className="text-4xl">Smart Reply Assistant</h1>
         <p className="text-muted-foreground mt-1 text-sm">
@@ -101,7 +101,7 @@ export default function RepliesPage() {
       {Object.keys(feeds).length === 0 && (
         <div className="rounded-sm border border-border bg-card p-6">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            {configured ? "[EMPTY]" : "[NOT CONFIGURED]"}
+            {configured ? "EMPTY" : "NOT CONFIGURED"}
           </p>
           <h2 className="text-2xl">No live feed</h2>
           <p className="text-muted-foreground mt-1 text-sm">

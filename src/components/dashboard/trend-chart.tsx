@@ -200,6 +200,7 @@ export function TrendChart({ data, series, xKey, className }: TrendChartProps) {
                 dot={false}
                 activeDot={{ r: 3, strokeWidth: 0, fill: style.stroke }}
                 isAnimationActive="auto"
+                connectNulls
               />
             );
           })}

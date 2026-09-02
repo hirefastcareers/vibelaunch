@@ -52,6 +52,10 @@ Dark sections are opt-in per section, not global. Do not put `class="dark"` on `
 - **Muted text floor.** `#8C857A` is the lightest tone allowed on paper, and only for decorative indices. Anything information-carrying (timestamps, frequencies, metadata) uses `#6B655C` or darker. `#A8A199` (`ink-dim`) is for dark bands only.
 - **Image placeholders.** Diagonal 6px stripe fill + a mono caption naming what belongs there. Replace with real screenshots before launch. No illustrated abstractions.
 
+### Brackets are reserved for live status
+
+Brackets (`[OK]`, `[WARN]`, `[SYS_OK]`, `[PREVIEW]`, and the rest) are reserved for live status: `StatusPill` indicators and the demo-mode banner. Never wrap section labels or page eyebrows in brackets. Those use plain mono-uppercase-tracked text instead (`OPS`, `AI SEARCH`, `01 - THE PLATFORM`) — the same convention as the landing page.
+
 ## 3. Banned (the slop list)
 
 Gradient hero backgrounds, glassmorphism, glowing orbs or blurred blobs, emoji bullets, purple/violet, floating 3D mockups, `shadow-2xl` cards, animated gradient text, "Trusted by 10,000+" with no logos, invented metrics, icon-per-feature grids, `rounded-2xl` everything, marquee logo strips.
@@ -78,7 +82,7 @@ Props: `{ value: number; suffix?: string }` (`suffix` defaults to `"%"`; pass `"
 
 ### StatCard — `src/components/dashboard/stat-card.tsx`
 
-Compact overview metric (Semrush Overview panel). Hairline box matching `Card`: `rounded-sm border border-border bg-card p-4 shadow-none`. Label is `ds-label` (mono uppercase muted). Value is a large serif number. Optional `TrendBadge` sits on the baseline; optional sparkline is a 44px Recharts line with no axes, labels, or tooltip — shape only, stroked in `--primary`.
+Compact overview metric (Semrush Overview panel). Hairline box matching `Card`: `rounded-sm border border-border bg-card px-6 py-7 shadow-none`. Label is `ds-label` (mono uppercase muted). Value is a serif number at `text-4xl`. Optional `TrendBadge` sits on the baseline; optional sparkline is a 44px Recharts line with no axes, labels, or tooltip — shape only, stroked in `--primary`. In a KPI row, drop the individual card border and sit the cards in a `gap-px bg-border` hairline grid so the padding — not a 1px gap — is what gives them air.
 
 Props: `{ label: string; value: string | number; trend?: number; sparkline?: number[] }`
 

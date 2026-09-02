@@ -51,7 +51,7 @@ export default function BillingContent({
     <div className="p-6 max-w-5xl space-y-10">
       <div>
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-          [BILLING]
+          BILLING
         </p>
         <h1 className="text-4xl">Billing</h1>
         <p className="text-muted-foreground text-sm mt-1">

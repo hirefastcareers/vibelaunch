@@ -50,7 +50,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   <p className="font-mono">{post.content}</p>
                   <div className="mt-2 flex gap-3 font-mono text-[10px] text-muted-foreground">
                     <span>{post.status}</span>
-                    {post.analytics && <span>[VIRALITY: {post.analytics.eri}]</span>}
+                    {post.analytics && (
+                      <StatusPill>{`[VIRALITY: ${post.analytics.eri}]`}</StatusPill>
+                    )}
                   </div>
                 </li>
               ))}

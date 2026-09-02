@@ -89,7 +89,7 @@ export function GeoCard() {
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            [AI_SEARCH]
+            AI SEARCH
           </p>
           <CardTitle className="text-xl">AI Search (ChatGPT/Perplexity)</CardTitle>
         </div>
@@ -143,7 +143,7 @@ export function GeoCard() {
         ) : (
           <div>
             <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-              [EMPTY]
+              EMPTY
             </p>
             <h2 className="text-2xl">Not enough data yet</h2>
             <p className="text-muted-foreground mt-1 text-sm">

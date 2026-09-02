@@ -10,24 +10,26 @@ export interface StatCardProps {
   trend?: number;
   sparkline?: number[];
   className?: string;
+  id?: string;
 }
 
 const SPARKLINE_STROKE = "hsl(var(--primary))";
 
-export function StatCard({ label, value, trend, sparkline, className }: StatCardProps) {
+export function StatCard({ label, value, trend, sparkline, className, id }: StatCardProps) {
   const sparkData = sparkline?.map((v, i) => ({ i, v }));
   const showSpark = Boolean(sparkData && sparkData.length > 1);
 
   return (
     <div
+      id={id}
       className={cn(
-        "rounded-sm border border-border bg-card p-4 text-card-foreground shadow-none",
+        "rounded-sm border border-border bg-card px-6 py-7 text-card-foreground shadow-none",
         className
       )}
     >
       <p className="ds-label">{label}</p>
-      <div className="mt-2 flex items-baseline gap-2.5">
-        <span className="font-serif text-3xl leading-none tracking-[-0.02em]">{value}</span>
+      <div className="mt-3 flex items-baseline gap-2.5">
+        <span className="font-serif text-4xl leading-none tracking-[-0.02em]">{value}</span>
         {trend != null && <TrendBadge value={trend} />}
       </div>
       {showSpark && sparkData && (

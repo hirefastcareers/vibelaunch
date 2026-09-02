@@ -10,6 +10,7 @@ import { GeneratePostModal } from "@/components/generate-post-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusPill } from "@/components/status-pill";
 import { formatRelativeTime } from "@/lib/utils";
+import { FileText, Video } from "lucide-react";
 
 interface QueuePost {
   id: string;
@@ -83,15 +84,16 @@ function PublishError({ errorMessage }: { errorMessage: string }) {
 }
 
 function MediaThumbnail({ urls }: { urls: string[] }) {
-  if (!urls.length) return null;
-
   const url = urls[0];
-  const isVideo = url.includes("video") || url.includes("placeholder?type=video");
-  const isCode = url.includes("code-card");
+  const isVideo = url?.includes("video") || url?.includes("placeholder?type=video");
 
   return (
-    <div className="h-14 w-14 rounded-sm border border-border bg-muted flex items-center justify-center shrink-0 overflow-hidden font-mono text-[9px] tracking-wider text-muted-foreground">
-      {isVideo ? "VID" : isCode ? "CODE" : (
+    <div className="h-14 w-14 rounded-sm border border-border bg-muted flex items-center justify-center shrink-0 overflow-hidden">
+      {!url ? (
+        <FileText className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+      ) : isVideo ? (
+        <Video className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+      ) : (
         <img src={url} alt="" className="h-full w-full object-cover" />
       )}
     </div>
@@ -177,7 +179,7 @@ export default function QueueStudioPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            [QUEUE]
+            QUEUE
           </p>
           <h1 className="text-4xl">AI Post Generator & Hooks</h1>
           <p className="text-muted-foreground mt-1 text-sm">

@@ -74,7 +74,7 @@ export default function OnboardPage() {
     <div className="mx-auto max-w-2xl p-8">
       <div className="mb-8">
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-          [ONBOARD]
+          ONBOARD
         </p>
         <h1 className="text-4xl mb-2">Autonomous Growth for Indie Builders</h1>
         <p className="text-muted-foreground">

@@ -11,7 +11,7 @@ export default function SignInForm({ demoMode = false }: SignInFormProps) {
     <main className="min-h-screen flex items-center px-6">
       <div className="bg-card p-8 rounded-sm border border-border shadow-none max-w-md w-full">
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-          [AUTH]
+          AUTH
         </p>
         <h1 className="text-3xl mb-3">Autonomous Growth for Indie Builders</h1>
         <p className="text-muted-foreground mb-8 text-sm">
