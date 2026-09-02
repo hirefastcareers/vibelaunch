@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import { StatusPill } from "@/components/status-pill";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { TrendChart } from "@/components/dashboard/trend-chart";
 
 interface ProviderStats {
   cited: number;
@@ -19,9 +21,32 @@ interface GeoData {
   citationScore: number;
   byProvider: Record<string, ProviderStats>;
   suggestions: string[];
+  citationTrend: Array<{ date: string; [key: string]: number | string }>;
 }
 
 const PROVIDER_KEYS = ["perplexity", "chatgpt", "claude"] as const;
+const PROVIDER_LABELS: Record<(typeof PROVIDER_KEYS)[number], string> = {
+  perplexity: "Perplexity",
+  chatgpt: "ChatGPT",
+  claude: "Claude",
+};
+
+/** Feature the leader only when it is clearly ahead — within 5pts, show all comparison-tone. */
+function featuredProvider(byProvider: GeoData["byProvider"] | undefined): string | null {
+  if (!byProvider) return null;
+
+  const ranked = PROVIDER_KEYS.map((key) => {
+    const provider = byProvider[key];
+    if (!provider || provider.total <= 0) return null;
+    return { key, rate: (provider.cited / provider.total) * 100 };
+  }).filter((row): row is { key: (typeof PROVIDER_KEYS)[number]; rate: number } => row != null);
+
+  if (ranked.length === 0) return null;
+  ranked.sort((a, b) => b.rate - a.rate);
+  const [top, next] = ranked;
+  if (next != null && top.rate - next.rate < 5) return null;
+  return top.key;
+}
 
 export function GeoCard() {
   const [data, setData] = useState<GeoData | null>(null);
@@ -55,7 +80,9 @@ export function GeoCard() {
     return <Skeleton className="h-72 w-full" />;
   }
 
-  const strong = (data?.citationScore ?? 0) >= 50;
+  const citationTrend = data?.citationTrend ?? [];
+  const showCitationChart = citationTrend.length >= 2;
+  const featured = featuredProvider(data?.byProvider);
 
   return (
     <Card>
@@ -79,16 +106,8 @@ export function GeoCard() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            CITED
-          </p>
-          <div className="flex items-baseline gap-2">
-            <span className="font-mono text-4xl tabular-nums">{data?.citationScore ?? 0}%</span>
-            <StatusPill tone={strong ? "ok" : "warn"}>
-              {strong ? "[STRONG]" : "[GROWING]"}
-            </StatusPill>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <StatCard label="CITED" value={`${data?.citationScore ?? 0}%`} />
+          <p className="text-xs text-muted-foreground mt-2">
             Niche AI prompts where {data?.projectName ?? "your product"} is recommended
           </p>
         </div>
@@ -110,6 +129,28 @@ export function GeoCard() {
             })}
           </div>
         </div>
+
+        {showCitationChart ? (
+          <TrendChart
+            data={citationTrend}
+            series={PROVIDER_KEYS.map((key) => ({
+              key,
+              label: PROVIDER_LABELS[key],
+              featured: featured === key,
+            }))}
+            xKey="date"
+          />
+        ) : (
+          <div>
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+              [EMPTY]
+            </p>
+            <h2 className="text-2xl">Not enough data yet</h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Citation trend builds up as weekly sweeps run — check back after a few cycles.
+            </p>
+          </div>
+        )}
 
         <div>
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">

@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import { SUITE_LABELS, type DiagnosticSuite } from "@/lib/diagnostics/types";
 import { StatusPill, statusLabel, statusTone } from "@/components/status-pill";
+import { StatCard } from "@/components/dashboard/stat-card";
 
 interface TestRunRecord {
   id: string;
@@ -122,8 +123,8 @@ export function DiagnosticCard() {
         </Button>
       </CardHeader>
       <CardContent className="space-y-5">
-        <div className="flex items-baseline gap-3">
-          <span className="font-mono text-3xl tabular-nums">{data?.overallScore ?? 0}%</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <StatCard label="OVERALL" value={`${data?.overallScore ?? 0}%`} />
           <StatusPill tone={statusTone(data?.overallStatus ?? "unknown")}>
             {statusLabel(data?.overallStatus ?? "unknown")}
           </StatusPill>

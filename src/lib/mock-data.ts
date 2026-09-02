@@ -446,6 +446,14 @@ export const MOCK_GEO = {
     "Publish benchmark data or usage stats - ChatGPT citations increase when pages contain specific, verifiable numbers.",
     'Create content targeting: "Top tools for sorano" - you\'re not yet cited for this high-intent query.',
   ],
+  citationTrend: [
+    { date: "2026-07-27", perplexity: 66.7, chatgpt: 33.3 },
+    { date: "2026-08-03", perplexity: 66.7, chatgpt: 33.3, claude: 0 },
+    { date: "2026-08-10", perplexity: 100, chatgpt: 33.3, claude: 0 },
+    { date: "2026-08-17", perplexity: 100, chatgpt: 66.7, claude: 0 },
+    { date: "2026-08-24", perplexity: 100, chatgpt: 66.7 },
+    { date: "2026-08-31", perplexity: 100, chatgpt: 66.7, claude: 0 },
+  ],
 };
 
 export const MOCK_GEO_CHECK = {
@@ -465,6 +473,7 @@ export const MOCK_GEO_CHECK = {
   byProvider: MOCK_GEO.byProvider,
   recentMetrics: MOCK_GEO.recentMetrics,
   suggestions: MOCK_GEO.suggestions,
+  citationTrend: MOCK_GEO.citationTrend,
 };
 
 const diagExecutedAt = new Date().toISOString();

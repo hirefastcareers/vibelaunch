@@ -3,7 +3,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { isDemoMode, demoDelay } from "@/lib/demo-mode";
 import { MOCK_GEO } from "@/lib/mock-data";
-import { buildGeoDashboardData } from "@/lib/geo/analytics";
+import { buildCitationTrend, buildGeoDashboardData } from "@/lib/geo/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   const metrics = await prisma.geoMetric.findMany({
     where: { projectId: project.id },
     orderBy: { checkedAt: "desc" },
-    take: 50,
+    take: 90,
   });
 
   const dashboard = buildGeoDashboardData(metrics, project.name);
@@ -44,5 +44,6 @@ export async function GET(req: NextRequest) {
     projectId: project.id,
     projectName: project.name,
     ...dashboard,
+    citationTrend: buildCitationTrend(metrics),
   });
 }

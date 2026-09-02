@@ -109,3 +109,48 @@ export function buildGeoDashboardData(
     suggestions: generateGeoSuggestions(metrics, projectName),
   };
 }
+
+export interface CitationTrendPoint {
+  date: string;
+  [provider: string]: number | string;
+}
+
+type WeekCounts = Record<string, { cited: number; total: number }>;
+
+/** Monday (UTC) of the ISO week that contains `input`. */
+function isoWeekStart(input: Date): string {
+  const d = new Date(Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), input.getUTCDate()));
+  const day = d.getUTCDay();
+  const isoDay = day === 0 ? 7 : day;
+  d.setUTCDate(d.getUTCDate() - (isoDay - 1));
+  return d.toISOString().split("T")[0];
+}
+
+export function buildCitationTrend(metrics: GeoMetricRecord[]): CitationTrendPoint[] {
+  const weeks = new Map<string, WeekCounts>();
+
+  for (const metric of metrics) {
+    const checked = new Date(metric.checkedAt);
+    if (Number.isNaN(checked.getTime())) continue;
+
+    const week = isoWeekStart(checked);
+    const counts = weeks.get(week) ?? {};
+    const provider = metric.llmProvider;
+    const current = counts[provider] ?? { cited: 0, total: 0 };
+    current.total += 1;
+    if (metric.cited) current.cited += 1;
+    counts[provider] = current;
+    weeks.set(week, counts);
+  }
+
+  return [...weeks.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, counts]) => {
+      const point: CitationTrendPoint = { date };
+      for (const [provider, { cited, total }] of Object.entries(counts)) {
+        if (total === 0) continue;
+        point[provider] = Math.round((cited / total) * 1000) / 10;
+      }
+      return point;
+    });
+}
