@@ -77,9 +77,12 @@ export function CitationSweep({
   }, [inView, citations.length]);
 
   return (
-    <div ref={rootRef} className="flex flex-col bg-ink-panel p-[30px]">
-      <div className="mb-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-        <span>CITATION CHECK · WEEKLY SWEEP</span>
+    <div
+      ref={rootRef}
+      className="flex flex-col rounded-3xl border border-[#E6E3DE] bg-[#FAFAF8] p-8 shadow-sm"
+    >
+      <div className="mb-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+        <span>Citation check · Weekly sweep</span>
       </div>
       <motion.div
         variants={listVariants}
@@ -90,22 +93,22 @@ export function CitationSweep({
           <motion.div
             key={cite.engine}
             variants={{ hidden: {}, visible: {} }}
-            className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-ink-rule py-[15px] font-mono text-xs"
+            className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-[#E6E3DE] py-4 text-sm"
           >
-            <span className="text-[#E5E0D8]">{cite.engine}</span>
-            <span className="relative min-w-[7.5rem] text-right">
+            <span className="font-medium text-foreground">{cite.engine}</span>
+            <span className="relative min-w-[8.5rem] text-right">
               <motion.span
                 variants={askingVariants}
-                className="absolute inset-0 text-[10px] tracking-[0.08em] text-[#8C857A]"
+                className="absolute inset-0 text-[12px] tracking-[0.04em] text-muted-foreground"
               >
-                ASKING...
+                Asking...
               </motion.span>
               <motion.span
                 variants={resultVariants}
                 className={
                   cite.cited
-                    ? "text-[10px] tracking-[0.08em] text-primary"
-                    : "text-[10px] tracking-[0.08em] text-[#8C857A]"
+                    ? "inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-[12px] font-medium tracking-[0.04em] text-primary"
+                    : "text-[12px] tracking-[0.04em] text-muted-foreground"
                 }
               >
                 {cite.state}
@@ -114,7 +117,7 @@ export function CitationSweep({
           </motion.div>
         ))}
       </motion.div>
-      <p className="mb-0 mt-5 font-mono text-[10.5px] leading-[1.6] tracking-[0.03em] text-[#8C857A]">
+      <p className="mb-0 mt-5 text-[13px] leading-[1.6] text-muted-foreground">
         A missing citation opens a task with the specific page and fact to add.
       </p>
     </div>

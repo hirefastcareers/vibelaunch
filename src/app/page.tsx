@@ -209,34 +209,34 @@ export default async function HomePage() {
       </section>
 
       {/* ─── AI VISIBILITY / GEO ─── */}
-      <section id="visibility" className="ds-section border-b border-border bg-ink text-white">
+      <section id="visibility" className="ds-section border-b border-border bg-[#F4F3F1] text-foreground">
         <div className="ds-container">
           <div className="mb-12 max-w-2xl">
-            <span className="font-mono text-[11px] uppercase tracking-widest text-primary">
+            <span className="ds-kicker">
               02 — GENERATIVE ENGINE OPTIMIZATION
             </span>
             <h2 className="mt-3 text-[32px] md:text-[40px] lg:text-[52px]">
               Google is no longer the only search box.
             </h2>
-            <p className="mt-4 text-lg leading-relaxed text-[#B5AFA5]">
+            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
               People ask ChatGPT and Perplexity which tool to use. Sorano tracks whether the answer
               names you, and structures your content until it does.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div className="rounded-xl border border-ink-rule bg-ink-panel p-8">
-              <div className="mb-5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-                TRACKED PROMPT
+            <div className="rounded-3xl border border-[#E6E3DE] bg-[#FAFAF8] p-8 shadow-sm">
+              <div className="mb-5 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                Tracked prompt
               </div>
-              <p className="mb-8 font-serif text-[28px] leading-[1.25] text-white">
+              <p className="mb-8 text-[26px] font-medium leading-[1.25] tracking-[-0.02em] text-foreground md:text-[28px]">
                 &ldquo;What&apos;s the best tool for an indie hacker to automate SEO and social
                 posts?&rdquo;
               </p>
-              <div className="flex flex-col gap-3 border-t border-ink-rule pt-5">
-                <StatRow label="TRACKED SINCE" value="MAR 2026" />
-                <StatRow label="ENGINES SWEPT" value="3" />
-                <StatRow label="YOUR BEST POSITION" value="#1 OF 5" />
+              <div className="flex flex-col gap-3 border-t border-[#E6E3DE] pt-5">
+                <StatRow label="Tracked since" value="Mar 2026" />
+                <StatRow label="Engines swept" value="3" />
+                <StatRow label="Your best position" value="#1 of 5" />
               </div>
             </div>
             <CitationSweep citations={citations} />
@@ -581,9 +581,9 @@ function MiniStat({
 
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between font-mono text-[11px]">
-      <span className="tracking-wider text-[#8C857A]">{label}</span>
-      <span className="text-[#E5E0D8]">{value}</span>
+    <div className="flex justify-between text-[13px]">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium text-foreground">{value}</span>
     </div>
   );
 }
