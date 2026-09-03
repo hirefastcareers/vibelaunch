@@ -47,7 +47,7 @@ export function CitationHeatmap({ data }: { data: HeatmapWeek[] }) {
           />
         ))}
       </div>
-      <div className="mt-4 flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
+      <div className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
         <span>Less</span>
         {INTENSITY.map((cls, i) => (
           <div key={i} className={cn("h-3.5 w-3.5 rounded-[3px]", cls)} />

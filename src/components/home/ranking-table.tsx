@@ -14,18 +14,18 @@ export interface RankingRow {
 const TREND_DISPLAY = {
   up: { icon: "▲", className: "text-green-600" },
   down: { icon: "▼", className: "text-red-500" },
-  stable: { icon: "—", className: "text-muted-foreground" },
+  stable: { icon: "-", className: "text-muted-foreground" },
   new: { icon: "★", className: "text-primary" },
 } as const;
 
 function PositionCell({ pos }: { pos: number | null }) {
-  if (pos === null) return <span className="text-muted-foreground">—</span>;
+  if (pos === null) return <span className="text-muted-foreground">-</span>;
   return (
     <span
       className={cn(
-        "inline-flex h-7 w-7 items-center justify-center rounded-md font-mono text-xs font-medium",
+        "inline-flex h-7 w-7 items-center justify-center rounded-md text-xs font-medium",
         pos <= 2 && "bg-primary/10 text-primary",
-        pos === 3 && "bg-blue-50 text-blue-600",
+        pos === 3 && "bg-muted text-foreground",
         pos > 3 && "bg-muted text-muted-foreground"
       )}
     >
@@ -64,11 +64,11 @@ export function RankingTable({ rows }: { rows: RankingRow[] }) {
                   <PositionCell pos={row.claude} />
                 </td>
                 <td className="text-center">
-                  <span className={cn("font-mono text-xs", trend.className)}>
+                  <span className={cn("text-xs font-medium", trend.className)}>
                     {trend.icon}
                   </span>
                 </td>
-                <td className="text-right font-mono text-[11px] text-muted-foreground">
+                <td className="text-right text-[12px] text-muted-foreground">
                   {row.lastChecked}
                 </td>
               </tr>

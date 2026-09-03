@@ -34,12 +34,12 @@ export default function SignInForm() {
             <button
               type="button"
               onClick={() => signIn("twitter", { callbackUrl: "/dashboard" })}
-              className="w-full rounded-xl bg-primary px-6 py-4 font-mono text-xs tracking-[0.1em] text-primary-foreground shadow-sm transition-all hover:bg-accent hover:shadow-md"
+              className="w-full rounded-xl bg-primary px-6 py-4 text-xs font-medium tracking-[0.04em] text-primary-foreground shadow-sm transition-all hover:bg-accent hover:shadow-md"
             >
-              SIGN IN WITH X
+              Sign in with X
             </button>
 
-            <p className="mt-5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+            <p className="mt-5 text-[11px] text-muted-foreground">
               You will return to your dashboard after authorizing Sorano.
             </p>
           </div>

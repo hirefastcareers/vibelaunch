@@ -242,7 +242,7 @@ export function PlatformTabs() {
               <div className="flex items-center justify-between gap-3">
                 <span
                   className={cn(
-                    "font-mono text-[10px] tracking-[0.14em]",
+                    "text-[11px] font-medium tracking-[0.12em]",
                     selected ? "text-primary-foreground/80" : "text-primary"
                   )}
                 >
@@ -250,7 +250,7 @@ export function PlatformTabs() {
                 </span>
                 <span
                   className={cn(
-                    "inline-flex h-7 min-w-7 items-center justify-center rounded-lg px-2 font-mono text-[10px] tracking-widest",
+                    "inline-flex h-7 min-w-7 items-center justify-center rounded-lg px-2 text-[11px] font-medium tracking-[0.12em]",
                     selected ? "bg-background/10 text-background/75" : "bg-muted text-muted-foreground"
                   )}
                 >
@@ -258,7 +258,7 @@ export function PlatformTabs() {
                 </span>
               </div>
               <div>
-                <div className="font-mono text-[11px] uppercase tracking-widest opacity-80">
+                <div className="text-[11px] font-medium uppercase tracking-[0.12em] opacity-80">
                   {mod.short}
                 </div>
                 <div className="mt-2 text-base font-medium tracking-[-0.02em]">
@@ -279,10 +279,10 @@ export function PlatformTabs() {
       >
         <div className="flex flex-col gap-6 rounded-3xl border border-border bg-background p-6 shadow-sm md:p-8">
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-mono text-[11px] tracking-wider text-primary">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-[11px] font-medium tracking-[0.08em] text-primary">
               {active.n}
             </span>
-            <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+            <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               {active.meta}
             </span>
           </div>
@@ -298,7 +298,7 @@ export function PlatformTabs() {
                 key={bullet}
                 className="flex items-start gap-3 rounded-2xl border border-border bg-card px-4 py-3.5 text-[14.5px] leading-[1.6] text-foreground"
               >
-                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-[10px] text-primary">
+                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
                   +
                 </span>
                 <span>{bullet}</span>
@@ -314,7 +314,7 @@ export function PlatformTabs() {
 
         <div className="rounded-3xl border border-border bg-card p-4 shadow-sm md:p-5">
           <div className="overflow-hidden rounded-[24px] border border-border bg-background">
-            <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-3 font-mono text-[10px] tracking-[0.12em] text-muted-foreground">
+            <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-3 text-[11px] font-medium tracking-[0.12em] text-muted-foreground">
               <span>{active.screen}</span>
               <span>{active.screenMeta}</span>
             </div>
@@ -347,14 +347,14 @@ export function PlatformTabs() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -4 }}
                             transition={SNAP}
-                            className="absolute inset-0 font-mono text-[10px] tracking-[0.08em] text-muted-foreground"
+                            className="absolute inset-0 text-[11px] font-medium tracking-[0.06em] text-muted-foreground"
                           >
                             {sub}
                           </motion.span>
                         </AnimatePresence>
                       </div>
                     ) : (
-                      <span className="font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+                      <span className="text-[11px] font-medium tracking-[0.06em] text-muted-foreground">
                         {row.sub}
                       </span>
                     )}
@@ -369,7 +369,7 @@ export function PlatformTabs() {
                           exit={{ opacity: 0, y: -4 }}
                           transition={SNAP}
                           className={cn(
-                            "absolute inset-0 whitespace-nowrap rounded-full px-2 py-0.5 font-mono text-[10px] tracking-[0.08em]",
+                            "absolute inset-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-medium tracking-[0.06em]",
                             tint === "accent"
                               ? "bg-primary/10 text-primary"
                               : "bg-muted text-muted-foreground"
@@ -382,7 +382,7 @@ export function PlatformTabs() {
                   ) : (
                     <span
                       className={cn(
-                        "whitespace-nowrap rounded-full px-2 py-1 font-mono text-[10px] tracking-[0.08em]",
+                        "whitespace-nowrap rounded-full px-2 py-1 text-[11px] font-medium tracking-[0.06em]",
                         row.tint === "accent"
                           ? "bg-primary/10 text-primary"
                           : "bg-muted text-muted-foreground"
@@ -395,7 +395,7 @@ export function PlatformTabs() {
               );
             })}
             </div>
-            <div className="flex items-center justify-between border-t border-border bg-card px-4 py-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+            <div className="flex items-center justify-between border-t border-border bg-card px-4 py-3 text-[11px] font-medium tracking-[0.06em] text-muted-foreground">
               <span className="inline-flex items-center gap-2">
                 <span className="inline-block h-2 w-2 rounded-full bg-primary" />
                 Live module preview
@@ -406,7 +406,7 @@ export function PlatformTabs() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 border-t border-border bg-background px-5 py-4 font-mono text-[11px] tracking-[0.04em] text-muted-foreground md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-2 border-t border-border bg-background px-5 py-4 text-[12px] tracking-[0.02em] text-muted-foreground md:flex-row md:items-center md:justify-between">
         <span className="inline-flex items-center gap-2">
           <span className="text-primary">↺</span>
           Engagement data feeds back into generation. Week four writes better hooks than week one.
@@ -428,7 +428,7 @@ function PreviewStat({
 }) {
   return (
     <div className="bg-background px-4 py-4">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
         {label}
       </div>
       <div className={cn("mt-1 text-lg font-medium tracking-[-0.02em]", accent ? "text-primary" : "text-foreground")}>
@@ -441,7 +441,7 @@ function PreviewStat({
 function MetricChip({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-border bg-background px-3 py-3">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      <div className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
         {label}
       </div>
       <div className="mt-1 text-sm font-medium text-foreground">{value}</div>

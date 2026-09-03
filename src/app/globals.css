@@ -48,7 +48,7 @@
     --chart-1: 16 100% 50%;
     --chart-2: 217 91% 60%;
     --chart-3: 142 72% 38%;
-    --chart-4: 262 83% 58%;
+    --chart-4: 215 16% 47%;
     --chart-5: 38 92% 50%;
   }
 
@@ -108,23 +108,23 @@
   }
 
   .ds-label {
-    @apply font-mono text-[11px] uppercase tracking-widest text-muted-foreground;
+    @apply text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground;
   }
 
   .ds-kicker {
-    @apply font-mono text-[11px] uppercase tracking-widest text-primary;
+    @apply text-[11px] font-medium uppercase tracking-[0.14em] text-primary;
   }
 
   .ds-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 font-mono text-xs font-medium tracking-[0.08em] text-primary-foreground shadow-sm transition-all duration-150 hover:bg-accent hover:shadow-md;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-xs font-medium tracking-[0.04em] text-primary-foreground shadow-sm transition-all duration-150 hover:bg-accent hover:shadow-md;
   }
 
   .ds-btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-6 py-3.5 font-mono text-xs font-medium tracking-[0.08em] text-foreground shadow-sm transition-all duration-150 hover:bg-muted hover:shadow-md;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-6 py-3.5 text-xs font-medium tracking-[0.04em] text-foreground shadow-sm transition-all duration-150 hover:bg-muted hover:shadow-md;
   }
 
   .ds-btn-ink {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-5 py-2.5 font-mono text-[11px] tracking-[0.08em] text-white shadow-sm transition-all duration-150 hover:bg-ink-panel;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-foreground px-5 py-2.5 text-[11px] font-medium tracking-[0.04em] text-background shadow-sm transition-all duration-150 hover:opacity-90;
   }
 
   .ds-card {
@@ -136,7 +136,7 @@
   }
 
   .ds-badge {
-    @apply inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider;
+    @apply inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider;
   }
 
   .ds-table {
@@ -144,7 +144,7 @@
   }
 
   .ds-table th {
-    @apply border-b-2 border-border bg-muted/50 px-4 py-3 text-left font-mono text-[10px] uppercase tracking-widest text-muted-foreground;
+    @apply border-b-2 border-border bg-muted/50 px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground;
   }
 
   .ds-table td {
