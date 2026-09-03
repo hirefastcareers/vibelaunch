@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getSession } from "@/lib/session";
-import { isDemoMode } from "@/lib/demo-mode";
 import { CitationSweep } from "@/components/home/citation-sweep";
 import { PlatformTabs } from "@/components/home/platform-tabs";
 import { SectionIndex } from "@/components/home/section-index";
@@ -151,7 +150,7 @@ const footerCols = [
       { label: "Articles & SEO", href: "#platform" },
       { label: "AI visibility", href: "#visibility" },
       { label: "Pricing", href: "#pricing" },
-      { label: "Dashboard demo", href: "/auth/signin" },
+      { label: "Sign in", href: "/auth/signin" },
     ],
   },
   {
@@ -176,11 +175,10 @@ const footerCols = [
 
 export default async function HomePage() {
   const session = await getSession();
-  const demo = isDemoMode();
   const signedIn = Boolean(session);
   const ctaHref = signedIn ? "/dashboard" : "/auth/signin";
-  const heroCta = signedIn ? "GO TO DASHBOARD" : "TRY DEMO DASHBOARD";
-  const navCta = signedIn ? "DASHBOARD" : demo ? "DEMO LOGIN" : "SIGN IN WITH X";
+  const heroCta = signedIn ? "GO TO DASHBOARD" : "SIGN IN WITH X";
+  const navCta = signedIn ? "DASHBOARD" : "SIGN IN WITH X";
   const bottomCta = signedIn ? "GO TO DASHBOARD" : "SIGN IN WITH X";
   const userLabel = session?.user.xUsername
     ? `@${session.user.xUsername}`
@@ -188,7 +186,6 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <DemoBanner visible={demo} />
       <SiteNav signedIn={signedIn} navCta={navCta} userLabel={userLabel} />
 
       <section className="border-b border-border bg-background">
@@ -345,7 +342,7 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            <CitationSweep citations={citations} simulated={demo} />
+            <CitationSweep citations={citations} />
           </div>
         </div>
       </section>
@@ -519,7 +516,7 @@ export default async function HomePage() {
               {bottomCta}
             </Link>
             <span className="font-mono text-[11px] tracking-[0.04em] text-muted-foreground">
-              Demo dashboard. No card, no setup call.
+              Sign in with X. No card, no setup call.
             </span>
           </div>
         </div>
@@ -554,23 +551,6 @@ export default async function HomePage() {
         </div>
       </footer>
     </main>
-  );
-}
-
-function DemoBanner({ visible }: { visible: boolean }) {
-  if (!visible) return null;
-
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-2.5 bg-ink px-6 py-[9px] font-mono text-[11px] tracking-[0.06em] text-surface-muted">
-      <span className="text-primary">[PREVIEW]</span>
-      <span>Demo login to explore the full dashboard</span>
-      <Link
-        href="/auth/signin"
-        className="text-background underline underline-offset-[3px] hover:text-primary"
-      >
-        → ENTER
-      </Link>
-    </div>
   );
 }
 

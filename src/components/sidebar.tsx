@@ -8,11 +8,11 @@ import { Logo } from "@/components/logo";
 
 const navItems = [
   { href: "/dashboard", label: "Command Center", key: "01" },
-  { href: "/dashboard/queue", label: "AI Post Generator & Hooks", key: "02" },
-  { href: "/dashboard#articles", label: "Auto-Published Articles", key: "03" },
-  { href: "/dashboard#ai-search", label: "AI Search (ChatGPT/Perplexity)", key: "04" },
+  { href: "/dashboard/queue", label: "AI Post Generator", key: "02" },
+  { href: "/dashboard#articles", label: "Published Articles", key: "03" },
+  { href: "/dashboard#ai-search", label: "AI Search", key: "04" },
   { href: "/dashboard/replies", label: "Smart Replies", key: "05" },
-  { href: "/dashboard/diagnostics", label: "App Health & Audits", key: "06" },
+  { href: "/dashboard/diagnostics", label: "App Health", key: "06" },
   { href: "/onboard", label: "Onboard Project", key: "07" },
   { href: "/dashboard/billing", label: "Billing", key: "08" },
 ];
@@ -20,22 +20,23 @@ const navItems = [
 interface SidebarProps {
   userLabel?: string;
   onOpenCommandPalette?: () => void;
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
+export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: SidebarProps) {
   const pathname = usePathname();
 
   return (
     <aside className="flex h-full w-64 flex-col border-r border-border bg-card">
       <div className="flex h-14 items-center px-4">
-        <Link href="/dashboard" className="flex items-center">
+        <Link href="/dashboard" className="flex items-center" onClick={onNavigate}>
           <Logo size={28} />
         </Link>
       </div>
 
       <Separator />
 
-      <nav className="flex-1 space-y-0 p-2">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
         {navItems.map((item) => {
           const itemPath = item.href.split("#")[0];
           const active = pathname === itemPath && !item.href.includes("#");
@@ -43,26 +44,33 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
             <Link
               key={item.label}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
-                "flex items-baseline gap-2 rounded-sm border-l-2 border-transparent px-2 py-2 text-sm transition-colors",
+                "flex items-baseline gap-2 rounded-md border-l-2 border-transparent px-2.5 py-2.5 text-sm transition-colors",
                 active
-                  ? "border-l-2 border-primary bg-secondary text-foreground"
+                  ? "border-l-primary bg-secondary text-foreground"
                   : "text-muted-foreground hover:bg-secondary hover:text-foreground"
               )}
             >
-              <span className={cn("font-mono text-[10px]", active ? "text-primary" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "font-mono text-[10px] tracking-wider",
+                  active ? "text-primary" : "text-muted-foreground"
+                )}
+              >
                 {item.key}
               </span>
-              <span>{item.label}</span>
+              <span className="leading-snug">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-3 space-y-3 border-t border-border">
+      <div className="space-y-3 border-t border-border p-3">
         <button
+          type="button"
           onClick={onOpenCommandPalette}
-          className="flex w-full items-center justify-between rounded-full border border-border bg-transparent px-4 py-2 text-xs text-muted-foreground hover:bg-accent transition-colors"
+          className="flex w-full items-center justify-between rounded-full border border-border bg-transparent px-4 py-2 text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         >
           <span className="font-mono text-[10px] tracking-wider">QUICK ACTIONS</span>
           <kbd className="rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[10px]">
@@ -70,7 +78,9 @@ export function Sidebar({ userLabel, onOpenCommandPalette }: SidebarProps) {
           </kbd>
         </button>
         {userLabel && (
-          <p className="truncate font-mono text-[10px] text-muted-foreground px-1">{userLabel}</p>
+          <p className="truncate px-1 font-mono text-[10px] tracking-wider text-muted-foreground">
+            {userLabel}
+          </p>
         )}
       </div>
     </aside>

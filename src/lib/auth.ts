@@ -1,40 +1,15 @@
 import { NextAuthOptions } from "next-auth";
 import TwitterProvider from "next-auth/providers/twitter";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
 import { ensureAuthEnv } from "./env";
-import { isDemoMode } from "./demo-mode";
-import { DEMO_USER } from "./mock-data";
 
 ensureAuthEnv();
 
-const demoProvider = CredentialsProvider({
-  id: "demo",
-  name: "Demo",
-  credentials: {
-    username: { label: "Username", type: "text" },
-    password: { label: "Password", type: "password" },
-  },
-  async authorize(credentials) {
-    if (
-      credentials?.username === "demo" &&
-      credentials?.password === "demo"
-    ) {
-      return {
-        id: DEMO_USER.id,
-        name: DEMO_USER.name,
-        email: DEMO_USER.email,
-      };
-    }
-    return null;
-  },
-});
-
 const twitterProvider = TwitterProvider({
-  clientId: process.env.X_CLIENT_ID ?? "test-x-client-id",
-  clientSecret: process.env.X_CLIENT_SECRET ?? "test-x-client-secret",
+  clientId: process.env.X_CLIENT_ID ?? "",
+  clientSecret: process.env.X_CLIENT_SECRET ?? "",
   version: "2.0",
   authorization: {
     params: {
@@ -43,30 +18,7 @@ const twitterProvider = TwitterProvider({
   },
 });
 
-const demoAuthOptions: NextAuthOptions = {
-  providers: [demoProvider],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.xUsername = DEMO_USER.xUsername;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user && token) {
-        session.user.id = token.id as string;
-        session.user.xUsername = token.xUsername as string;
-      }
-      return session;
-    },
-  },
-  pages: { signIn: "/auth/signin" },
-  session: { strategy: "jwt" },
-  secret: process.env.NEXTAUTH_SECRET,
-};
-
-const productionAuthOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [twitterProvider],
   callbacks: {
@@ -100,7 +52,3 @@ const productionAuthOptions: NextAuthOptions = {
   session: { strategy: "database" },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
-export const authOptions: NextAuthOptions = isDemoMode()
-  ? demoAuthOptions
-  : productionAuthOptions;

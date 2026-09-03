@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
 import { getBaseUrl } from "@/lib/env";
-import { isDemoMode, getMockTestResults } from "@/lib/demo-mode";
 
 export interface TestSuiteResult {
   suite: "seo_audit" | "feedback_loop" | "media_render" | "geo_audit";
@@ -11,8 +10,6 @@ export interface TestSuiteResult {
 }
 
 export async function runSeoAudit(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("seo_audit") as TestSuiteResult;
-
   try {
     const entry = await db.changelogEntry.findFirst({
       where: { projectId, published: true },
@@ -70,8 +67,6 @@ export async function runSeoAudit(projectId: string): Promise<TestSuiteResult> {
 }
 
 export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("feedback_loop") as TestSuiteResult;
-
   try {
     const vectors = await db.postEmbedding.findMany({
       where: { post: { projectId } },
@@ -106,8 +101,6 @@ export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteR
 const CAPTURE_FRESH_MS = 24 * 60 * 60 * 1000;
 
 export async function runMediaValidation(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("media_render") as TestSuiteResult;
-
   try {
     const project = await db.project.findUnique({ where: { id: projectId } });
 
@@ -162,8 +155,6 @@ export async function runMediaValidation(projectId: string): Promise<TestSuiteRe
 }
 
 export async function runGeoAudit(projectId: string): Promise<TestSuiteResult> {
-  if (isDemoMode()) return getMockTestResults("geo_audit") as TestSuiteResult;
-
   try {
     const metrics = await db.geoMetric.findMany({
       where: { projectId },
@@ -204,21 +195,19 @@ export async function runFullDiagnosticSuite(projectId: string) {
   const results = [seo, feedback, media, geo];
   const overallScore = results.reduce((acc, r) => acc + r.score, 0) / results.length;
 
-  if (!isDemoMode()) {
-    await Promise.all(
-      results.map((r) =>
-        db.testRun.create({
-          data: {
-            projectId,
-            suite: r.suite,
-            status: r.status,
-            score: r.score,
-            details: r.details as Prisma.InputJsonValue,
-          },
-        })
-      )
-    );
-  }
+  await Promise.all(
+    results.map((r) =>
+      db.testRun.create({
+        data: {
+          projectId,
+          suite: r.suite,
+          status: r.status,
+          score: r.score,
+          details: r.details as Prisma.InputJsonValue,
+        },
+      })
+    )
+  );
 
   return {
     overallScore: Math.round(overallScore * 10) / 10,

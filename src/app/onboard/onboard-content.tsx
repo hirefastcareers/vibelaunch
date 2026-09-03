@@ -76,9 +76,9 @@ export default function OnboardPage() {
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
           ONBOARD
         </p>
-        <h1 className="text-5xl mb-2">Autonomous Growth for Indie Builders</h1>
+        <h1 className="text-5xl mb-2">Onboard your product</h1>
         <p className="text-muted-foreground">
-          Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically.
+          Paste a URL. Sorano scrapes context, then starts drafting posts, articles, and citation checks from it.
         </p>
       </div>
 
@@ -104,7 +104,8 @@ export default function OnboardPage() {
                 name="targetUrl"
                 type="url"
                 required
-                defaultValue="https://sorano.app"
+                defaultValue=""
+                placeholder="https://yourproduct.com"
                 disabled={loading}
               />
             </div>
@@ -115,7 +116,8 @@ export default function OnboardPage() {
                 id="projectName"
                 name="projectName"
                 required
-                defaultValue="Sorano"
+                defaultValue=""
+                placeholder="Your product name"
                 disabled={loading}
               />
             </div>

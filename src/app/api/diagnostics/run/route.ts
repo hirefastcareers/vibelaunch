@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/db";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
 import { runAllDiagnostics, runDiagnosticSuite } from "@/lib/diagnostics/agent";
 import type { DiagnosticSuite } from "@/lib/diagnostics/types";
 import { ALL_SUITES } from "@/lib/diagnostics/types";
@@ -18,24 +17,6 @@ export async function POST(req: NextRequest) {
     projectId?: string;
     suite?: DiagnosticSuite;
   };
-
-  if (isDemoMode()) {
-    await demoDelay(1500);
-    const projectId = body.projectId ?? "demo-project-sorano";
-    if (body.suite && ALL_SUITES.includes(body.suite)) {
-      const result = await runDiagnosticSuite(projectId, body.suite);
-      return NextResponse.json({
-        projectId,
-        projectName: "Sorano",
-        overallScore: result.score,
-        overallStatus: result.status,
-        suites: [result],
-        executedAt: new Date().toISOString(),
-      });
-    }
-    const summary = await runAllDiagnostics(projectId);
-    return NextResponse.json({ ...summary, projectName: "Sorano" });
-  }
 
   const userId = session.user.id;
   const project = body.projectId

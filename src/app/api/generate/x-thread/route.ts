@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_X_THREAD } from "@/lib/mock-data";
 
 export const dynamic = "force-dynamic";
 
@@ -21,20 +19,6 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const parsed = threadSchema.safeParse(body);
-
-  if (isDemoMode()) {
-    await demoDelay();
-    const parts = parsed.success ? parsed.data.parts : undefined;
-    const thread = parts
-      ? MOCK_X_THREAD.thread.slice(0, parts)
-      : MOCK_X_THREAD.thread;
-
-    return NextResponse.json({
-      ...MOCK_X_THREAD,
-      thread,
-      message: "Demo: X thread generated successfully (simulated)",
-    });
-  }
 
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });

@@ -4,55 +4,49 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Logo } from "@/components/logo";
 
-interface SignInFormProps {
-  demoMode?: boolean;
-}
-
-export default function SignInForm({ demoMode = false }: SignInFormProps) {
+export default function SignInForm() {
   return (
-    <main className="min-h-screen flex items-center px-6">
-      <div className="bg-card p-8 rounded-lg border border-border shadow-none max-w-md w-full">
-        <Link href="/" className="mb-6 inline-flex">
-          <Logo size={36} />
-        </Link>
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-          AUTH
-        </p>
-        <h1 className="text-3xl mb-3">Autonomous Growth for Indie Builders</h1>
-        <p className="text-muted-foreground mb-8 text-sm">
-          {demoMode
-            ? "Preview mode - click Demo Login to explore the full dashboard."
-            : "Turn your product updates into viral social posts, Google-ranked articles, and AI search recommendations - automatically."}
-        </p>
+    <main className="relative min-h-screen overflow-hidden bg-background">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.35] ds-stripe"
+      />
+      <div className="relative mx-auto flex min-h-screen max-w-[1120px] flex-col justify-center px-5 py-16 md:px-8">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          <div>
+            <Link href="/" className="mb-8 inline-flex">
+              <Logo size={40} />
+            </Link>
+            <p className="ds-label mb-4">AUTH</p>
+            <h1 className="mb-4 max-w-[14ch] text-[37px] leading-[1.05] md:text-[48px]">
+              Sign in. Ship once. Get found everywhere.
+            </h1>
+            <p className="max-w-[42ch] text-pretty text-[17px] leading-[1.6] text-ink-muted">
+              Connect X once. Sorano turns your product updates into posts, articles,
+              and AI search citations automatically.
+            </p>
+          </div>
 
-        {demoMode && (
-          <button
-            onClick={() =>
-              signIn("demo", {
-                username: "demo",
-                password: "demo",
-                callbackUrl: "/dashboard",
-              })
-            }
-            className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-full hover:bg-accent font-mono text-sm tracking-wider mb-3"
-          >
-            DEMO LOGIN
-          </button>
-        )}
+          <div className="rounded-xl border border-border bg-card p-8">
+            <p className="ds-label mb-3">START</p>
+            <h2 className="mb-2 text-[28px] leading-tight">Continue with X</h2>
+            <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
+              One login. No API keys to paste, no second CMS, no scheduling tool on the side.
+            </p>
 
-        <button
-          onClick={() => signIn("twitter", { callbackUrl: "/dashboard" })}
-          disabled={demoMode}
-          className="w-full px-6 py-3 border border-border text-foreground rounded-full hover:bg-secondary font-mono text-sm tracking-wider disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          SIGN IN WITH X
-        </button>
+            <button
+              type="button"
+              onClick={() => signIn("twitter", { callbackUrl: "/dashboard" })}
+              className="w-full rounded-full bg-primary px-6 py-3.5 font-mono text-xs tracking-[0.1em] text-primary-foreground transition-colors hover:bg-accent"
+            >
+              SIGN IN WITH X
+            </button>
 
-        {demoMode && (
-          <p className="mt-4 font-mono text-[10px] text-muted-foreground">
-            [PREVIEW] No database or API keys required
-          </p>
-        )}
+            <p className="mt-5 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+              You will return to your dashboard after authorizing Sorano.
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );

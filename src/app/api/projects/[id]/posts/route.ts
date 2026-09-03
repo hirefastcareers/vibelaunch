@@ -3,8 +3,6 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { createPostSchema } from "@/lib/validators";
 import { validateMediaUrls } from "@/lib/media/engine";
-import { enqueuePost } from "@/lib/queue/qstash";
-import { isDemoMode } from "@/lib/demo-mode";
 import { assertCanCreatePost, UsageLimitError } from "@/lib/billing/limits";
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -46,18 +44,16 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (!isDemoMode()) {
-    try {
-      await assertCanCreatePost(session.user.id);
-    } catch (err) {
-      if (err instanceof UsageLimitError) {
-        return NextResponse.json(
-          { error: err.message, code: err.code },
-          { status: 403 },
-        );
-      }
-      throw err;
+  try {
+    await assertCanCreatePost(session.user.id);
+  } catch (err) {
+    if (err instanceof UsageLimitError) {
+      return NextResponse.json(
+        { error: err.message, code: err.code },
+        { status: 403 },
+      );
     }
+    throw err;
   }
 
   const body = await req.json();
