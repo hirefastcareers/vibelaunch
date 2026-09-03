@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +43,12 @@ export function GeneratePostModal({
   const [errorCode, setErrorCode] = useState<string | undefined>();
   const [queueing, setQueueing] = useState(false);
   const [queued, setQueued] = useState(false);
+
+  useEffect(() => {
+    if (!projectId && projects[0]?.id) {
+      setProjectId(projects[0].id);
+    }
+  }, [projectId, projects]);
 
   async function handleGenerate() {
     if (!projectId || !topic) return;
@@ -112,9 +118,15 @@ export function GeneratePostModal({
         </DialogHeader>
 
         <div className="space-y-4">
+          {!projects.length && (
+            <div className="rounded-sm border border-border bg-muted p-3 font-mono text-[12px] text-muted-foreground">
+              No project available yet. Onboard a project before generating posts.
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label>Project</Label>
-            <Select value={projectId} onValueChange={setProjectId}>
+            <Select value={projectId} onValueChange={setProjectId} disabled={!projects.length}>
               <SelectTrigger>
                 <SelectValue placeholder="Select project" />
               </SelectTrigger>
@@ -163,7 +175,11 @@ export function GeneratePostModal({
           )}
 
           <div className="flex flex-col gap-2">
-            <Button onClick={handleGenerate} disabled={loading || !topic} className="w-full font-mono text-xs tracking-wider">
+            <Button
+              onClick={handleGenerate}
+              disabled={loading || !topic || !projectId}
+              className="w-full font-mono text-xs tracking-wider"
+            >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
