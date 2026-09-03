@@ -27,8 +27,8 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-border bg-card">
-      <div className="flex h-14 items-center px-4">
+    <aside className="flex h-full w-72 flex-col border-r border-border bg-gradient-to-b from-card to-background">
+      <div className="flex h-16 items-center px-5">
         <Link href="/dashboard" className="flex items-center" onClick={onNavigate}>
           <Logo size={28} />
         </Link>
@@ -36,7 +36,7 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
 
       <Separator />
 
-      <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
         {navItems.map((item) => {
           const itemPath = item.href.split("#")[0];
           const active = pathname === itemPath && !item.href.includes("#");
@@ -46,15 +46,15 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                "flex items-baseline gap-2 rounded-md border-l-2 border-transparent px-2.5 py-2.5 text-sm transition-colors",
+                "flex items-center gap-3 rounded-xl border border-transparent px-3.5 py-3 text-sm transition-all",
                 active
-                  ? "border-l-primary bg-secondary text-foreground"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "border-border bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:border-border hover:bg-background hover:text-foreground"
               )}
             >
               <span
                 className={cn(
-                  "font-mono text-[10px] tracking-wider",
+                  "inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-muted px-1.5 font-mono text-[10px] tracking-wider",
                   active ? "text-primary" : "text-muted-foreground"
                 )}
               >
@@ -66,14 +66,14 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
         })}
       </nav>
 
-      <div className="space-y-3 border-t border-border p-3">
+      <div className="space-y-3 border-t border-border p-4">
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="flex w-full items-center justify-between rounded-full border border-border bg-transparent px-4 py-2 text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-xs text-muted-foreground shadow-sm transition-all hover:bg-secondary hover:text-foreground hover:shadow-md"
         >
           <span className="font-mono text-[10px] tracking-wider">QUICK ACTIONS</span>
-          <kbd className="rounded-full border border-border bg-background px-2 py-0.5 font-mono text-[10px]">
+          <kbd className="rounded-md border border-border bg-card px-2 py-0.5 font-mono text-[10px]">
             ⌘K
           </kbd>
         </button>

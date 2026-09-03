@@ -25,14 +25,14 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   if (!project) notFound();
 
   return (
-    <main className="min-h-screen max-w-4xl mx-auto px-6 py-8">
+    <main className="mx-auto min-h-screen max-w-5xl px-6 py-8">
       <Link href="/dashboard" className="font-mono text-[11px] tracking-wider text-muted-foreground hover:text-foreground">
         BACK
       </Link>
 
-      <header className="mt-4 mb-8">
+      <header className="mb-8 mt-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-5xl">{project.name}</h1>
+          <h1 className="text-[38px] md:text-[48px]">{project.name}</h1>
           <StatusPill>{`[${project.status}]`}</StatusPill>
         </div>
         {project.tagline && <p className="mt-2 text-muted-foreground">{project.tagline}</p>}
@@ -44,7 +44,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           {project.posts.length === 0 ? (
             <p className="text-muted-foreground text-sm">No posts yet.</p>
           ) : (
-            <ul className="border border-border divide-y divide-border">
+            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border shadow-sm">
               {project.posts.map((post) => (
                 <li key={post.id} className="bg-card p-4 text-sm">
                   <p className="font-mono">{post.content}</p>
@@ -65,7 +65,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           {project.changelog.length === 0 ? (
             <p className="text-muted-foreground text-sm">No changelog entries yet.</p>
           ) : (
-            <ul className="border border-border divide-y divide-border">
+            <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border shadow-sm">
               {project.changelog.map((entry) => (
                 <li key={entry.id}>
                   <Link
@@ -85,7 +85,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       {project.analytics.length > 0 && (
         <section className="mt-8">
           <h2 className="text-2xl mb-4">Virality Snapshots</h2>
-          <div className="border border-border overflow-hidden">
+          <div className="overflow-hidden rounded-xl border border-border shadow-sm">
             <table className="w-full text-sm font-mono">
               <thead className="bg-card text-[10px] tracking-wider text-muted-foreground">
                 <tr>

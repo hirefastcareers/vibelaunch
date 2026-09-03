@@ -57,10 +57,10 @@ export default function BillingContent({
     <div className="max-w-5xl space-y-8 p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+        <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
           BILLING
         </p>
-        <h1 className="text-5xl">Billing</h1>
+        <h1 className="text-[38px] md:text-[48px]">Billing</h1>
         <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
           Project and monthly post limits. Everything else stays available on every plan.
         </p>
@@ -71,7 +71,7 @@ export default function BillingContent({
       </div>
 
       <section className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-lg border border-border bg-card px-5 py-5">
+        <div className="rounded-xl border border-border bg-card px-5 py-5 shadow-sm">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground">POST CAP</p>
           <div className="mt-2 flex items-end justify-between gap-4">
             <p className="font-serif text-[32px] tracking-[-0.02em]">
@@ -84,7 +84,7 @@ export default function BillingContent({
             <div className="h-full bg-primary" style={{ width: `${postUsagePct}%` }} />
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-card px-5 py-5">
+        <div className="rounded-xl border border-border bg-card px-5 py-5 shadow-sm">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT CAP</p>
           <div className="mt-2 flex items-end justify-between gap-4">
             <p className="font-serif text-[32px] tracking-[-0.02em]">

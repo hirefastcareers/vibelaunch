@@ -114,10 +114,10 @@ export default function DiagnosticsPage() {
     <div className="p-6 max-w-5xl space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+          <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
             HEALTH
           </p>
-          <h1 className="text-5xl">App Health & Audits</h1>
+          <h1 className="text-[38px] md:text-[48px]">App Health & Audits</h1>
           <p className="text-muted-foreground text-sm mt-1 max-w-[52ch]">
             Checks Google indexing, AI learning, media, and whether ChatGPT and Perplexity mention you.
           </p>
@@ -133,7 +133,7 @@ export default function DiagnosticsPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-border bg-card px-5 py-4">
+        <div className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             NOTICE
           </p>
@@ -142,7 +142,7 @@ export default function DiagnosticsPage() {
       )}
 
       {!report || report.results.length === 0 ? (
-        <div className="rounded-lg border border-border bg-card px-6 py-8">
+        <div className="rounded-xl border border-border bg-card px-6 py-8 shadow-sm">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             EMPTY
           </p>

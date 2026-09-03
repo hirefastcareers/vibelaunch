@@ -90,17 +90,17 @@ export default function RepliesPage() {
   return (
     <div className="space-y-8 p-6">
       <div>
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+        <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
           REPLIES
         </p>
-        <h1 className="text-5xl">Smart Reply Assistant</h1>
+        <h1 className="text-[38px] md:text-[48px]">Smart Reply Assistant</h1>
         <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
           Turn relevant mentions into warm replies. When the live feed is wired, this page becomes a lightweight reply queue instead of an empty tool screen.
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.35fr_0.95fr]">
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
             <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
               WORKFLOW
@@ -132,7 +132,7 @@ export default function RepliesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
             <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
               READINESS
@@ -158,7 +158,7 @@ export default function RepliesPage() {
       </div>
 
       {Object.keys(feeds).length === 0 && (
-        <div className="rounded-lg border border-border bg-card p-6">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             {configured ? "EMPTY" : "NOT CONFIGURED"}
           </p>
@@ -170,7 +170,7 @@ export default function RepliesPage() {
       )}
 
       {Object.entries(feeds).map(([keyword, items]) => (
-        <Card key={keyword}>
+        <Card key={keyword} className="overflow-hidden">
           <CardHeader>
             <CardTitle className="font-mono text-sm tracking-wider">{keyword}</CardTitle>
           </CardHeader>
@@ -182,7 +182,7 @@ export default function RepliesPage() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-lg border border-border p-4 space-y-3"
+                  className="space-y-3 rounded-xl border border-border bg-background p-4 shadow-sm"
                 >
                   <div>
                     <span className="text-sm font-mono text-muted-foreground">{item.author}</span>

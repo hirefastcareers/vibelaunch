@@ -71,12 +71,12 @@ export default function OnboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-6">
+    <div className="mx-auto max-w-6xl space-y-8 p-6">
       <div className="mb-8">
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+        <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
           ONBOARD
         </p>
-        <h1 className="text-5xl mb-2">Onboard your product</h1>
+        <h1 className="mb-2 text-[38px] md:text-[48px]">Onboard your product</h1>
         <p className="max-w-[56ch] text-sm leading-relaxed text-muted-foreground">
           Give Sorano a real product URL and a writing tone. It will pull context, create the project record,
           and prepare the rest of the growth loop.
@@ -84,7 +84,7 @@ export default function OnboardPage() {
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
             <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
               BEFORE YOU START
@@ -116,17 +116,17 @@ export default function OnboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b border-border bg-muted/30">
             <CardTitle>Project Setup</CardTitle>
             <CardDescription>
               Paste your product URL. We&apos;ll pull in your name, description, and keywords to get started.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6 pt-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <div className="rounded-sm border border-border p-3 font-mono text-[12px] text-muted-foreground">
+                <div className="rounded-xl border border-border bg-background p-3 font-mono text-[12px] text-muted-foreground">
                   <LimitHitNotice code={errorCode} fallback={error} />
                 </div>
               )}
@@ -181,7 +181,7 @@ export default function OnboardPage() {
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="h-11 w-full rounded-xl" disabled={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
