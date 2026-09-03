@@ -47,16 +47,16 @@ export default function CommandCenterPage() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-10">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+      <div className="space-y-8 p-6">
+        <Skeleton className="h-10 w-64" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-none" />
+            <Skeleton key={i} className="h-32 rounded-xl" />
           ))}
         </div>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <Skeleton className="h-72 lg:col-span-2" />
-          <Skeleton className="h-72" />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <Skeleton className="h-80 rounded-xl lg:col-span-2" />
+          <Skeleton className="h-80 rounded-xl" />
         </div>
       </div>
     );
@@ -67,56 +67,54 @@ export default function CommandCenterPage() {
   const showEriChart = eriTrend.length >= 2;
 
   return (
-    <div className="p-6 space-y-10">
+    <div className="space-y-8 p-6">
+      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            OPS
-          </p>
-          <h1 className="text-5xl">Command Center</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <span className="ds-kicker">OPS</span>
+          <h1 className="mt-1 text-[36px] md:text-[44px]">Command Center</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Launch metrics and top-performing content
           </p>
         </div>
         <StatusPill tone="ok">[LEARNING ACTIVE]</StatusPill>
       </div>
 
-      <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+      {/* KPI Row */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="IMP_7D"
+          label="IMP 7D"
           value={(stats?.impressionsVelocity ?? 0).toLocaleString()}
           trend={stats?.impressionsTrend ?? undefined}
-          className="rounded-none border-0"
+          sparkline={eriTrend.length > 1 ? eriTrend.slice(-7).map((d) => d.eri) : undefined}
         />
         <StatCard
-          label="VIRALITY"
+          label="VIRALITY (ERI)"
           value={stats?.avgEri ?? 0}
           trend={stats?.eriTrendPct ?? undefined}
-          className="rounded-none border-0"
         />
         <StatCard
           id="articles"
-          label="INDEXED"
+          label="INDEXED PAGES"
           value={stats?.seoPagesPublished ?? 0}
-          className="scroll-mt-8 rounded-none border-0"
         />
         <StatCard
-          label="IMP_ALL"
+          label="TOTAL IMP"
           value={(stats?.totalImpressions ?? 0).toLocaleString()}
-          className="rounded-none border-0"
         />
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
-        <div className="min-w-0 space-y-8 lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-                ERI
-              </p>
-              <CardTitle className="text-xl">ERI Trend</CardTitle>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
+          <Card className="overflow-hidden rounded-xl shadow-sm">
+            <CardHeader className="border-b border-border bg-muted/30">
+              <div>
+                <span className="ds-kicker">ENGAGEMENT</span>
+                <CardTitle className="mt-1 text-xl">ERI Trend</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               {showEriChart ? (
                 <TrendChart
                   data={eriTrend}
@@ -124,15 +122,10 @@ export default function CommandCenterPage() {
                   xKey="date"
                 />
               ) : (
-                <div>
-                  <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-                    EMPTY
-                  </p>
-                  <h2 className="text-2xl">Not enough data yet</h2>
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    ERI snapshots build up as the analytics cron runs against published posts.
-                  </p>
-                </div>
+                <EmptyState
+                  title="Not enough data yet"
+                  description="ERI snapshots build up as the analytics cron runs against published posts."
+                />
               )}
             </CardContent>
           </Card>
@@ -147,52 +140,89 @@ export default function CommandCenterPage() {
         </div>
       </div>
 
+      {/* Top Posts Table */}
       <div>
-        <h2 className="text-2xl mb-4">Top Performing Posts</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl">Top Performing Posts</h2>
+          <Link
+            href="/dashboard/queue"
+            className="ds-btn-secondary px-4 py-2 text-[11px]"
+          >
+            CREATE POST
+          </Link>
+        </div>
         {!data?.topPosts.length ? (
-          <Card>
-            <CardContent className="py-8 text-sm text-muted-foreground">
-              No published posts yet.{" "}
-              <Link href="/dashboard/queue" className="underline text-foreground">
-                Head to the AI Post Generator
-              </Link>{" "}
-              to create your first post.
+          <Card className="rounded-xl shadow-sm">
+            <CardContent className="py-12 text-center">
+              <p className="text-sm text-muted-foreground">
+                No published posts yet.{" "}
+                <Link href="/dashboard/queue" className="font-medium text-primary hover:underline">
+                  Generate your first post
+                </Link>
+              </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="border border-border divide-y divide-border">
-            {data.topPosts.map((post) => (
-              <div key={post.id} className="bg-card p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm leading-relaxed font-mono">{post.content}</p>
-                    <div className="flex items-center gap-3 mt-3 font-mono text-[10px] text-muted-foreground">
-                      <span>{post.impressions.toLocaleString()} IMP</span>
-                      <span>{formatRelativeTime(post.publishedAt)}</span>
+          <div className="overflow-hidden rounded-xl border border-border">
+            <table className="ds-table">
+              <thead>
+                <tr>
+                  <th>Post</th>
+                  <th className="w-[100px] text-center">ERI</th>
+                  <th className="w-[120px] text-right">Impressions</th>
+                  <th className="w-[100px] text-right">Published</th>
+                  <th className="w-[80px] text-center">Media</th>
+                  <th className="w-[60px]" />
+                </tr>
+              </thead>
+              <tbody>
+                {data.topPosts.map((post) => (
+                  <tr key={post.id}>
+                    <td>
+                      <p className="max-w-md truncate text-sm">{post.content}</p>
+                    </td>
+                    <td className="text-center">
+                      <EriBadge eri={post.eri} />
+                    </td>
+                    <td className="text-right font-mono text-sm tabular-nums">
+                      {post.impressions.toLocaleString()}
+                    </td>
+                    <td className="text-right font-mono text-[11px] text-muted-foreground">
+                      {formatRelativeTime(post.publishedAt)}
+                    </td>
+                    <td className="text-center">
                       {post.mediaUrls.length > 0 && (
-                        <StatusPill>{`[MEDIA: ${post.mediaUrls.length}]`}</StatusPill>
+                        <StatusPill>{`[${post.mediaUrls.length}]`}</StatusPill>
                       )}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2 shrink-0">
-                    <EriBadge eri={post.eri} />
-                    {post.xPostUrl && (
-                      <a
-                        href={post.xPostUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono text-[10px] tracking-wider underline text-muted-foreground hover:text-foreground"
-                      >
-                        VIEW
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+                    </td>
+                    <td>
+                      {post.xPostUrl && (
+                        <a
+                          href={post.xPostUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-[10px] tracking-wider text-primary hover:underline"
+                        >
+                          VIEW
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function EmptyState({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="py-8 text-center">
+      <h3 className="text-xl">{title}</h3>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
     </div>
   );
 }

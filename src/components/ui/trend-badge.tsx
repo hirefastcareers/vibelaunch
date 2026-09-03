@@ -22,7 +22,7 @@ export function TrendBadge({ value, suffix = "%", className }: TrendBadgeProps) 
 
   if (value > 0) {
     return (
-      <span className={cn("font-mono text-[11px] text-accent", className)}>
+      <span className={cn("font-mono text-[11px] text-green-600", className)}>
         ▲ +{formatMagnitude(value)}
         {suffix}
       </span>
@@ -30,7 +30,7 @@ export function TrendBadge({ value, suffix = "%", className }: TrendBadgeProps) 
   }
 
   return (
-    <span className={cn("font-mono text-[11px] text-muted-foreground", className)}>
+    <span className={cn("font-mono text-[11px] text-red-500", className)}>
       ▼ -{formatMagnitude(value)}
       {suffix}
     </span>
