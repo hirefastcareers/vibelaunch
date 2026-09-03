@@ -3,6 +3,7 @@ import { PLAN_DISPLAY, PLAN_LIMITS } from "@/lib/billing/plans";
 import type { UsageSnapshot } from "@/lib/billing/limits";
 import Link from "next/link";
 import { CheckoutButton } from "@/components/checkout-button";
+import { StatusPill } from "@/components/status-pill";
 
 const TIERS: PlanTier[] = ["FREE", "STARTER", "PRO"];
 
@@ -46,18 +47,57 @@ export default function BillingContent({
   const note = statusNote(subscriptionStatus);
   const showStarterUpgrade = planTier === "FREE" && starterCheckoutHref;
   const showProUpgrade = planTier !== "PRO" && proCheckoutHref;
+  const postUsagePct = Math.min(100, Math.round((usage.postCount / Math.max(1, usage.postLimit)) * 100));
+  const projectUsagePct = Math.min(
+    100,
+    Math.round((usage.projectCount / Math.max(1, usage.projectLimit)) * 100)
+  );
 
   return (
-    <div className="p-6 max-w-5xl space-y-10">
-      <div>
+    <div className="max-w-5xl space-y-8 p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
           BILLING
         </p>
         <h1 className="text-5xl">Billing</h1>
-        <p className="text-muted-foreground text-sm mt-1">
+        <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
           Project and monthly post limits. Everything else stays available on every plan.
         </p>
+        </div>
+        <StatusPill tone={subscriptionStatus === "active" || !subscriptionStatus ? "ok" : "warn"}>
+          {subscriptionStatus ? `[${subscriptionStatus.toUpperCase()}]` : "[FREE PLAN]"}
+        </StatusPill>
       </div>
+
+      <section className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-lg border border-border bg-card px-5 py-5">
+          <p className="font-mono text-[10px] tracking-widest text-muted-foreground">POST CAP</p>
+          <div className="mt-2 flex items-end justify-between gap-4">
+            <p className="font-serif text-[32px] tracking-[-0.02em]">
+              {usage.postCount}
+              <span className="ml-2 text-[18px] text-muted-foreground">of {usage.postLimit}</span>
+            </p>
+            <p className="font-mono text-[11px] text-muted-foreground">{postUsagePct}% used</p>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
+            <div className="h-full bg-primary" style={{ width: `${postUsagePct}%` }} />
+          </div>
+        </div>
+        <div className="rounded-lg border border-border bg-card px-5 py-5">
+          <p className="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT CAP</p>
+          <div className="mt-2 flex items-end justify-between gap-4">
+            <p className="font-serif text-[32px] tracking-[-0.02em]">
+              {usage.projectCount}
+              <span className="ml-2 text-[18px] text-muted-foreground">of {usage.projectLimit}</span>
+            </p>
+            <p className="font-mono text-[11px] text-muted-foreground">{projectUsagePct}% used</p>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
+            <div className="h-full bg-ink" style={{ width: `${projectUsagePct}%` }} />
+          </div>
+        </div>
+      </section>
 
       <section>
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
@@ -112,33 +152,7 @@ export default function BillingContent({
 
       <section>
         <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-          02 — USAGE THIS MONTH
-        </p>
-        <div className="grid gap-px bg-border md:grid-cols-2 border border-border">
-          <div className="bg-background px-5 py-[22px]">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              POSTS
-            </p>
-            <p className="font-serif text-[32px] tracking-[-0.02em] mt-2">
-              {usage.postCount}{" "}
-              <span className="text-[18px] text-muted-foreground">of {usage.postLimit}</span>
-            </p>
-          </div>
-          <div className="bg-card px-5 py-[22px]">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              PROJECTS
-            </p>
-            <p className="font-serif text-[32px] tracking-[-0.02em] mt-2">
-              {usage.projectCount}{" "}
-              <span className="text-[18px] text-muted-foreground">of {usage.projectLimit}</span>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-          03 — PLANS
+          02 — PLANS
         </p>
         <div className="border border-ink bg-background">
           <div className="hidden lg:grid grid-cols-[1.2fr_1fr_1fr_140px] gap-px bg-ink">

@@ -11,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatusPill } from "@/components/status-pill";
 import { formatRelativeTime } from "@/lib/utils";
 import { FileText, Video } from "lucide-react";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface QueuePost {
   id: string;
@@ -174,32 +176,120 @@ export default function QueueStudioPage() {
     );
   }
 
+  const pendingCount = data?.pending.length ?? 0;
+  const scheduledCount = data?.scheduled.length ?? 0;
+  const publishedCount = data?.published.length ?? 0;
+  const queueTotal = pendingCount + scheduledCount + publishedCount;
+  const latestPublished = data?.published[0];
+  const hasProjects = projects.length > 0;
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-start justify-between gap-4">
+    <div className="space-y-8 p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
             QUEUE
           </p>
           <h1 className="text-5xl">AI Post Generator & Hooks</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Draft, schedule, and publish posts that learn from what already went viral
+          <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
+            Draft, schedule, and review every post in one place. The queue should feel like an editorial pipeline, not a dump.
           </p>
         </div>
-        <Button onClick={() => setModalOpen(true)} className="font-mono text-xs tracking-wider">
-          GENERATE POST
-        </Button>
+        {hasProjects ? (
+          <Button onClick={() => setModalOpen(true)} className="font-mono text-xs tracking-wider">
+            GENERATE POST
+          </Button>
+        ) : (
+          <Button asChild className="font-mono text-xs tracking-wider">
+            <Link href="/onboard">ONBOARD PROJECT</Link>
+          </Button>
+        )}
+      </div>
+
+      <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="TOTAL" value={queueTotal} className="rounded-none border-0" />
+        <StatCard label="PENDING" value={pendingCount} className="rounded-none border-0" />
+        <StatCard label="SCHEDULED" value={scheduledCount} className="rounded-none border-0" />
+        <StatCard label="PUBLISHED" value={publishedCount} className="rounded-none border-0" />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.3fr_0.9fr]">
+        <Card>
+          <CardHeader className="border-b border-border pb-4">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+              WORKFLOW
+            </p>
+            <CardTitle className="mt-1 text-[24px]">How this queue works</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-px p-0 md:grid-cols-3">
+            <div className="bg-background px-5 py-5">
+              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">01</p>
+              <h2 className="mt-2 text-[21px]">Generate</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Start with AI drafts and hooks tailored to your project tone.
+              </p>
+            </div>
+            <div className="bg-card px-5 py-5">
+              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">02</p>
+              <h2 className="mt-2 text-[21px]">Schedule</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Hold posts for a better publish window or queue them immediately.
+              </p>
+            </div>
+            <div className="bg-background px-5 py-5">
+              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">03</p>
+              <h2 className="mt-2 text-[21px]">Learn</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Published posts feed analytics back into the next round of drafts.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="border-b border-border pb-4">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
+              LAST OUTPUT
+            </p>
+            <CardTitle className="mt-1 text-[24px]">Latest published post</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            {latestPublished ? (
+              <div className="space-y-3">
+                <p className="text-sm leading-relaxed">{latestPublished.content}</p>
+                <div className="flex flex-wrap gap-2 font-mono text-[10px] text-muted-foreground">
+                  <span>{formatRelativeTime(latestPublished.publishedAt)}</span>
+                  {latestPublished.eri !== null && <EriBadge eri={latestPublished.eri} />}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Nothing has been published yet. {hasProjects ? "Generate a post to start the pipeline." : "Onboard a project first, then generate your first post."}
+                </p>
+                {!hasProjects && (
+                  <Link
+                    href="/onboard"
+                    className="inline-block border-b border-border font-mono text-[11px] tracking-wider text-muted-foreground hover:text-foreground"
+                  >
+                    GO TO ONBOARDING
+                  </Link>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="pending">
         <TabsList>
-          <TabsTrigger value="pending" className="font-mono text-[10px] tracking-wider">
+          <TabsTrigger value="pending">
             PENDING ({data?.pending.length ?? 0})
           </TabsTrigger>
-          <TabsTrigger value="scheduled" className="font-mono text-[10px] tracking-wider">
+          <TabsTrigger value="scheduled">
             SCHED ({data?.scheduled.length ?? 0})
           </TabsTrigger>
-          <TabsTrigger value="published" className="font-mono text-[10px] tracking-wider">
+          <TabsTrigger value="published">
             LIVE ({data?.published.length ?? 0})
           </TabsTrigger>
         </TabsList>
