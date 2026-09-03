@@ -187,10 +187,10 @@ export default function QueueStudioPage() {
     <div className="space-y-8 p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
+          <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
             QUEUE
           </p>
-          <h1 className="text-5xl">AI Post Generator & Hooks</h1>
+          <h1 className="text-[38px] md:text-[48px]">AI Post Generator & Hooks</h1>
           <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
             Draft, schedule, and review every post in one place. The queue should feel like an editorial pipeline, not a dump.
           </p>
@@ -206,15 +206,15 @@ export default function QueueStudioPage() {
         )}
       </div>
 
-      <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="TOTAL" value={queueTotal} className="rounded-none border-0" />
-        <StatCard label="PENDING" value={pendingCount} className="rounded-none border-0" />
-        <StatCard label="SCHEDULED" value={scheduledCount} className="rounded-none border-0" />
-        <StatCard label="PUBLISHED" value={publishedCount} className="rounded-none border-0" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="TOTAL" value={queueTotal} />
+        <StatCard label="PENDING" value={pendingCount} />
+        <StatCard label="SCHEDULED" value={scheduledCount} />
+        <StatCard label="PUBLISHED" value={publishedCount} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.3fr_0.9fr]">
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
             <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
               WORKFLOW
@@ -246,7 +246,7 @@ export default function QueueStudioPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
             <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
               LAST OUTPUT

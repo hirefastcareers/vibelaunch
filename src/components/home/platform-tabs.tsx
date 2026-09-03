@@ -214,12 +214,13 @@ export function PlatformTabs() {
   const reinforce = useReinforcementCycle(tab === 0);
 
   return (
-    <div className="border border-ink">
-      <div
-        role="tablist"
-        aria-label="Platform modules"
-        className="flex gap-px overflow-x-auto bg-ink"
-      >
+    <div className="overflow-hidden rounded-[28px] border border-border bg-gradient-to-br from-card via-background to-card shadow-lg">
+      <div className="border-b border-border px-4 py-4 md:px-6">
+        <div
+          role="tablist"
+          aria-label="Platform modules"
+          className="grid grid-cols-2 gap-2 lg:grid-cols-4"
+        >
         {modules.map((mod, idx) => {
           const selected = idx === tab;
           return (
@@ -232,60 +233,99 @@ export function PlatformTabs() {
               aria-controls="platform-panel"
               onClick={() => setTab(idx)}
               className={cn(
-                "flex min-w-[180px] flex-1 cursor-pointer flex-col gap-[7px] border-0 px-[18px] py-4 text-left font-mono text-[11px] tracking-[0.06em]",
-                selected ? "bg-background text-foreground" : "bg-ink text-surface-muted"
+                "flex min-h-[92px] cursor-pointer flex-col justify-between rounded-2xl border px-4 py-4 text-left transition-all",
+                selected
+                  ? "border-transparent bg-foreground text-background shadow-md"
+                  : "border-border bg-background text-foreground hover:border-foreground/10 hover:bg-card"
               )}
             >
-              <span
-                className={cn(
-                  "text-[9.5px] tracking-[0.14em]",
-                  selected ? "text-primary" : "text-[#8C857A]"
-                )}
-              >
-                {mod.n}
-              </span>
-              <span>{mod.short}</span>
+              <div className="flex items-center justify-between gap-3">
+                <span
+                  className={cn(
+                    "font-mono text-[10px] tracking-[0.14em]",
+                    selected ? "text-primary-foreground/80" : "text-primary"
+                  )}
+                >
+                  {mod.n}
+                </span>
+                <span
+                  className={cn(
+                    "inline-flex h-7 min-w-7 items-center justify-center rounded-lg px-2 font-mono text-[10px] tracking-widest",
+                    selected ? "bg-background/10 text-background/75" : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {mod.screenMeta}
+                </span>
+              </div>
+              <div>
+                <div className="font-mono text-[11px] uppercase tracking-widest opacity-80">
+                  {mod.short}
+                </div>
+                <div className="mt-2 text-base font-medium tracking-[-0.02em]">
+                  {mod.title}
+                </div>
+              </div>
             </button>
           );
         })}
+        </div>
       </div>
 
       <div
         id="platform-panel"
         role="tabpanel"
         aria-labelledby={`platform-tab-${active.n}`}
-        className="grid grid-cols-1 gap-px border-t border-ink bg-border lg:grid-cols-[0.85fr_1.15fr]"
+        className="grid grid-cols-1 gap-6 p-4 md:p-6 lg:grid-cols-[0.9fr_1.1fr]"
       >
-        <div className="flex flex-col gap-4 bg-background px-[30px] py-[34px]">
-          <h3 className="m-0 text-[21px] leading-[1.1] tracking-[-0.02em] lg:text-[30px]">
+        <div className="flex flex-col gap-6 rounded-3xl border border-border bg-background p-6 shadow-sm md:p-8">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 font-mono text-[11px] tracking-wider text-primary">
+              {active.n}
+            </span>
+            <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+              {active.meta}
+            </span>
+          </div>
+          <h3 className="m-0 text-[28px] leading-[1.05] tracking-[-0.03em] lg:text-[38px]">
             {active.title}
           </h3>
-          <p className="m-0 text-pretty text-[15.5px] leading-[1.6] text-ink-muted">
+          <p className="m-0 max-w-[42ch] text-pretty text-[16px] leading-[1.7] text-muted-foreground">
             {active.desc}
           </p>
-          <div className="mt-1.5 flex flex-col gap-2.5">
+          <div className="grid gap-3">
             {active.bullets.map((bullet) => (
               <div
                 key={bullet}
-                className="grid grid-cols-[14px_1fr] items-start gap-2.5 text-[14.5px] leading-[1.5] text-[#2C2822]"
+                className="flex items-start gap-3 rounded-2xl border border-border bg-card px-4 py-3.5 text-[14.5px] leading-[1.6] text-foreground"
               >
-                <span className="pt-0.5 font-mono text-xs text-primary">-</span>
+                <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 font-mono text-[10px] text-primary">
+                  +
+                </span>
                 <span>{bullet}</span>
               </div>
             ))}
           </div>
-          <div className="mt-auto border-t border-border pt-5 font-mono text-[10px] tracking-[0.1em] text-muted-foreground">
-            {active.meta}
+          <div className="mt-auto grid grid-cols-3 gap-3 border-t border-border pt-6">
+            <MetricChip label="Module" value={active.short.split(" & ")[0]} />
+            <MetricChip label="Preview rows" value={String(active.rows.length)} />
+            <MetricChip label="Status" value={active.screenFoot} />
           </div>
         </div>
 
-        <div className="bg-card px-7 py-[26px]">
-          <div className="border border-[#D6D1C7] bg-white">
-            <div className="flex justify-between border-b border-border px-3.5 py-[11px] font-mono text-[9.5px] tracking-[0.12em] text-muted-foreground">
+        <div className="rounded-3xl border border-border bg-card p-4 shadow-sm md:p-5">
+          <div className="overflow-hidden rounded-[24px] border border-border bg-background">
+            <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-3 font-mono text-[10px] tracking-[0.12em] text-muted-foreground">
               <span>{active.screen}</span>
               <span>{active.screenMeta}</span>
             </div>
-            {active.rows.map((row) => {
+            <div className="grid grid-cols-2 gap-px border-b border-border bg-border px-0 md:grid-cols-4">
+              <PreviewStat label="Coverage" value={active.n === "03" ? "78%" : "94%"} />
+              <PreviewStat label="Velocity" value={active.n === "01" ? "5 / wk" : active.n === "02" ? "3 / wk" : "Weekly"} />
+              <PreviewStat label="Wins" value={active.n === "04" ? "12/12" : "24"} />
+              <PreviewStat label="Trend" value={active.n === "03" ? "+14 pts" : "+22%"} accent />
+            </div>
+            <div className="p-3 md:p-4">
+              {active.rows.map((row) => {
               const live = tab === 0 && row.state === "SHIPPED" ? reinforce : null;
               const sub = live?.sub ?? row.sub;
               const state = live?.state ?? row.state;
@@ -294,10 +334,10 @@ export function PlatformTabs() {
               return (
                 <div
                   key={row.main}
-                  className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-[#EFEBE4] p-3.5"
+                  className="grid grid-cols-[1fr_auto] items-center gap-4 rounded-2xl border border-border bg-card px-4 py-4 mb-3 last:mb-0"
                 >
                   <div className="flex min-w-0 flex-col gap-[5px]">
-                    <span className="text-sm leading-[1.4] text-foreground">{row.main}</span>
+                    <span className="text-sm font-medium leading-[1.5] text-foreground">{row.main}</span>
                     {live ? (
                       <div className="relative h-[13px] overflow-hidden">
                         <AnimatePresence mode="wait">
@@ -329,8 +369,10 @@ export function PlatformTabs() {
                           exit={{ opacity: 0, y: -4 }}
                           transition={SNAP}
                           className={cn(
-                            "absolute inset-0 whitespace-nowrap font-mono text-[10px] tracking-[0.08em]",
-                            tint === "accent" ? "text-accent" : "text-muted-foreground"
+                            "absolute inset-0 whitespace-nowrap rounded-full px-2 py-0.5 font-mono text-[10px] tracking-[0.08em]",
+                            tint === "accent"
+                              ? "bg-primary/10 text-primary"
+                              : "bg-muted text-muted-foreground"
                           )}
                         >
                           {state}
@@ -340,8 +382,10 @@ export function PlatformTabs() {
                   ) : (
                     <span
                       className={cn(
-                        "whitespace-nowrap font-mono text-[10px] tracking-[0.08em]",
-                        row.tint === "accent" ? "text-accent" : "text-muted-foreground"
+                        "whitespace-nowrap rounded-full px-2 py-1 font-mono text-[10px] tracking-[0.08em]",
+                        row.tint === "accent"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
                       )}
                     >
                       {row.state}
@@ -350,17 +394,57 @@ export function PlatformTabs() {
                 </div>
               );
             })}
-            <div className="px-3.5 py-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
-              <span className="text-primary">▍</span> {active.screenFoot}
+            </div>
+            <div className="flex items-center justify-between border-t border-border bg-card px-4 py-3 font-mono text-[10px] tracking-[0.08em] text-muted-foreground">
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-block h-2 w-2 rounded-full bg-primary" />
+                Live module preview
+              </span>
+              <span>{active.screenFoot}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 border-t border-ink bg-ink px-5 py-[15px] font-mono text-[11px] tracking-[0.04em] text-surface-muted">
-        <span className="text-primary">↺</span>
-        <span>Engagement data feeds back into generation. Week four writes better hooks than week one.</span>
+      <div className="flex flex-col gap-2 border-t border-border bg-background px-5 py-4 font-mono text-[11px] tracking-[0.04em] text-muted-foreground md:flex-row md:items-center md:justify-between">
+        <span className="inline-flex items-center gap-2">
+          <span className="text-primary">↺</span>
+          Engagement data feeds back into generation. Week four writes better hooks than week one.
+        </span>
+        <span className="text-primary">Designed for operators, not just readers.</span>
       </div>
+    </div>
+  );
+}
+
+function PreviewStat({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="bg-background px-4 py-4">
+      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </div>
+      <div className={cn("mt-1 text-lg font-medium tracking-[-0.02em]", accent ? "text-primary" : "text-foreground")}>
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function MetricChip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-background px-3 py-3">
+      <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </div>
+      <div className="mt-1 text-sm font-medium text-foreground">{value}</div>
     </div>
   );
 }

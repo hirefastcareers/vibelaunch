@@ -47,9 +47,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-hidden p-0 shadow-none max-w-lg rounded-lg">
+      <DialogContent className="max-w-lg overflow-hidden rounded-2xl border border-border p-0 shadow-lg">
         <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
-          <div className="flex items-center border-b px-3">
+          <div className="flex items-center border-b border-border px-3">
             <Command.Input
               value={search}
               onValueChange={setSearch}

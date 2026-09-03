@@ -75,9 +75,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ["var(--font-serif)", "ui-serif", "Georgia", "serif"],
+        serif: ["var(--font-sans)", "Satoshi", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
-        sans: ["ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Satoshi", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       boxShadow: {
         sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",

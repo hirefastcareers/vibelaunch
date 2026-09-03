@@ -34,7 +34,7 @@ export function Logo({
       {wordmark && (
         <span
           style={{
-            fontFamily: "var(--font-logo), Satoshi, system-ui, sans-serif",
+            fontFamily: "var(--font-sans), Satoshi, system-ui, sans-serif",
             fontWeight: 700,
             fontSize: size * 0.69,
             letterSpacing: "-0.03em",

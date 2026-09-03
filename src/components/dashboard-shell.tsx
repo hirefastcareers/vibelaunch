@@ -17,7 +17,7 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-muted/20">
       <div className="hidden lg:flex">
         <Sidebar
           userLabel={userLabel}
@@ -33,7 +33,7 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
             className="absolute inset-0 bg-ink/40"
             onClick={() => setMobileNavOpen(false)}
           />
-          <div className="relative z-10 h-full w-[min(18rem,86vw)] shadow-none">
+          <div className="relative z-10 h-full w-[min(19rem,88vw)] shadow-lg">
             <Sidebar
               userLabel={userLabel}
               onOpenCommandPalette={() => {
@@ -47,7 +47,7 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 items-center justify-between border-b border-border px-4 lg:hidden">
+        <header className="flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur-md lg:hidden">
           <Link href="/dashboard" className="flex items-center">
             <Logo size={28} />
           </Link>
@@ -55,7 +55,7 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
             type="button"
             aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
             onClick={() => setMobileNavOpen((open) => !open)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground hover:bg-secondary"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background text-foreground shadow-sm hover:bg-secondary"
           >
             {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
