@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { createProjectSchema } from "@/lib/validators";
-import { isDemoMode } from "@/lib/demo-mode";
 import { assertCanCreateProject, UsageLimitError } from "@/lib/billing/limits";
 
 export async function GET() {
@@ -32,18 +31,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (!isDemoMode()) {
-    try {
-      await assertCanCreateProject(session.user.id);
-    } catch (err) {
-      if (err instanceof UsageLimitError) {
-        return NextResponse.json(
-          { error: err.message, code: err.code },
-          { status: 403 },
-        );
-      }
-      throw err;
+  try {
+    await assertCanCreateProject(session.user.id);
+  } catch (err) {
+    if (err instanceof UsageLimitError) {
+      return NextResponse.json(
+        { error: err.message, code: err.code },
+        { status: 403 },
+      );
     }
+    throw err;
   }
 
   const existing = await prisma.project.findUnique({

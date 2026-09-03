@@ -6,11 +6,6 @@ vi.mock("@/lib/session", () => ({
   getSession: vi.fn(),
 }));
 
-vi.mock("@/lib/demo-mode", () => ({
-  isDemoMode: vi.fn(() => false),
-  demoDelay: vi.fn(async () => {}),
-}));
-
 vi.mock("@/lib/billing/limits", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/billing/limits")>();
   return {
@@ -40,7 +35,6 @@ vi.mock("@/lib/queue/qstash", () => ({
 }));
 
 import { getSession } from "@/lib/session";
-import { isDemoMode } from "@/lib/demo-mode";
 import { assertCanCreatePost, assertCanCreateProject } from "@/lib/billing/limits";
 import { prisma } from "@/lib/prisma";
 
@@ -50,7 +44,6 @@ describe("usage cap API responses", () => {
     vi.mocked(getSession).mockResolvedValue({
       user: { id: "user-1", email: "a@b.c" },
     } as Awaited<ReturnType<typeof getSession>>);
-    vi.mocked(isDemoMode).mockReturnValue(false);
   });
 
   it("onboard returns 403 with PROJECT_LIMIT code", async () => {
@@ -75,24 +68,6 @@ describe("usage cap API responses", () => {
       error: "Project limit reached for the FREE plan",
       code: "PROJECT_LIMIT",
     });
-  });
-
-  it("onboard skips the cap in demo mode", async () => {
-    vi.mocked(isDemoMode).mockReturnValue(true);
-    const { POST } = await import("@/app/api/project/onboard/route");
-    const res = await POST(
-      new NextRequest("http://localhost/api/project/onboard", {
-        method: "POST",
-        body: JSON.stringify({
-          targetUrl: "https://sorano.app",
-          projectName: "Sorano",
-          tone: "build-in-public",
-        }),
-      }),
-    );
-
-    expect(res.status).toBe(201);
-    expect(assertCanCreateProject).not.toHaveBeenCalled();
   });
 
   it("posts create returns 403 with POST_LIMIT code", async () => {

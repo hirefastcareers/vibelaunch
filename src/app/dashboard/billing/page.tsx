@@ -3,9 +3,8 @@ export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { isDemoMode } from "@/lib/demo-mode";
 import { getUsage } from "@/lib/billing/limits";
-import { PLAN_LIMITS, productIdForTier } from "@/lib/billing/plans";
+import { productIdForTier } from "@/lib/billing/plans";
 import BillingContent from "./billing-content";
 
 function checkoutHref(
@@ -34,25 +33,6 @@ export default async function BillingPage() {
     session.user.id,
   );
   const proCheckoutHref = checkoutHref(proId, session.user.email, session.user.id);
-
-  if (isDemoMode()) {
-    return (
-      <BillingContent
-        planTier="FREE"
-        subscriptionStatus={null}
-        planRenewsAt={null}
-        usage={{
-          projectCount: 1,
-          postCount: 3,
-          projectLimit: PLAN_LIMITS.FREE.projects,
-          postLimit: PLAN_LIMITS.FREE.postsPerMonth,
-        }}
-        starterCheckoutHref={starterCheckoutHref}
-        proCheckoutHref={proCheckoutHref}
-        portalHref={null}
-      />
-    );
-  }
 
   const [user, usage] = await Promise.all([
     prisma.user.findUnique({

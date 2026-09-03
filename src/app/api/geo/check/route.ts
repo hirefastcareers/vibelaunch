@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_GEO_CHECK } from "@/lib/mock-data";
 import { checkLLMCitations } from "@/lib/geo/citation-tracker";
 import { buildCitationTrend, buildGeoDashboardData } from "@/lib/geo/analytics";
 
@@ -16,11 +14,6 @@ export async function POST(req: NextRequest) {
 
   const body = (await req.json().catch(() => ({}))) as { projectId?: string };
   const userId = session.user.id;
-
-  if (isDemoMode()) {
-    await demoDelay(1500);
-    return NextResponse.json(MOCK_GEO_CHECK);
-  }
 
   const project = body.projectId
     ? await prisma.project.findFirst({ where: { id: body.projectId, userId } })

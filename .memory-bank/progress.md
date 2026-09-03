@@ -15,7 +15,7 @@
 - [x] TestRun Prisma model for diagnostic logs (`prisma/schema.prisma`)
 - [x] Autonomous Diagnostic Agent (`lib/diagnostics/runner.ts`, `lib/agents/tester.ts`)
 - [x] SEO / Vector / Media / GEO audit suites (`runFullDiagnosticSuite`)
-- [x] Demo mock test results (`getMockTestResults` in `lib/demo-mode.ts`)
+- [x] Removed demo mode; diagnostics persist live suite results
 - [x] Diagnostic Dashboard Widget (`components/dashboard/diagnostic-card.tsx`)
 - [x] Diagnostics Cron Route (`app/api/cron/diagnostics/route.ts`)
 - [x] System Diagnostics Page (`app/dashboard/diagnostics/page.tsx`)

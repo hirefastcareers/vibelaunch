@@ -36,10 +36,8 @@ const resultVariants = {
 
 export function CitationSweep({
   citations,
-  simulated,
 }: {
   citations: Citation[];
-  simulated: boolean;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { once: false, amount: 0.5 });
@@ -82,7 +80,6 @@ export function CitationSweep({
     <div ref={rootRef} className="flex flex-col bg-ink-panel p-[30px]">
       <div className="mb-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
         <span>CITATION CHECK · WEEKLY SWEEP</span>
-        {simulated ? <span>[SIMULATED]</span> : null}
       </div>
       <motion.div
         variants={listVariants}

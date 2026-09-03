@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_ANALYTICS } from "@/lib/mock-data";
 
 export const dynamic = "force-dynamic";
 
@@ -10,11 +8,6 @@ export async function GET() {
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (isDemoMode()) {
-    await demoDelay();
-    return NextResponse.json(MOCK_ANALYTICS);
   }
 
   const userId = session.user.id;

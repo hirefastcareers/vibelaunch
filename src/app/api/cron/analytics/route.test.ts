@@ -1,15 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { isDemoMode } from "@/lib/demo-mode";
-
-vi.mock("@/lib/demo-mode", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/demo-mode")>();
-  return {
-    ...actual,
-    isDemoMode: vi.fn(),
-    demoDelay: vi.fn(async () => {}),
-  };
-});
 
 vi.mock("@/lib/analytics/cron", () => ({
   runEriAnalyticsCron: vi.fn(async () => ({ snapshots: 0 })),
@@ -27,12 +17,10 @@ function request(auth?: string, method = "GET") {
 
 describe("/api/cron/analytics", () => {
   beforeEach(() => {
-    vi.mocked(isDemoMode).mockReset();
     process.env.CRON_SECRET = "test-cron-secret";
   });
 
-  it("rejects GET without Authorization outside demo mode", async () => {
-    vi.mocked(isDemoMode).mockReturnValue(false);
+  it("rejects GET without Authorization", async () => {
     const { GET } = await import("./route");
     const res = await GET(request());
 
@@ -40,8 +28,7 @@ describe("/api/cron/analytics", () => {
     await expect(res.json()).resolves.toEqual({ error: "Unauthorized" });
   });
 
-  it("rejects POST without Authorization outside demo mode", async () => {
-    vi.mocked(isDemoMode).mockReturnValue(false);
+  it("rejects POST without Authorization", async () => {
     const { POST } = await import("./route");
     const res = await POST(request(undefined, "POST"));
 

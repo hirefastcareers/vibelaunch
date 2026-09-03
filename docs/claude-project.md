@@ -12,8 +12,8 @@ We are not building another social scheduler, AI writer, or CMS. Those already e
 
 **The north star:** one X login, one product URL, then continuous organic growth with almost no weekly work. Success looks like: posts go out, articles rank, AI engines cite the product, and the next draft is better than the last because ERI (engagement rate index) and pgvector reinforcement actually ran.
 
-**Where we are:** phases 1–7 of the engine exist (auth, queue, publish, ERI learning, SEO changelog, GEO citation checks, diagnostic agent). Demo mode can walk the whole dashboard without a database. Several promised pieces are still fake: Playwright capture, code cards, the replies feed, Google AI Overviews. The marketing site uses the paper/ink design system. The dashboard still looks like a dark admin panel.
+**Where we are:** phases 1–7 of the engine exist (auth, queue, publish, ERI learning, SEO changelog, GEO citation checks, diagnostic agent). Auth is X OAuth only. Several promised pieces are still incomplete: Playwright capture, code cards, the replies feed, Google AI Overviews. The marketing site and dashboard share the paper/ink design system.
 
-**What to do next (in order):** make the product honest. Apply the design system to the authenticated app. Replace stubs with real capture or stop claiming them. Wire production (Postgres + pgvector, QStash, Vercel crons, real X). Do not add billing, teams, or new channels until the loop we already sell actually works.
+**What to do next (in order):** make the product honest. Replace stubs with real capture or stop claiming them. Wire production (Postgres + pgvector, QStash, Vercel crons, real X). Do not add billing, teams, or new channels until the loop we already sell actually works.
 
-**How to write and build:** never use em dashes. Specific, dry copy. Hairlines not cards, one orange accent, no purple/glow/gradient slop. Demo-gate APIs first (`isDemoMode()` then live). Follow `docs/design.md` and `.cursor/rules/vibelaunch-spec.mdc`.
+**How to write and build:** never use em dashes. Specific, dry copy. Hairlines and rounded cards per `docs/design.md`, one orange accent, no purple/glow/gradient slop. Follow `docs/design.md` and `.cursor/rules/vibelaunch-spec.mdc`.

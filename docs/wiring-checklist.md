@@ -1,6 +1,6 @@
 # Wiring Checklist
 
-Everything below is unconfigured. The app runs in demo mode (see src/lib/demo-mode.ts) until these are set. Check items off as they're wired up.
+Everything below must be configured for a live deploy. Check items off as they're wired up.
 
 ## Database
 - [ ] `DATABASE_URL` — Postgres with pgvector support (Neon or Supabase recommended, both support the extension on free tiers). Schema already declares `extensions = [vector]` (prisma/schema.prisma), so `npx prisma db push` creates it automatically once this is set.
@@ -34,7 +34,7 @@ Everything below is unconfigured. The app runs in demo mode (see src/lib/demo-mo
 
 ## Storage
 - [ ] Enable Vercel Blob in the Vercel dashboard (Storage tab) — auto-populates `BLOB_READ_WRITE_TOKEN`. No manual value to generate.
-  Gates: screenshot capture, video capture, code-card PNGs (src/lib/media/*). NOTE: these do NOT check isDemoMode() — they attempt real capture/upload regardless, so triggering them before this is wired will throw a real error, not fall back to a placeholder. That's intentional (an honest failure beats a silent fake), but worth knowing before clicking "capture" anywhere in the dashboard pre-wiring.
+  Gates: screenshot capture, video capture, code-card PNGs (src/lib/media/*). These attempt real capture/upload; triggering them before Blob is wired will throw a real error rather than silently faking success.
 
 ## Cron protection
 - [ ] `CRON_SECRET` — random string, no external account needed. Worth setting now even before other services are wired, since it's free and Vercel auto-injects it as the Authorization header on cron invocations (see vercel.json).
@@ -54,4 +54,4 @@ Everything below is unconfigured. The app runs in demo mode (see src/lib/demo-mo
   NOTE: the pricing page itself displays USD prices with a note that billing happens in the customer's local currency at checkout — it does not attempt to show a pre-converted local-currency estimate, to avoid a displayed price drifting from what Dodo actually charges (see docs/deferred-work.md for the reasoning if it's logged there).
 
 ---
-Once all of the above are set in Vercel's environment variables and a deploy has run, isDemoMode() (src/lib/demo-mode.ts) will automatically stop returning true, and the app switches from demo data to live data with no code changes needed.
+Once the above are set in Vercel's environment variables and a deploy has run, the app uses live data paths end to end.

@@ -143,7 +143,7 @@ npm test
 npm run build
 ```
 
-**Demo mode is the default local path.** `isDemoMode()` is true if `NEXT_PUBLIC_DEMO_MODE=true` / `DEMO_MODE=true`, or if `DATABASE_URL` / `OPENAI_API_KEY` / X keys look like placeholders. Demo login: **username `demo`, password `demo`**. APIs return `src/lib/mock-data.ts` with a fake delay.
+**Local path.** Copy `.env.example` to `.env`, fill live `DATABASE_URL`, `OPENAI_API_KEY`, and X OAuth keys, then `npx prisma generate` + `npm run db:push` + `npm run dev`. Sign in with X at `/auth/signin`.
 
 Auth env fallbacks live in `src/lib/env.ts` (`ensureAuthEnv`) so Vercel builds do not die on empty `NEXTAUTH_URL` / `NEXTAUTH_SECRET`.
 
@@ -178,7 +178,7 @@ src/app/
   api/                        # all backend routes (24 handlers)
 
 src/lib/
-  auth.ts session.ts env.ts demo-mode.ts mock-data.ts prisma.ts validators.ts
+  auth.ts session.ts env.ts prisma.ts validators.ts
   analytics/          # ERI + cron
   generator/ adaptive.ts
   ai/ generator.ts vector-store.ts
@@ -284,7 +284,7 @@ Interactive landing tabs: `src/components/home/platform-tabs.tsx` (client). `pag
 
 **Real code paths (work when env is live):** project CRUD, scrape onboard, Sharp image processing, QStash enqueue/process, X publish, ERI math, OpenAI generation + embeddings, SEO expander + changelog + indexing, GEO queries (or simulation), diagnostic HTML audits.
 
-**Demo-first:** almost every API short-circuits via `isDemoMode()` to `mock-data.ts`. You can demo the whole dashboard with no DB.
+**Live-first:** APIs require a real session and database. Missing integrations return honest empty or 503 states instead of fabricated dashboard data.
 
 **Stubs / lies to fix:**
 
@@ -303,7 +303,7 @@ Interactive landing tabs: `src/components/home/platform-tabs.tsx` (client). `pag
 
 Vitest, `npm test`. Coverage is unit-level:
 
-- `eri`, `validators`, `env`, `demo-mode`
+- `eri`, `validators`, `env`
 - `media/engine`
 - `seo/expander`
 - `geo/citation-tracker`, `geo/analytics`, `geo/llm-schema`
@@ -315,7 +315,7 @@ No DB integration tests. `npx prisma generate` is required before build.
 
 ## Architecture patterns (do not reinvent)
 
-1. **Demo gate first, then Prisma.** If you add an API, follow existing `isDemoMode() → mock → live` shape.
+1. **Auth then Prisma.** Session-gated APIs load the caller's projects from the database. Missing integrations return empty or 503 states.
 2. **Publish pipeline:** create Post → enqueue QStash → `/api/queue/process` verifies → `publishToX` → status PUBLISHED → `storePostEmbedding`.
 3. **Learn loop:** cron fetches metrics → ERI snapshot → reinforce embeddings with ERI ≥ 2.0 → generator `findSimilarPosts`.
 4. **SEO pipeline:** `POST /api/seo/publish` → expand → `ChangelogEntry` → Google index → sitemap.

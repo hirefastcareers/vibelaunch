@@ -55,7 +55,7 @@ Dark sections are opt-in per section, not global. Do not put `class="dark"` on `
 
 ### Brackets are reserved for live status
 
-Brackets (`[OK]`, `[WARN]`, `[SYS_OK]`, `[PREVIEW]`, and the rest) are reserved for live status: `StatusPill` indicators and the demo-mode banner. Never wrap section labels or page eyebrows in brackets. Those use plain mono-uppercase-tracked text instead (`OPS`, `AI SEARCH`, `01 - THE PLATFORM`) — the same convention as the landing page.
+Brackets (`[OK]`, `[WARN]`, `[SYS_OK]`, `[PREVIEW]`, and the rest) are reserved for live status: `StatusPill` indicators. Never wrap section labels or page eyebrows in brackets. Those use plain mono-uppercase-tracked text instead (`OPS`, `AI SEARCH`, `01 - THE PLATFORM`) — the same convention as the landing page.
 
 ## 3. Banned (the slop list)
 

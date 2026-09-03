@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_GEO } from "@/lib/mock-data";
 import { buildCitationTrend, buildGeoDashboardData } from "@/lib/geo/analytics";
 
 export const dynamic = "force-dynamic";
@@ -11,11 +9,6 @@ export async function GET(req: NextRequest) {
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (isDemoMode()) {
-    await demoDelay();
-    return NextResponse.json(MOCK_GEO);
   }
 
   const projectId = req.nextUrl.searchParams.get("projectId");

@@ -1,8 +1,6 @@
 import { db } from "@/lib/db";
 import type { Prisma } from "@prisma/client";
-import { isDemoMode } from "@/lib/demo-mode";
 import type { DiagnosticRunSummary, DiagnosticSuite } from "./types";
-import { ALL_SUITES } from "./types";
 import {
   runFullDiagnosticSuite,
   runSeoAudit,
@@ -28,17 +26,15 @@ export async function runDiagnosticSuite(
 ): Promise<TestSuiteResult> {
   const result = await SUITE_RUNNERS[suite](projectId);
 
-  if (!isDemoMode()) {
-    await db.testRun.create({
-      data: {
-        projectId,
-        suite: result.suite,
-        status: result.status,
-        score: result.score,
-        details: result.details as Prisma.InputJsonValue,
-      },
-    });
-  }
+  await db.testRun.create({
+    data: {
+      projectId,
+      suite: result.suite,
+      status: result.status,
+      score: result.score,
+      details: result.details as Prisma.InputJsonValue,
+    },
+  });
 
   return result;
 }

@@ -4,8 +4,6 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { scrapeUrl } from "@/lib/scraper/url-scraper";
 import { slugify } from "@/lib/utils";
-import { isDemoMode, demoDelay } from "@/lib/demo-mode";
-import { MOCK_PROJECT, MOCK_SCRAPED_CONTEXT } from "@/lib/mock-data";
 import { assertCanCreateProject, UsageLimitError } from "@/lib/billing/limits";
 
 export const dynamic = "force-dynamic";
@@ -30,35 +28,6 @@ export async function POST(req: NextRequest) {
   }
 
   const { targetUrl, projectName, tone, keywords: inputKeywords } = parsed.data;
-
-  if (isDemoMode()) {
-    await demoDelay();
-    const slug = slugify(projectName);
-    const keywords = [
-      ...(inputKeywords ?? []),
-      ...MOCK_SCRAPED_CONTEXT.keywords,
-    ].filter((k, i, arr) => arr.indexOf(k) === i).slice(0, 20);
-
-    return NextResponse.json(
-      {
-        project: {
-          ...MOCK_PROJECT,
-          id: `demo-${slug}`,
-          name: projectName,
-          slug,
-          websiteUrl: targetUrl,
-          tone,
-          keywords,
-        },
-        scraped: {
-          ...MOCK_SCRAPED_CONTEXT,
-          title: projectName,
-        },
-        message: "Demo: project onboarded successfully (simulated)",
-      },
-      { status: 201 }
-    );
-  }
 
   try {
     await assertCanCreateProject(session.user.id);
