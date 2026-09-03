@@ -43,6 +43,14 @@ npm run build
 
 See `.cursor/rules/vibelaunch-spec.mdc` for the full platform specification and `.memory-bank/` for project context.
 
+## Deployments
+
+Sorano uses Vercel. **Preview** deploys run on PR branches; **production** deploys only from `main` after merge.
+
+Cloud Agent PRs on `cursor/*` branches auto-merge to `main` once Vercel checks pass (see `.github/workflows/auto-ship-cursor-prs.yml`). Leave a PR as **draft** if you only want a preview.
+
+Full details: [docs/deployments.md](docs/deployments.md)
+
 ## Phases
 
 | Phase | Description |
