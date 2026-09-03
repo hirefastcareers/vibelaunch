@@ -14,8 +14,8 @@ function DonutTooltip({ active, payload }: TooltipContentProps) {
   const entry = payload[0];
   return (
     <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-md">
-      <p className="font-mono text-[11px] text-muted-foreground">{entry.name}</p>
-      <p className="font-serif text-lg">{entry.value}%</p>
+      <p className="text-[11px] text-muted-foreground">{entry.name}</p>
+      <p className="text-lg font-medium">{entry.value}%</p>
     </div>
   );
 }
@@ -52,8 +52,8 @@ export function EngineDonut({
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-serif text-[28px] leading-none tracking-tight">{centerValue}</span>
-          <span className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <span className="font-sans text-[28px] font-medium leading-none tracking-tight">{centerValue}</span>
+          <span className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             {centerLabel}
           </span>
         </div>
@@ -65,7 +65,7 @@ export function EngineDonut({
               className="inline-block h-2.5 w-2.5 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="font-mono text-[11px] text-muted-foreground">
+            <span className="text-[11px] font-medium text-muted-foreground">
               {entry.name} ({entry.value}%)
             </span>
           </div>

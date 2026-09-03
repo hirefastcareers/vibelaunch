@@ -35,7 +35,6 @@ function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) 
     if (!started) return;
     const duration = 1500;
     const steps = 40;
-    const increment = target / steps;
     let step = 0;
     const timer = setInterval(() => {
       step++;
@@ -52,7 +51,8 @@ function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) 
 
   return (
     <span ref={ref} className="tabular-nums">
-      {current.toLocaleString()}{suffix}
+      {current.toLocaleString()}
+      {suffix}
     </span>
   );
 }
@@ -60,14 +60,17 @@ function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) 
 export function StatsTicker() {
   return (
     <div className="border-y border-border bg-muted/30">
-      <div className="ds-container">
+      <div className="ds-container py-4">
+        <p className="mb-4 text-center text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+          Illustrative platform volume
+        </p>
         <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
           {STATS.map((stat) => (
             <div key={stat.label} className="bg-background px-6 py-8 text-center md:py-10">
               <div className="ds-metric text-foreground">
                 <AnimatedNumber target={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+              <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                 {stat.label}
               </div>
             </div>

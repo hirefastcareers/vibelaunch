@@ -18,12 +18,12 @@ function BarFill({ pct, highlighted }: { pct: number; highlighted?: boolean }) {
         <div
           className={cn(
             "h-full rounded-full transition-all",
-            highlighted ? "bg-primary" : "bg-ink-muted/40"
+            highlighted ? "bg-primary" : "bg-foreground/25"
           )}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="min-w-[36px] text-right font-mono text-xs tabular-nums">{pct}%</span>
+      <span className="min-w-[36px] text-right text-xs font-medium tabular-nums">{pct}%</span>
     </div>
   );
 }
@@ -52,11 +52,11 @@ export function CompetitorMatrix({ rows }: { rows: CompetitorRow[] }) {
               <td>
                 <BarFill pct={row.shareOfVoice} highlighted={row.highlighted} />
               </td>
-              <td className="text-center font-mono text-sm tabular-nums">{row.citationRate}%</td>
+              <td className="text-center text-sm font-medium tabular-nums">{row.citationRate}%</td>
               <td className="text-center">
                 <span
                   className={cn(
-                    "inline-flex h-7 min-w-[28px] items-center justify-center rounded-md font-mono text-xs font-medium",
+                    "inline-flex h-7 min-w-[28px] items-center justify-center rounded-md text-xs font-medium",
                     row.avgPosition <= 2 ? "bg-primary/10 text-primary" : "bg-muted text-foreground"
                   )}
                 >
@@ -66,13 +66,13 @@ export function CompetitorMatrix({ rows }: { rows: CompetitorRow[] }) {
               <td className="text-center">
                 <span
                   className={cn(
-                    "font-mono text-xs",
+                    "text-xs font-medium",
                     row.trend === "up" && "text-green-600",
                     row.trend === "down" && "text-red-500",
                     row.trend === "stable" && "text-muted-foreground"
                   )}
                 >
-                  {row.trend === "up" ? "▲" : row.trend === "down" ? "▼" : "—"}
+                  {row.trend === "up" ? "▲" : row.trend === "down" ? "▼" : "-"}
                 </span>
               </td>
             </tr>
