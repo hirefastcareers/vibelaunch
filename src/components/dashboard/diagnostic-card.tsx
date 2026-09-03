@@ -153,10 +153,13 @@ export function DiagnosticCard() {
         </div>
 
         {!data?.runs?.length && (
-          <p className="text-sm text-muted-foreground py-4">
-            No health checks yet. Click &quot;Run All Checks&quot; to verify indexing, AI learning,
-            media, and AI search citations.
-          </p>
+          <div className="rounded-lg border border-border bg-background px-4 py-5">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">EMPTY</p>
+            <p className="mt-2 text-sm text-foreground">No health checks yet.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Run all checks after you publish content, so the score reflects the real system instead of an empty project.
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
