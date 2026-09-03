@@ -315,7 +315,33 @@ export default async function HomePage() {
             </h2>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-border">
+          {/* Mobile: stacked rows so the Sorano column is never clipped */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {compare.map((row) => (
+              <div
+                key={row.job}
+                className="rounded-xl border border-border bg-background p-5"
+              >
+                <h3 className="text-lg font-medium leading-snug">{row.job}</h3>
+                <div className="mt-4 grid gap-3">
+                  <div>
+                    <span className="ds-kicker">Stitched stack</span>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      {row.old}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+                    <span className="ds-kicker text-primary">Sorano</span>
+                    <p className="mt-1.5 text-sm font-medium leading-relaxed text-foreground">
+                      {row.next}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden overflow-x-auto rounded-xl border border-border md:block">
             <table className="ds-table">
               <thead>
                 <tr>
