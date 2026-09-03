@@ -43,9 +43,9 @@ const competitorRows = [
 ];
 
 const citations = [
-  { engine: "ChatGPT", state: "CITED · POS 2", cited: true },
-  { engine: "Perplexity", state: "CITED · POS 1", cited: true },
-  { engine: "Claude", state: "CITED · POS 3", cited: true },
+  { engine: "ChatGPT", state: "Cited · Pos 2", cited: true },
+  { engine: "Perplexity", state: "Cited · Pos 1", cited: true },
+  { engine: "Claude", state: "Cited · Pos 3", cited: true },
 ];
 
 const dashboardPreviewData: CitationTrendPoint[] = [
