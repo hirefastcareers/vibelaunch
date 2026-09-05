@@ -102,7 +102,37 @@ function MediaThumbnail({ urls }: { urls: string[] }) {
   );
 }
 
-function PostCard({ post }: { post: QueuePost }) {
+function PostCard({
+  post,
+  onChanged,
+}: {
+  post: QueuePost;
+  onChanged?: () => void;
+}) {
+  const [publishing, setPublishing] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const canPublish = ["DRAFT", "FAILED"].includes(post.status);
+
+  async function handlePublish() {
+    setPublishing(true);
+    setActionError("");
+    try {
+      const res = await fetch(`/api/posts/${post.id}/publish`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setActionError(
+          typeof data.error === "string" ? data.error : "Publish failed",
+        );
+        return;
+      }
+      onChanged?.();
+    } catch {
+      setActionError("Network error - please try again");
+    } finally {
+      setPublishing(false);
+    }
+  }
+
   return (
     <div className="border-b border-border bg-card p-4 last:border-b-0">
       <div className="flex gap-4">
@@ -117,9 +147,32 @@ function PostCard({ post }: { post: QueuePost }) {
           </div>
           <p className="text-sm font-mono line-clamp-2">{post.content}</p>
           {post.errorMessage ? <PublishError errorMessage={post.errorMessage} /> : null}
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] text-muted-foreground">
+          {actionError ? (
+            <p className="mt-2 font-mono text-[10px] text-muted-foreground">{actionError}</p>
+          ) : null}
+          <div className="mt-2 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground">
             {post.scheduledAt && <span>{new Date(post.scheduledAt).toLocaleString()}</span>}
             {post.publishedAt && <span>{formatRelativeTime(post.publishedAt)}</span>}
+            {post.xPostUrl ? (
+              <a
+                href={post.xPostUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary tracking-wider hover:underline"
+              >
+                VIEW ON X
+              </a>
+            ) : null}
+            {canPublish ? (
+              <button
+                type="button"
+                onClick={handlePublish}
+                disabled={publishing}
+                className="text-primary tracking-wider hover:underline disabled:opacity-50"
+              >
+                {publishing ? "PUBLISHING..." : "PUBLISH TO X"}
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
@@ -127,7 +180,15 @@ function PostCard({ post }: { post: QueuePost }) {
   );
 }
 
-function PostList({ posts, emptyMessage }: { posts: QueuePost[]; emptyMessage: string }) {
+function PostList({
+  posts,
+  emptyMessage,
+  onChanged,
+}: {
+  posts: QueuePost[];
+  emptyMessage: string;
+  onChanged?: () => void;
+}) {
   if (!posts.length) {
     return (
       <div className="py-8 px-4 font-mono text-[12px] text-muted-foreground border border-border">
@@ -138,7 +199,7 @@ function PostList({ posts, emptyMessage }: { posts: QueuePost[]; emptyMessage: s
   return (
     <div className="border border-border">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} onChanged={onChanged} />
       ))}
     </div>
   );
@@ -151,14 +212,17 @@ export default function QueueStudioPage() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    Promise.all([
+  async function reloadQueue() {
+    const [queue, stats] = await Promise.all([
       fetch("/api/dashboard/queue").then((r) => r.json()),
       fetch("/api/dashboard/stats").then((r) => r.json()),
-    ]).then(([queue, stats]) => {
-      setData(queue);
-      setProjects(stats.projects ?? []);
-    }).finally(() => setLoading(false));
+    ]);
+    setData(queue);
+    setProjects(stats.projects ?? []);
+  }
+
+  useEffect(() => {
+    reloadQueue().finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -233,7 +297,7 @@ export default function QueueStudioPage() {
               <p className="font-mono text-[10px] tracking-widest text-muted-foreground">02</p>
               <h2 className="mt-2 text-[21px]">Schedule</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Hold posts for a better publish window or queue them immediately.
+                Hold posts for a better publish window, or click Publish to X on a pending draft.
               </p>
             </div>
             <div className="bg-background px-5 py-5">
@@ -265,7 +329,7 @@ export default function QueueStudioPage() {
             ) : (
               <div className="space-y-3">
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Nothing has been published yet. {hasProjects ? "Generate a post to start the pipeline." : "Onboard a project first, then generate your first post."}
+                  Nothing has been published yet. {hasProjects ? "Generate a post, then click Publish to X on the pending draft." : "Onboard a project first, then generate your first post."}
                 </p>
                 {!hasProjects && (
                   <Link
@@ -295,7 +359,11 @@ export default function QueueStudioPage() {
         </TabsList>
 
         <TabsContent value="pending">
-          <PostList posts={data?.pending ?? []} emptyMessage="No pending posts. Generate one with AI." />
+          <PostList
+            posts={data?.pending ?? []}
+            emptyMessage="No pending posts. Generate one with AI."
+            onChanged={reloadQueue}
+          />
         </TabsContent>
         <TabsContent value="scheduled">
           <PostList posts={data?.scheduled ?? []} emptyMessage="No scheduled posts." />
@@ -309,6 +377,12 @@ export default function QueueStudioPage() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         projects={projects}
+        onGenerated={() => {
+          void reloadQueue();
+        }}
+        onQueued={() => {
+          void reloadQueue();
+        }}
       />
     </div>
   );

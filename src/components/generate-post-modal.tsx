@@ -26,6 +26,7 @@ interface GeneratePostModalProps {
   onOpenChange: (open: boolean) => void;
   projects: Array<{ id: string; name: string }>;
   onGenerated?: (content: string) => void;
+  onQueued?: () => void;
 }
 
 export function GeneratePostModal({
@@ -33,6 +34,7 @@ export function GeneratePostModal({
   onOpenChange,
   projects,
   onGenerated,
+  onQueued,
 }: GeneratePostModalProps) {
   const [projectId, setProjectId] = useState(projects[0]?.id ?? "");
   const [topic, setTopic] = useState("");
@@ -100,6 +102,7 @@ export function GeneratePostModal({
         return;
       }
       setQueued(true);
+      onQueued?.();
     } catch {
       setError("Network error - please try again");
     } finally {

@@ -2,6 +2,30 @@
 
 Everything below must be configured for a live deploy. Check items off as they're wired up.
 
+## Production go-live (do this in order)
+
+Use the **same** `DATABASE_URL` as local so the Sorano project, drafts, and X tokens you already created carry over.
+
+1. Vercel → Project → Settings → Environment Variables. Set production (and preview if you want PR logins) to:
+   - `DATABASE_URL` (same Postgres as local, pgvector enabled)
+   - `NEXTAUTH_URL`, `APP_URL`, `NEXT_PUBLIC_APP_URL` = the live origin, e.g. `https://sorano.app` or `https://YOUR-APP.vercel.app`
+   - `NEXTAUTH_SECRET` (a new 32+ char secret, not the localhost one)
+   - `X_CLIENT_ID` / `X_CLIENT_SECRET` (same OAuth 2.0 client as local)
+   - `OPENAI_API_KEY` (generation + embeddings)
+   - `CRON_SECRET` (any random string)
+2. X developer portal → User authentication settings → add production callbacks, exact, no trailing slash:
+   - `https://YOUR-LIVE-ORIGIN/api/auth/callback/twitter`
+   Keep the localhost callbacks too so local still works.
+3. Redeploy production after saving env vars. Sign in on the **live** URL (cookies do not transfer from localhost).
+4. Optional but needed for the full loop:
+   - Upstash QStash (`QSTASH_*`) for scheduled posts and retries. Immediate **Publish to X** works without it.
+   - Vercel Blob (Storage tab) for screenshots/code cards
+   - `PERPLEXITY_API_KEY` and `ANTHROPIC_API_KEY` for live GEO citation checks
+   - Google Indexing service account for changelog indexing
+   - Dodo keys only if you are taking payments
+
+After that: Command Center → Recheck (GEO), Publish a changelog article, Queue → Publish to X.
+
 ## Database
 - [ ] `DATABASE_URL` — Postgres with pgvector support (Neon or Supabase recommended, both support the extension on free tiers). Schema already declares `extensions = [vector]` (prisma/schema.prisma), so `npx prisma db push` creates it automatically once this is set.
 

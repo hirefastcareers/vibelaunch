@@ -9,6 +9,7 @@ import { StatusPill } from "@/components/status-pill";
 import { formatRelativeTime } from "@/lib/utils";
 import { GeoCard } from "@/components/dashboard/geo-card";
 import { DiagnosticCard } from "@/components/dashboard/diagnostic-card";
+import { PublishArticleCard } from "@/components/dashboard/publish-article-card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TrendChart } from "@/components/dashboard/trend-chart";
 
@@ -32,6 +33,7 @@ interface DashboardStats {
     mediaUrls: string[];
   }>;
   eriTrend: Array<{ date: string; eri: number }>;
+  projects: Array<{ id: string; name: string }>;
 }
 
 export default function CommandCenterPage() {
@@ -133,6 +135,8 @@ export default function CommandCenterPage() {
           <div id="ai-search" className="scroll-mt-8">
             <GeoCard />
           </div>
+
+          <PublishArticleCard projects={data?.projects ?? []} />
         </div>
 
         <div className="min-w-0">

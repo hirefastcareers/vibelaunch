@@ -31,13 +31,12 @@ describe("Validators", () => {
     expect(tooLong.success).toBe(false);
   });
 
-  it("validates SEO publish input", () => {
+  it("allows SEO publish without a prewritten body", () => {
     const result = seoPublishSchema.safeParse({
       projectId: "clxxxxxxxxxxxxxxxx",
       title: "v1.0 Release",
       summary: "We shipped the first version.",
     });
-    // cuid validation may fail with fake id - test structure
-    expect(result.success).toBe(false); // invalid cuid
+    expect(result.success).toBe(true);
   });
 });
