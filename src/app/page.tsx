@@ -45,7 +45,7 @@ const engineSlices = [
 ];
 
 const competitorRows = [
-  { name: "Sorano", shareOfVoice: 62, citationRate: 78, avgPosition: 1.8, trend: "up" as const, highlighted: true },
+  { name: "Xoopa", shareOfVoice: 62, citationRate: 78, avgPosition: 1.8, trend: "up" as const, highlighted: true },
   { name: "Competitor A", shareOfVoice: 44, citationRate: 52, avgPosition: 3.2, trend: "down" as const },
   { name: "Competitor B", shareOfVoice: 31, citationRate: 38, avgPosition: 4.1, trend: "stable" as const },
   { name: "Competitor C", shareOfVoice: 18, citationRate: 22, avgPosition: 5.0, trend: "down" as const },
@@ -94,10 +94,10 @@ const pricing = [
 ];
 
 const faqs = [
-  { q: "Do I have to write anything?", a: "Two lines about what you shipped. Sorano handles the posts, the article, the media and the structured data for AI search." },
+  { q: "Do I have to write anything?", a: "Two lines about what you shipped. Xoopa handles the posts, the article, the media and the structured data for AI search." },
   { q: "Will the posts sound generated?", a: "They are built from your own best-performing posts. Engagement data feeds back in, so voice and hooks tighten over time." },
   { q: "What is GEO, exactly?", a: "Generative Engine Optimization: making your content the kind of source ChatGPT and Perplexity quote when someone asks for a tool like yours." },
-  { q: "How is this different from an SEO suite?", a: "Suites tell you what to fix. Sorano writes, publishes and tracks it from the update you already wrote." },
+  { q: "How is this different from an SEO suite?", a: "Suites tell you what to fix. Xoopa writes, publishes and tracks it from the update you already wrote." },
   { q: "What do I connect?", a: "Sign in with X. No API keys, no separate CMS, no scheduling tool on the side." },
 ];
 
@@ -122,7 +122,7 @@ const footerCols = [
   {
     head: "Company",
     links: [
-      { label: "@sorano", href: "https://x.com" },
+      { label: "@xoopa", href: "https://x.com" },
     ],
   },
 ];
@@ -160,7 +160,7 @@ export default async function HomePage() {
               everywhere.
             </h1>
             <p className="mx-auto mb-10 max-w-[52ch] text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Sorano turns your product updates into viral social posts, Google-ranked articles,
+              Xoopa turns your product updates into viral social posts, Google-ranked articles,
               and AI search citations - automatically.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -188,10 +188,10 @@ export default async function HomePage() {
                     <span className="h-3 w-3 rounded-full bg-green-400" />
                   </div>
                   <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                    Sorano dashboard
+                    Xoopa dashboard
                   </span>
                 </div>
-                <span className="text-[11px] text-muted-foreground">sorano.app/dashboard</span>
+                <span className="text-[11px] text-muted-foreground">xoopa.app/dashboard</span>
               </div>
               <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
                 <MiniStat label="Share of Voice" value="62%" trend="+14 pts" positive />
@@ -225,7 +225,7 @@ export default async function HomePage() {
               One update in. Four channels out.
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              Write two lines about what you shipped. Sorano handles the rest and feeds the results
+              Write two lines about what you shipped. Xoopa handles the rest and feeds the results
               back into the next run.
             </p>
           </div>
@@ -241,7 +241,7 @@ export default async function HomePage() {
               Google is no longer the only search box.
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              People ask ChatGPT and Perplexity which tool to use. Sorano tracks whether the answer
+              People ask ChatGPT and Perplexity which tool to use. Xoopa tracks whether the answer
               names you, and structures your content until it does.
             </p>
           </div>
@@ -315,7 +315,7 @@ export default async function HomePage() {
             </h2>
           </div>
 
-          {/* Mobile: stacked rows so the Sorano column is never clipped */}
+          {/* Mobile: stacked rows so the Xoopa column is never clipped */}
           <div className="flex flex-col gap-3 md:hidden">
             {compare.map((row) => (
               <div
@@ -331,7 +331,7 @@ export default async function HomePage() {
                     </p>
                   </div>
                   <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                    <span className="ds-kicker text-primary">Sorano</span>
+                    <span className="ds-kicker text-primary">Xoopa</span>
                     <p className="mt-1.5 text-sm font-medium leading-relaxed text-foreground">
                       {row.next}
                     </p>
@@ -348,7 +348,7 @@ export default async function HomePage() {
                   <th className="min-w-[180px]">The Job</th>
                   <th className="min-w-[220px]">Stitched Stack</th>
                   <th className="min-w-[220px]">
-                    <span className="text-primary">Sorano</span>
+                    <span className="text-primary">Xoopa</span>
                   </th>
                 </tr>
               </thead>
@@ -371,7 +371,7 @@ export default async function HomePage() {
           <div className="mb-12 max-w-2xl">
             <span className="ds-kicker">06 - What ships weekly</span>
             <h2 className="mt-3 text-[32px] md:text-[40px] lg:text-[52px]">
-              Sorano never stops working.
+              Xoopa never stops working.
             </h2>
           </div>
 
@@ -523,7 +523,7 @@ export default async function HomePage() {
           ))}
         </div>
         <div className="ds-container flex flex-wrap justify-between gap-6 border-t border-[#E6E3DE] pb-11 pt-5 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-          <span>© 2026 Sorano.app</span>
+          <span>© 2026 Xoopa.app</span>
           <span>Built for people who ship</span>
         </div>
       </footer>

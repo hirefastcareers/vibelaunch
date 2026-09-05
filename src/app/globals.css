@@ -163,13 +163,13 @@
     @apply font-sans text-[28px] font-medium leading-none tracking-[-0.02em] sm:text-[32px];
   }
 
-  @keyframes sorano-blink {
+  @keyframes xoopa-blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
 
-  .animate-sorano-blink {
-    animation: sorano-blink 2s ease-in-out infinite;
+  .animate-xoopa-blink {
+    animation: xoopa-blink 2s ease-in-out infinite;
   }
 
   @keyframes slide-up-fade {

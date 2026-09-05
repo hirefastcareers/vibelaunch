@@ -93,7 +93,7 @@ function FallbackCard({
             color: INK,
           }}
         >
-          Sorano
+          Xoopa
         </div>
       </div>
       <div

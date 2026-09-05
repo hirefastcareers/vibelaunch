@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "Sorano - Autonomous Growth for Indie Builders";
+export const alt = "Xoopa - Autonomous Growth for Indie Builders";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -69,7 +69,7 @@ export default async function Image() {
               color: INK,
             }}
           >
-            Sorano
+            Xoopa
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>

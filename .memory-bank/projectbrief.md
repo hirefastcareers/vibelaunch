@@ -1,8 +1,8 @@
-# Sorano.app - Project Brief
+# Xoopa.app - Project Brief
 
-## What is Sorano?
+## What is Xoopa?
 
-Sorano is an autonomous growth and GEO engine for indie builders: one product update becomes X posts, a Google-indexable article, UI media, and AI citation checks — then ERI + pgvector reinforcement makes the next draft better.
+Xoopa is an autonomous growth and GEO engine for indie builders: one product update becomes X posts, a Google-indexable article, UI media, and AI citation checks — then ERI + pgvector reinforcement makes the next draft better.
 
 We are not another Ahrefs, Athena, or Typefully. We own the closed loop: capture → distribute → measure → reinforce → get cited.
 
