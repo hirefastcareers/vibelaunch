@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import SignInForm from "./signin-form";
-import { isXOauthConfigured } from "@/lib/env";
+import { getXOauthCallbackAllowlist, isXOauthConfigured } from "@/lib/env";
 import { getSignInErrorMessage } from "@/lib/auth-errors";
 
 type PageProps = {
@@ -14,6 +14,7 @@ export default async function SignInPage({ searchParams }: PageProps) {
   return (
     <SignInForm
       configured={configured}
+      callbackUrls={getXOauthCallbackAllowlist()}
       errorMessage={getSignInErrorMessage(error, configured)}
     />
   );

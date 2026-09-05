@@ -12,7 +12,7 @@ export function getSignInErrorMessage(
       return "Could not start X sign-in. Use the OAuth 2.0 Client ID and Client Secret (not the API Key), confirm they have no extra quotes or spaces, and restart the dev server.";
     case "OAuthCallback":
     case "Callback":
-      return "X rejected the callback. In the X app, add exactly http://localhost:3000/api/auth/callback/twitter (and http://127.0.0.1:3000/api/auth/callback/twitter). NEXTAUTH_URL must be http://localhost:3000.";
+      return "X rejected the callback. In the X app, add exactly http://localhost:3000/api/auth/callback/twitter (and http://127.0.0.1:3000/api/auth/callback/twitter). NEXTAUTH_URL must be http://localhost:3000. Type of app must be Web App.";
     case "OAuthCreateAccount":
       return "Signed in with X, but the account could not be saved. Check DATABASE_URL and that prisma db push succeeded.";
     case "OAuthAccountNotLinked":

@@ -4,6 +4,8 @@ import {
   ensureAuthEnv,
   getXOauthCredentials,
   isXOauthConfigured,
+  getXOauthCallbackUrl,
+  getXOauthCallbackAllowlist,
 } from "@/lib/env";
 
 describe("env helpers", () => {
@@ -61,5 +63,16 @@ describe("env helpers", () => {
       clientSecret: "secret-from-alias",
     });
     expect(isXOauthConfigured()).toBe(true);
+  });
+
+  it("builds the NextAuth X callback URL from the app origin", () => {
+    process.env.NEXTAUTH_URL = "http://localhost:3000";
+    expect(getXOauthCallbackUrl()).toBe(
+      "http://localhost:3000/api/auth/callback/twitter",
+    );
+    expect(getXOauthCallbackAllowlist()).toEqual([
+      "http://localhost:3000/api/auth/callback/twitter",
+      "http://127.0.0.1:3000/api/auth/callback/twitter",
+    ]);
   });
 });
