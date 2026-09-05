@@ -22,6 +22,33 @@ export function getBaseUrl(): string {
   return LOCAL_FALLBACK;
 }
 
+function firstNonEmpty(...values: Array<string | undefined>): string {
+  for (const value of values) {
+    const trimmed = value?.trim();
+    if (trimmed) return trimmed;
+  }
+  return "";
+}
+
+/**
+ * OAuth 2.0 Client ID / Secret from the X developer portal
+ * (User authentication settings), not the API Key / API Key Secret.
+ */
+export function getXOauthCredentials(): { clientId: string; clientSecret: string } {
+  return {
+    clientId: firstNonEmpty(process.env.X_CLIENT_ID, process.env.TWITTER_CLIENT_ID),
+    clientSecret: firstNonEmpty(
+      process.env.X_CLIENT_SECRET,
+      process.env.TWITTER_CLIENT_SECRET,
+    ),
+  };
+}
+
+export function isXOauthConfigured(): boolean {
+  const { clientId, clientSecret } = getXOauthCredentials();
+  return Boolean(clientId && clientSecret);
+}
+
 /**
  * Ensure NextAuth's required env vars are never empty strings during build/runtime.
  */

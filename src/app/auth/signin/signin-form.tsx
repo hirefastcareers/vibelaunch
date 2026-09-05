@@ -4,7 +4,12 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Logo } from "@/components/logo";
 
-export default function SignInForm() {
+interface SignInFormProps {
+  configured: boolean;
+  errorMessage: string | null;
+}
+
+export default function SignInForm({ configured, errorMessage }: SignInFormProps) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
       <div className="absolute inset-x-0 top-[-8rem] h-[24rem] bg-[radial-gradient(circle_at_top,rgba(242,65,0,0.12),transparent_55%)]" />
@@ -31,6 +36,15 @@ export default function SignInForm() {
               One login. No API keys to paste, no second CMS, no scheduling tool on the side.
             </p>
 
+            {errorMessage ? (
+              <p
+                role="alert"
+                className="mb-6 rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm leading-relaxed text-foreground"
+              >
+                {errorMessage}
+              </p>
+            ) : null}
+
             <button
               type="button"
               onClick={() => signIn("twitter", { callbackUrl: "/dashboard" })}
@@ -40,7 +54,9 @@ export default function SignInForm() {
             </button>
 
             <p className="mt-5 text-[11px] text-muted-foreground">
-              You will return to your dashboard after authorizing Sorano.
+              {configured
+                ? "You will return to your dashboard after authorizing Sorano."
+                : "The button will keep failing until X_CLIENT_ID and X_CLIENT_SECRET are set and the server is restarted."}
             </p>
           </div>
         </div>
