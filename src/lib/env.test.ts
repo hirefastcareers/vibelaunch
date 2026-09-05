@@ -1,5 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { getBaseUrl, ensureAuthEnv } from "@/lib/env";
+import {
+  getBaseUrl,
+  ensureAuthEnv,
+  getXOauthCredentials,
+  isXOauthConfigured,
+  getXOauthCallbackUrl,
+  getXOauthCallbackAllowlist,
+} from "@/lib/env";
 
 describe("env helpers", () => {
   const originalEnv = { ...process.env };
@@ -36,5 +43,36 @@ describe("env helpers", () => {
     process.env.NEXTAUTH_URL = "";
     ensureAuthEnv();
     expect(process.env.NEXTAUTH_URL).toBe("http://localhost:3000");
+  });
+
+  it("treats empty X OAuth strings as unset", () => {
+    process.env.X_CLIENT_ID = "";
+    process.env.X_CLIENT_SECRET = "  ";
+    delete process.env.TWITTER_CLIENT_ID;
+    delete process.env.TWITTER_CLIENT_SECRET;
+    expect(isXOauthConfigured()).toBe(false);
+  });
+
+  it("accepts TWITTER_CLIENT_* aliases", () => {
+    delete process.env.X_CLIENT_ID;
+    delete process.env.X_CLIENT_SECRET;
+    process.env.TWITTER_CLIENT_ID = "id-from-alias";
+    process.env.TWITTER_CLIENT_SECRET = "secret-from-alias";
+    expect(getXOauthCredentials()).toEqual({
+      clientId: "id-from-alias",
+      clientSecret: "secret-from-alias",
+    });
+    expect(isXOauthConfigured()).toBe(true);
+  });
+
+  it("builds the NextAuth X callback URL from the app origin", () => {
+    process.env.NEXTAUTH_URL = "http://localhost:3000";
+    expect(getXOauthCallbackUrl()).toBe(
+      "http://localhost:3000/api/auth/callback/twitter",
+    );
+    expect(getXOauthCallbackAllowlist()).toEqual([
+      "http://localhost:3000/api/auth/callback/twitter",
+      "http://127.0.0.1:3000/api/auth/callback/twitter",
+    ]);
   });
 });

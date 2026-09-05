@@ -4,7 +4,17 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Logo } from "@/components/logo";
 
-export default function SignInForm() {
+interface SignInFormProps {
+  configured: boolean;
+  callbackUrls: string[];
+  errorMessage: string | null;
+}
+
+export default function SignInForm({
+  configured,
+  callbackUrls,
+  errorMessage,
+}: SignInFormProps) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
       <div className="absolute inset-x-0 top-[-8rem] h-[24rem] bg-[radial-gradient(circle_at_top,rgba(242,65,0,0.12),transparent_55%)]" />
@@ -27,9 +37,18 @@ export default function SignInForm() {
           <div className="rounded-[28px] border border-border bg-card p-8 shadow-lg">
             <p className="ds-label mb-3">START</p>
             <h2 className="mb-2 text-[28px] leading-tight">Continue with X</h2>
-            <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
+            <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
               One login. No API keys to paste, no second CMS, no scheduling tool on the side.
             </p>
+
+            {errorMessage ? (
+              <p
+                role="alert"
+                className="mb-6 rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm leading-relaxed text-foreground"
+              >
+                {errorMessage}
+              </p>
+            ) : null}
 
             <button
               type="button"
@@ -39,9 +58,29 @@ export default function SignInForm() {
               Sign in with X
             </button>
 
-            <p className="mt-5 text-[11px] text-muted-foreground">
-              You will return to your dashboard after authorizing Sorano.
-            </p>
+            <div className="mt-6 space-y-2 text-[11px] leading-relaxed text-muted-foreground">
+              <p>
+                If X says you were not able to give access, the developer portal callback is
+                wrong. Under User authentication settings, type of app must be Web App, and
+                Callback URI must be exactly:
+              </p>
+              {callbackUrls.map((url) => (
+                <code
+                  key={url}
+                  className="block break-all rounded-lg border border-border bg-muted/50 px-3 py-2 font-mono text-[11px] text-foreground"
+                >
+                  {url}
+                </code>
+              ))}
+              <p>
+                Do not use /auth/signin, https, or a trailing slash. Save, then try again.
+              </p>
+              {!configured ? (
+                <p>
+                  Also set X_CLIENT_ID and X_CLIENT_SECRET, then restart npm run dev.
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
