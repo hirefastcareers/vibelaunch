@@ -1,13 +1,13 @@
 # Deployments
 
-Sorano deploys through Vercel's GitHub integration.
+Xoopa deploys through Vercel's GitHub integration.
 
 ## How it works
 
 | Stage | Trigger | Where it shows up |
 |-------|---------|-------------------|
 | **Preview** | Push to any branch with an open PR | `vibelaunch-git-<branch>-<team>.vercel.app` |
-| **Production** | Merge (or push) to `main` | Production domain (e.g. `sorano.app`) |
+| **Production** | Merge (or push) to `main` | Production domain (e.g. `xoopa.app`) |
 
 Pushing to a feature branch **does not** update production. Only `main` does.
 

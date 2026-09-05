@@ -4,7 +4,7 @@ Paste this into the Claude Project instructions. Full engineering context, compe
 
 ---
 
-Sorano is **autonomous growth for indie builders**. A solo founder ships a feature, spends about 40 seconds in the product, and the system turns that update into X posts, a Google-indexable article, UI media, and a check of whether ChatGPT / Perplexity / Claude cite them. It then learns which posts actually performed and writes the next ones better.
+Xoopa is **autonomous growth for indie builders**. A solo founder ships a feature, spends about 40 seconds in the product, and the system turns that update into X posts, a Google-indexable article, UI media, and a check of whether ChatGPT / Perplexity / Claude cite them. It then learns which posts actually performed and writes the next ones better.
 
 We are not building another social scheduler, AI writer, SEO research suite, or CMS. Those already exist (Ahrefs/Semrush for research, Athena/Profound for GEO monitoring, Typefully/Buffer for scheduling). We are collapsing five tools into one closed loop: **capture the update → distribute it → measure it → feed the score back into generation → get cited by AI search**.
 

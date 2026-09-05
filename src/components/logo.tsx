@@ -1,7 +1,7 @@
 type LogoProps = {
   /** Height of the mark in px. Wordmark scales with it. */
   size?: number;
-  /** Show the "Sorano" wordmark next to the mark. */
+  /** Show the "Xoopa" wordmark next to the mark. */
   wordmark?: boolean;
   /** Text to render as the wordmark. */
   label?: string;
@@ -15,7 +15,7 @@ type LogoProps = {
 export function Logo({
   size = 32,
   wordmark = true,
-  label = "Sorano",
+  label = "Xoopa",
   accent = "#F24100",
   ink = "#242424",
   className,
@@ -65,7 +65,7 @@ export function LogoMark({
       fill="none"
       className={className}
       role={decorative ? undefined : "img"}
-      aria-label={decorative ? undefined : "Sorano"}
+      aria-label={decorative ? undefined : "Xoopa"}
       aria-hidden={decorative ? true : undefined}
     >
       <path d="M159.4 159.4 A84 84 0 1 1 159.4 40.6" stroke={accent} strokeWidth={26} />

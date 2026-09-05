@@ -7,7 +7,7 @@ Everything below must be configured for a live deploy. Check items off as they'r
 
 ## Auth
 - [ ] `NEXTAUTH_SECRET` — random 32+ char string
-- [ ] `NEXTAUTH_URL` — production URL (e.g. https://sorano.app)
+- [ ] `NEXTAUTH_URL` — production URL (e.g. https://xoopa.app)
 
 ## X (Twitter)
 - [ ] `X_CLIENT_ID`
@@ -44,8 +44,8 @@ Everything below must be configured for a live deploy. Check items off as they'r
 - [ ] `DODO_PAYMENTS_WEBHOOK_KEY`
 - [ ] `DODO_PAYMENTS_ENVIRONMENT` — set to `live_mode` for production
 - [ ] `DODO_PAYMENTS_RETURN_URL`
-- [ ] Create "Sorano Starter" product — $19.00 USD/month recurring subscription
-- [ ] Create "Sorano Pro" product — $49.00 USD/month recurring subscription
+- [ ] Create "Xoopa Starter" product — $19.00 USD/month recurring subscription
+- [ ] Create "Xoopa Pro" product — $49.00 USD/month recurring subscription
 - [ ] `DODO_STARTER_PRODUCT_ID` — paste after creating the Starter product above
 - [ ] `DODO_PRO_PRODUCT_ID` — paste after creating the Pro product above
 - [ ] Dodo Dashboard → Settings → Business → enable **Adaptive Currency** (auto-detects customer's country at checkout, charges in their local currency — e.g. GBP for UK customers — at live exchange rates, zero code required)

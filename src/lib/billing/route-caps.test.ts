@@ -56,8 +56,8 @@ describe("usage cap API responses", () => {
       new NextRequest("http://localhost/api/project/onboard", {
         method: "POST",
         body: JSON.stringify({
-          targetUrl: "https://sorano.app",
-          projectName: "Sorano",
+          targetUrl: "https://xoopa.app",
+          projectName: "Xoopa",
           tone: "build-in-public",
         }),
       }),

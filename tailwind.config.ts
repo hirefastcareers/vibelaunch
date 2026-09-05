@@ -86,13 +86,13 @@ const config: Config = {
         lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
       },
       keyframes: {
-        "sorano-blink": {
+        "xoopa-blink": {
           "0%, 49%": { opacity: "1" },
           "50%, 100%": { opacity: "0" },
         },
       },
       animation: {
-        "sorano-blink": "sorano-blink 1.6s steps(1) infinite",
+        "xoopa-blink": "xoopa-blink 1.6s steps(1) infinite",
       },
     },
   },

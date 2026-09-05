@@ -11,7 +11,7 @@ export interface ScrapedContext {
 export async function scrapeUrl(url: string): Promise<ScrapedContext> {
   try {
     const response = await fetch(url, {
-      headers: { "User-Agent": "Sorano/1.0 (+https://sorano.app)" },
+      headers: { "User-Agent": "Xoopa/1.0 (+https://xoopa.app)" },
       signal: AbortSignal.timeout(10000),
     });
 

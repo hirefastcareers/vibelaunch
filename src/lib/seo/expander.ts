@@ -102,7 +102,7 @@ Visit our website to try the latest version of ${projectName} today.
 
 ---
 
-*Published by Sorano*`;
+*Published by Xoopa*`;
 
   return {
     title,
