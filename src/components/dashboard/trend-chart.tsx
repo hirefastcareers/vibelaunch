@@ -134,7 +134,7 @@ export function TrendChart({ data, series, xKey, className }: TrendChartProps) {
                 type="button"
                 onClick={() => key && toggle(key)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider",
+                  "inline-flex items-center gap-1.5 text-xs",
                   isHidden ? "text-muted-foreground" : "text-foreground"
                 )}
               >

@@ -50,6 +50,7 @@ export function statusLabel(status: string): string {
     case "fail":
       return "Failing";
     default:
-      return status ? status.replaceAll("_", " ") : "Unknown";
+      if (!status || status.toLowerCase() === "unknown") return "Unknown";
+      return status.replaceAll("_", " ");
   }
 }
