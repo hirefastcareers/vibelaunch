@@ -71,16 +71,24 @@ export default function CommandCenterPage() {
   return (
     <div className="space-y-8 p-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <span className="ds-kicker">OPS</span>
-          <h1 className="mt-1 text-[36px] md:text-[44px]">Command Center</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Launch metrics and top-performing content
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span className="ds-kicker">OPS</span>
+            <h1 className="mt-1 text-[36px] md:text-[44px]">Command Center</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Launch metrics and top-performing content
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/dashboard/queue"
+              className="ds-btn px-4 py-2 text-[11px]"
+            >
+              PUBLISH TO X
+            </Link>
+            <StatusPill tone="ok">[LEARNING ACTIVE]</StatusPill>
+          </div>
         </div>
-        <StatusPill tone="ok">[LEARNING ACTIVE]</StatusPill>
-      </div>
 
       {/* KPI Row */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -161,7 +169,7 @@ export default function CommandCenterPage() {
               <p className="text-sm text-muted-foreground">
                 No published posts yet.{" "}
                 <Link href="/dashboard/queue" className="font-medium text-primary hover:underline">
-                  Generate your first post
+                  Generate a draft, then Publish to X
                 </Link>
               </p>
             </CardContent>

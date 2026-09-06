@@ -135,17 +135,17 @@ function PostCard({
 
   return (
     <div className="border-b border-border bg-card p-4 last:border-b-0">
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <MediaThumbnail urls={post.mediaUrls} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex flex-wrap items-center gap-2">
             <StatusPill>{statusTag(post.status)}</StatusPill>
             <span className="font-mono text-[10px] text-muted-foreground">
               {post.projectName}
             </span>
             {post.eri !== null && <EriBadge eri={post.eri} />}
           </div>
-          <p className="text-sm font-mono line-clamp-2">{post.content}</p>
+          <p className="line-clamp-2 font-mono text-sm">{post.content}</p>
           {post.errorMessage ? <PublishError errorMessage={post.errorMessage} /> : null}
           {actionError ? (
             <p className="mt-2 font-mono text-[10px] text-muted-foreground">{actionError}</p>
@@ -158,23 +158,23 @@ function PostCard({
                 href={post.xPostUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary tracking-wider hover:underline"
+                className="tracking-wider text-primary hover:underline"
               >
                 VIEW ON X
               </a>
             ) : null}
-            {canPublish ? (
-              <button
-                type="button"
-                onClick={handlePublish}
-                disabled={publishing}
-                className="text-primary tracking-wider hover:underline disabled:opacity-50"
-              >
-                {publishing ? "PUBLISHING..." : "PUBLISH TO X"}
-              </button>
-            ) : null}
           </div>
         </div>
+        {canPublish ? (
+          <Button
+            type="button"
+            onClick={handlePublish}
+            disabled={publishing}
+            className="shrink-0 font-mono text-xs tracking-wider sm:mt-0"
+          >
+            {publishing ? "PUBLISHING..." : "PUBLISH TO X"}
+          </Button>
+        ) : null}
       </div>
     </div>
   );
@@ -256,7 +256,7 @@ export default function QueueStudioPage() {
           </p>
           <h1 className="text-[38px] md:text-[48px]">AI Post Generator & Hooks</h1>
           <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
-            Draft, schedule, and review every post in one place. The queue should feel like an editorial pipeline, not a dump.
+            Generate a draft, then click Publish to X on the pending card. It posts with your connected account.
           </p>
         </div>
         {hasProjects ? (
@@ -361,7 +361,7 @@ export default function QueueStudioPage() {
         <TabsContent value="pending">
           <PostList
             posts={data?.pending ?? []}
-            emptyMessage="No pending posts. Generate one with AI."
+            emptyMessage="No pending drafts. Generate a post, then Publish to X appears on the card."
             onChanged={reloadQueue}
           />
         </TabsContent>

@@ -38,7 +38,7 @@ export async function publishToX(
     tweetBody.media = { media_ids: mediaIds };
   }
 
-  const response = await fetch("https://api.twitter.com/2/tweets", {
+  const response = await fetch("https://api.x.com/2/tweets", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -151,7 +151,7 @@ export async function fetchTweetMetrics(
   });
 
   const response = await fetch(
-    `https://api.twitter.com/2/tweets?${params}`,
+    `https://api.x.com/2/tweets?${params}`,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
     }
