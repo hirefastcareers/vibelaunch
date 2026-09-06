@@ -4,28 +4,28 @@ import { detectCitation } from "@/lib/geo/citation-tracker";
 describe("detectCitation", () => {
   it("detects citation by project name", () => {
     const result = detectCitation(
-      "Top tools include Sorano for indie founders.",
-      "Sorano",
-      "https://sorano.app"
+      "Top tools include Xoopa for indie founders.",
+      "Xoopa",
+      "https://xoopa.app"
     );
     expect(result.cited).toBe(true);
   });
 
   it("detects citation by domain", () => {
     const result = detectCitation(
-      "Check out https://sorano.app for launch automation.",
+      "Check out https://xoopa.app for launch automation.",
       "OtherApp",
-      "https://sorano.app"
+      "https://xoopa.app"
     );
     expect(result.cited).toBe(true);
-    expect(result.citationUrl).toContain("sorano.app");
+    expect(result.citationUrl).toContain("xoopa.app");
   });
 
   it("returns not cited when absent", () => {
     const result = detectCitation(
       "Buffer and Hypefury are popular schedulers.",
-      "Sorano",
-      "https://sorano.app"
+      "Xoopa",
+      "https://xoopa.app"
     );
     expect(result.cited).toBe(false);
     expect(result.citationUrl).toBeNull();

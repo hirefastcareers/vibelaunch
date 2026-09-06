@@ -29,7 +29,7 @@ export default function SignInForm({
               Sign in. Ship once. Get found everywhere.
             </h1>
             <p className="max-w-[42ch] text-pretty text-[17px] leading-[1.7] text-muted-foreground">
-              Connect X once. Sorano turns your product updates into posts, articles,
+              Connect X once. Xoopa turns your product updates into posts, articles,
               and AI search citations automatically.
             </p>
           </div>
