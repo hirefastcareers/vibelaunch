@@ -1,9 +1,9 @@
 export type LLMProvider = "perplexity" | "chatgpt" | "claude";
 
-export const SORANO_PUBLISHER = {
+export const XOOPA_PUBLISHER = {
   "@type": "Organization" as const,
-  name: "Sorano",
-  url: "https://sorano.app",
+  name: "Xoopa",
+  url: "https://xoopa.app",
   description:
     "Autonomous growth for indie builders - turn product updates into viral social posts, Google-ranked articles, and AI search recommendations.",
 };
@@ -51,10 +51,10 @@ export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
       "Auto-published articles with Google indexing",
       "Cited in ChatGPT, Perplexity, and Claude",
     ],
-    keywords: input.keywords?.join(", ") ?? "sorano, indie saas, geo, x growth",
+    keywords: input.keywords?.join(", ") ?? "xoopa, indie saas, geo, x growth",
     slogan: input.tagline ?? input.changelogSummary,
-    publisher: SORANO_PUBLISHER,
-    creator: SORANO_PUBLISHER,
+    publisher: XOOPA_PUBLISHER,
+    creator: XOOPA_PUBLISHER,
   };
 }
 
@@ -103,8 +103,8 @@ export function buildArticleSchema(input: GeoSchemaInput) {
     headline: input.changelogTitle,
     description: input.changelogSummary,
     url: input.changelogUrl,
-    author: SORANO_PUBLISHER,
-    publisher: SORANO_PUBLISHER,
+    author: XOOPA_PUBLISHER,
+    publisher: XOOPA_PUBLISHER,
     about: {
       "@type": "SoftwareApplication",
       name: input.projectName,

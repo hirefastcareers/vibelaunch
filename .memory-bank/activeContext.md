@@ -1,4 +1,4 @@
-# Sorano.app - Active Context
+# Xoopa.app - Active Context
 
 Phases 1–7 exist in code (foundation through diagnostics), plus billing. Marketing UI refreshed (Satoshi, soft grey/orange).
 

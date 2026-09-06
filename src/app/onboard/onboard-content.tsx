@@ -78,7 +78,7 @@ export default function OnboardPage() {
         </p>
         <h1 className="mb-2 text-[38px] md:text-[48px]">Onboard your product</h1>
         <p className="max-w-[56ch] text-sm leading-relaxed text-muted-foreground">
-          Give Sorano a real product URL and a writing tone. It will pull context, create the project record,
+          Give Xoopa a real product URL and a writing tone. It will pull context, create the project record,
           and prepare the rest of the growth loop.
         </p>
       </div>
@@ -110,7 +110,7 @@ export default function OnboardPage() {
             <div className="bg-background px-5 py-5">
               <p className="font-mono text-[10px] tracking-widest text-muted-foreground">03 · KEYWORDS</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Seed 3 to 8 phrases you actually want to rank and be cited for. Sorano will merge them with scraped context.
+                Seed 3 to 8 phrases you actually want to rank and be cited for. Xoopa will merge them with scraped context.
               </p>
             </div>
           </CardContent>

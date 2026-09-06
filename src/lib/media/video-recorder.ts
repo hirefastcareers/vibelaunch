@@ -35,7 +35,7 @@ export async function recordSiteVideo(
   const duration = options.duration ?? 15;
   const viewport = options.viewport ?? DEFAULT_VIEWPORT;
   const slug = `${slugifyUrl(options.url)}-${Date.now()}`;
-  const tmpDir = await mkdtemp(path.join(tmpdir(), "sorano-video-"));
+  const tmpDir = await mkdtemp(path.join(tmpdir(), "xoopa-video-"));
   let browser: Awaited<ReturnType<typeof launchServerlessChromium>> | null = null;
 
   try {

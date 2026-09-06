@@ -15,7 +15,7 @@ export function RoiCalculator() {
     <div className="ds-card overflow-hidden">
       <div className="mb-6">
         <span className="ds-kicker">ROI Calculator</span>
-        <h3 className="mt-2 text-2xl">See what Sorano does with your updates</h3>
+        <h3 className="mt-2 text-2xl">See what Xoopa does with your updates</h3>
       </div>
 
       <div className="space-y-6">
@@ -57,7 +57,7 @@ export function RoiCalculator() {
         </div>
 
         <p className="text-center text-[11px] text-muted-foreground">
-          Based on average Sorano user data across all tiers
+          Based on average Xoopa user data across all tiers
         </p>
       </div>
     </div>

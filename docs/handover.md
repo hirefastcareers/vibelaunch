@@ -1,4 +1,4 @@
-# Sorano handover for the next agent
+# Xoopa handover for the next agent
 
 Claude Project instructions (short brief): `docs/claude-project.md`.  
 Wiring checklist: `docs/wiring-checklist.md`.  
@@ -9,7 +9,7 @@ Deployments: `docs/deployments.md`.
 
 ## What we are trying to achieve
 
-Sorano is **autonomous growth for indie builders**. A solo founder ships a feature, spends about 40 seconds in the product, and the system turns that update into:
+Xoopa is **autonomous growth for indie builders**. A solo founder ships a feature, spends about 40 seconds in the product, and the system turns that update into:
 
 1. X posts / threads  
 2. A Google-indexable article  
@@ -26,7 +26,7 @@ It then learns which posts actually performed (ERI) and writes the next ones bet
 
 | | |
 |---|---|
-| **Product** | Sorano (`sorano.app`) |
+| **Product** | Xoopa (`xoopa.app`) |
 | **Repo** | `hirefastcareers/vibelaunch` |
 | **Stack** | Next.js 15 App Router, React 19, TypeScript, Prisma 6, PostgreSQL + pgvector, NextAuth v4 (X OAuth 2.0), Upstash QStash, OpenAI, Sharp, Playwright (serverless Chromium), Tailwind, Vitest, Dodo Payments |
 | **Target user** | Indie hackers / vibe-coders launching AI-built products who will not stitch Buffer + Typefully + a CMS + Search Console + “are we cited in ChatGPT?” |
@@ -42,7 +42,7 @@ It then learns which posts actually performed (ERI) and writes the next ones bet
 
 ## Competitive landscape (research, 2026)
 
-The market splits into four categories. Sorano sits in a fifth that almost nobody owns for indie founders.
+The market splits into four categories. Xoopa sits in a fifth that almost nobody owns for indie founders.
 
 ### 1. Traditional SEO suites
 
@@ -53,7 +53,7 @@ The market splits into four categories. Sorano sits in a fifth that almost nobod
 | **Strength** | Best-in-class research data |
 | **Gap** | They tell you what to do. They do not turn a product update into posts, articles, and citations for you. |
 
-**Implication:** Do not try to beat Ahrefs on backlink graphs. Use free GSC + light keyword intent later if needed. Sorano wins on **execution**, not research depth.
+**Implication:** Do not try to beat Ahrefs on backlink graphs. Use free GSC + light keyword intent later if needed. Xoopa wins on **execution**, not research depth.
 
 ### 2. GEO / AEO visibility trackers
 
@@ -84,9 +84,9 @@ The market splits into four categories. Sorano sits in a fifth that almost nobod
 | **Job** | Draft copy or host pages |
 | **Gap** | No closed learn loop across X + SEO + GEO. |
 
-### Where Sorano’s wedge is
+### Where Xoopa’s wedge is
 
-| Competitor type | They optimize | Sorano’s bet |
+| Competitor type | They optimize | Xoopa’s bet |
 |---|---|---|
 | Ahrefs / Semrush | Research | Ship and learn |
 | Athena / Profound | Monitor AI citations | Monitor **and** auto-publish to improve citations |
@@ -116,8 +116,8 @@ The market splits into four categories. Sorano sits in a fifth that almost nobod
 A founder can truthfully say:
 
 - “I pasted two lines about what I shipped.”  
-- “Sorano posted to X, published a changelog article, captured UI media, and checked three AI engines.”  
-- “When ChatGPT stopped citing me, Sorano drafted the fix content without me opening five tabs.”  
+- “Xoopa posted to X, published a changelog article, captured UI media, and checked three AI engines.”  
+- “When ChatGPT stopped citing me, Xoopa drafted the fix content without me opening five tabs.”  
 - “This week’s posts are better than last month’s because the system learned.”  
 - “I pay less than one Ahrefs seat.”
 
@@ -296,4 +296,4 @@ If you only have one session: pick the highest P0 item that is still false in pr
 
 ## One-line summary
 
-Sorano wins by being the **best autonomous X + SEO + GEO loop for indie shippers** — not by out-researching Ahrefs or out-tracking Athena. Make the loop true (P0), make gaps auto-fix themselves (P1), then deepen category leadership (P2).
+Xoopa wins by being the **best autonomous X + SEO + GEO loop for indie shippers** — not by out-researching Ahrefs or out-tracking Athena. Make the loop true (P0), make gaps auto-fix themselves (P1), then deepen category leadership (P2).

@@ -30,9 +30,9 @@ describe("geo analytics", () => {
       { id: "2", queryPrompt: "Best indie tools", cited: false, citationUrl: null, llmProvider: "chatgpt", checkedAt: new Date() },
       { id: "3", queryPrompt: "Best indie tools", cited: false, citationUrl: null, llmProvider: "claude", checkedAt: new Date() },
     ];
-    const suggestions = generateGeoSuggestions(lowScoreMetrics, "Sorano");
+    const suggestions = generateGeoSuggestions(lowScoreMetrics, "Xoopa");
     expect(suggestions.length).toBeGreaterThan(0);
-    expect(suggestions.some((s) => s.includes("Sorano"))).toBe(true);
+    expect(suggestions.some((s) => s.includes("Xoopa"))).toBe(true);
   });
 
   it("maps Sunday into the ISO week that started the prior Monday", () => {

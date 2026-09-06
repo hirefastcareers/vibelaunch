@@ -1,4 +1,4 @@
-# Sorano.app
+# Xoopa.app
 
 Autonomous growth and GEO engine - continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
 
@@ -45,7 +45,7 @@ See `.cursor/rules/vibelaunch-spec.mdc` for the full platform specification and 
 
 ## Deployments
 
-Sorano uses Vercel. **Preview** deploys run on PR branches; **production** deploys only from `main` after merge.
+Xoopa uses Vercel. **Preview** deploys run on PR branches; **production** deploys only from `main` after merge.
 
 Cloud Agent PRs on `cursor/*` branches auto-merge to `main` once Vercel checks pass (see `.github/workflows/auto-ship-cursor-prs.yml`). Leave a PR as **draft** if you only want a preview.
 
