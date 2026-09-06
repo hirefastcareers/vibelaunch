@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getLogoMarkGeometry } from "@/components/logo";
 
 export const runtime = "nodejs";
 export const alt = "Xoopa - Autonomous Growth for Indie Builders";
@@ -17,6 +18,7 @@ const SERIF_FONT_URL =
   "https://cdn.jsdelivr.net/fontsource/fonts/instrument-serif@5.2.5/latin-400-normal.ttf";
 
 function Mark({ size = 72 }: { size?: number }) {
+  const { strokeWidth, arms } = getLogoMarkGeometry(false);
   return (
     <svg
       width={size}
@@ -25,8 +27,15 @@ function Mark({ size = 72 }: { size?: number }) {
       fill="none"
       style={{ display: "flex" }}
     >
-      <path d="M159.4 159.4 A84 84 0 1 1 159.4 40.6" stroke={ACCENT} strokeWidth={26} />
-      <path d="M132.53 132.53 A46 46 0 1 1 132.53 67.47" stroke={INK} strokeWidth={26} />
+      {arms.map((arm) => (
+        <path
+          key={arm.d}
+          d={arm.d}
+          stroke={arm.tone === "accent" ? ACCENT : INK}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+        />
+      ))}
     </svg>
   );
 }

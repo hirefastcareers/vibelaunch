@@ -43,9 +43,10 @@ export const metadata: Metadata = {
   applicationName: "Xoopa",
   icons: {
     icon: [
-      { url: "/logo/favicon.svg", type: "image/svg+xml" },
-      { url: "/logo/png/mark-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/logo/png/mark-64.png", sizes: "64x64", type: "image/png" },
+      { url: "/logo/favicon-x.svg", type: "image/svg+xml" },
+      { url: "/logo/png/favicon-x-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/logo/png/favicon-x-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo/png/favicon-x-64.png", sizes: "64x64", type: "image/png" },
     ],
     apple: [{ url: "/logo/png/apple-touch-icon.png", sizes: "180x180" }],
   },

@@ -5,12 +5,30 @@ type LogoProps = {
   wordmark?: boolean;
   /** Text to render as the wordmark. */
   label?: string;
-  /** Accent (outer arc). */
+  /** Accent (upper arms). */
   accent?: string;
-  /** Inner arc + wordmark colour. */
+  /** Lower arms + wordmark colour. */
   ink?: string;
   className?: string;
 };
+
+export function getLogoMarkGeometry(compact = false) {
+  const inner = compact ? 20 : 34;
+  const strokeWidth = compact ? 32 : 28;
+  const k = 0.70710678;
+  const arm = (dx: number, dy: number) =>
+    `M${100 + dx * k * inner} ${100 + dy * k * inner} L${100 + dx * k * 90} ${100 + dy * k * 90}`;
+
+  return {
+    strokeWidth,
+    arms: [
+      { d: arm(-1, -1), tone: "accent" as const },
+      { d: arm(1, -1), tone: "accent" as const },
+      { d: arm(-1, 1), tone: "ink" as const },
+      { d: arm(1, 1), tone: "ink" as const },
+    ],
+  };
+}
 
 export function Logo({
   size = 32,
@@ -26,7 +44,7 @@ export function Logo({
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: size * 0.17,
+        gap: size * 0.23,
         lineHeight: 1,
       }}
     >
@@ -54,22 +72,34 @@ export function LogoMark({
   ink = "#242424",
   className,
   decorative = false,
+  compact,
 }: Pick<LogoProps, "size" | "accent" | "ink" | "className"> & {
   decorative?: boolean;
+  compact?: boolean;
 }) {
+  const tight = compact ?? size < 32;
+  const { strokeWidth, arms } = getLogoMarkGeometry(tight);
+
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 200 200"
       fill="none"
+      strokeLinecap="round"
       className={className}
       role={decorative ? undefined : "img"}
       aria-label={decorative ? undefined : "Xoopa"}
       aria-hidden={decorative ? true : undefined}
     >
-      <path d="M159.4 159.4 A84 84 0 1 1 159.4 40.6" stroke={accent} strokeWidth={26} />
-      <path d="M132.53 132.53 A46 46 0 1 1 132.53 67.47" stroke={ink} strokeWidth={26} />
+      {arms.map((arm) => (
+        <path
+          key={arm.d}
+          d={arm.d}
+          stroke={arm.tone === "accent" ? accent : ink}
+          strokeWidth={strokeWidth}
+        />
+      ))}
     </svg>
   );
 }

@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
 import { ensureAuthEnv, getXOauthCredentials } from "./env";
+import { persistXUserProfile } from "./x/profile";
 
 ensureAuthEnv();
 
@@ -42,6 +43,25 @@ const twitterProvider = TwitterProvider({
       "user.fields": "profile_image_url,username",
     },
   },
+  profile(rawProfile) {
+    const { data } = rawProfile as {
+      data: {
+        id: string;
+        name: string;
+        username?: string;
+        profile_image_url?: string;
+      };
+    };
+    return {
+      id: data.id,
+      name: data.name,
+      email: null,
+      image: data.profile_image_url,
+      // Passed through Prisma createUser after NextAuth strips `id`.
+      xUserId: data.id,
+      xUsername: data.username,
+    };
+  },
 });
 
 export const authOptions: NextAuthOptions = {
@@ -60,21 +80,10 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+  },
+  events: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "twitter" && profile && user.id) {
-        const twitterProfile = profile as {
-          data?: { id?: string; username?: string };
-        };
-        const xUserId = twitterProfile.data?.id ?? account.providerAccountId;
-        const xUsername = twitterProfile.data?.username;
-        if (xUserId) {
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { xUserId, xUsername },
-          });
-        }
-      }
-      return true;
+      await persistXUserProfile(user.id, account, profile);
     },
   },
   pages: { signIn: "/auth/signin" },

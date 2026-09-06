@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/prisma";
+import { getLogoMarkGeometry } from "@/components/logo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,6 +48,7 @@ function clamp(text: string, max: number): string {
 }
 
 function Mark({ size = 36 }: { size?: number }) {
+  const { strokeWidth, arms } = getLogoMarkGeometry(false);
   return (
     <svg
       width={size}
@@ -55,8 +57,15 @@ function Mark({ size = 36 }: { size?: number }) {
       fill="none"
       style={{ display: "flex" }}
     >
-      <path d="M159.4 159.4 A84 84 0 1 1 159.4 40.6" stroke="#F24100" strokeWidth={26} />
-      <path d="M132.53 132.53 A46 46 0 1 1 132.53 67.47" stroke={INK} strokeWidth={26} />
+      {arms.map((arm) => (
+        <path
+          key={arm.d}
+          d={arm.d}
+          stroke={arm.tone === "accent" ? "#F24100" : INK}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+        />
+      ))}
     </svg>
   );
 }
