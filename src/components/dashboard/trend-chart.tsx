@@ -12,6 +12,9 @@ import {
   YAxis,
 } from "recharts";
 import type { LegendPayload, TooltipContentProps } from "recharts";
+import { ChartFrame } from "@/components/chart-frame";
+import { CHART_COLOR } from "@/lib/chart-colors";
+import { useMounted } from "@/lib/use-mounted";
 import { cn } from "@/lib/utils";
 
 export interface TrendChartSeries {
@@ -28,12 +31,12 @@ export interface TrendChartProps {
 }
 
 const TOKEN = {
-  primary: "hsl(var(--primary))",
-  ink: "hsl(var(--ink))",
-  inkMuted: "hsl(var(--ink-muted))",
-  surfaceMuted: "hsl(var(--surface-muted))",
-  border: "hsl(var(--border))",
-  mutedFg: "hsl(var(--muted-foreground))",
+  primary: CHART_COLOR.primary,
+  ink: CHART_COLOR.ink,
+  inkMuted: CHART_COLOR.inkMuted,
+  surfaceMuted: CHART_COLOR.surfaceMuted,
+  border: CHART_COLOR.border,
+  mutedFg: CHART_COLOR.mutedFg,
 } as const;
 
 const COMPARISON_TONES = [TOKEN.ink, TOKEN.inkMuted, TOKEN.surfaceMuted] as const;
@@ -101,6 +104,7 @@ function TrendTooltip({ active, payload, label }: TooltipContentProps) {
 }
 
 export function TrendChart({ data, series, xKey, className }: TrendChartProps) {
+  const mounted = useMounted();
   const styles = useMemo(() => seriesStyles(series), [series]);
   const [hidden, setHidden] = useState<ReadonlySet<string>>(() => new Set());
 
@@ -159,53 +163,52 @@ export function TrendChart({ data, series, xKey, className }: TrendChartProps) {
 
   return (
     <div className={cn("h-[280px] w-full", className)}>
-      <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 640, height: 280 }}>
-        <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid stroke={TOKEN.border} vertical={false} />
-          <XAxis
-            dataKey={xKey}
-            tick={AXIS_TICK}
-            axisLine={{ stroke: TOKEN.border }}
-            tickLine={false}
-          />
-          <YAxis
-            width="auto"
-            tick={AXIS_TICK}
-            axisLine={false}
-            tickLine={false}
-          />
-          <Tooltip
-            content={TrendTooltip}
-            cursor={{ stroke: TOKEN.border, strokeWidth: 1 }}
-            isAnimationActive={false}
-            wrapperStyle={{ outline: "none", zIndex: 10 }}
-            itemSorter={(item) => {
-              const idx = series.findIndex((s) => s.key === payloadKey(item));
-              return idx === -1 ? series.length : idx;
-            }}
-          />
-          <Legend content={renderLegend} itemSorter={null} />
-          {series.map((item) => {
-            const style = styles[item.key];
-            return (
-              <Line
-                key={item.key}
-                type="monotone"
-                dataKey={item.key}
-                name={item.label}
-                stroke={style.stroke}
-                strokeWidth={style.width}
-                strokeDasharray={style.dash}
-                hide={hidden.has(item.key)}
-                dot={false}
-                activeDot={{ r: 3, strokeWidth: 0, fill: style.stroke }}
-                isAnimationActive="auto"
-                connectNulls
+      {!mounted ? null : (
+        <ChartFrame fallback={null}>
+          <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 640, height: 280 }}>
+            <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid stroke={TOKEN.border} vertical={false} />
+              <XAxis
+                dataKey={xKey}
+                tick={AXIS_TICK}
+                axisLine={{ stroke: TOKEN.border }}
+                tickLine={false}
               />
-            );
-          })}
-        </LineChart>
-      </ResponsiveContainer>
+              <YAxis width={36} tick={AXIS_TICK} axisLine={false} tickLine={false} />
+              <Tooltip
+                content={TrendTooltip}
+                cursor={{ stroke: TOKEN.border, strokeWidth: 1 }}
+                isAnimationActive={false}
+                wrapperStyle={{ outline: "none", zIndex: 10 }}
+                itemSorter={(item) => {
+                  const idx = series.findIndex((s) => s.key === payloadKey(item));
+                  return idx === -1 ? series.length : idx;
+                }}
+              />
+              <Legend content={renderLegend} itemSorter={null} />
+              {series.map((item) => {
+                const style = styles[item.key];
+                return (
+                  <Line
+                    key={item.key}
+                    type="monotone"
+                    dataKey={item.key}
+                    name={item.label}
+                    stroke={style.stroke}
+                    strokeWidth={style.width}
+                    strokeDasharray={style.dash}
+                    hide={hidden.has(item.key)}
+                    dot={false}
+                    activeDot={{ r: 3, strokeWidth: 0, fill: style.stroke }}
+                    isAnimationActive={false}
+                    connectNulls
+                  />
+                );
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartFrame>
+      )}
     </div>
   );
 }

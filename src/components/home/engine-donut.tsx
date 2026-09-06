@@ -2,6 +2,8 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import type { TooltipContentProps } from "recharts";
+import { ChartFrame } from "@/components/chart-frame";
+import { useMounted } from "@/lib/use-mounted";
 
 export interface EngineSlice {
   name: string;
@@ -29,28 +31,39 @@ export function EngineDonut({
   centerLabel: string;
   centerValue: string;
 }) {
+  const mounted = useMounted();
+
   return (
     <div className="ds-card-flat flex flex-col items-center">
       <div className="relative h-[200px] w-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={85}
-              paddingAngle={3}
-              dataKey="value"
-              strokeWidth={0}
+        {mounted ? (
+          <ChartFrame fallback={null}>
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              initialDimension={{ width: 200, height: 200 }}
             >
-              {data.map((entry) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip content={DonutTooltip} />
-          </PieChart>
-        </ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={85}
+                  paddingAngle={3}
+                  dataKey="value"
+                  strokeWidth={0}
+                  isAnimationActive={false}
+                >
+                  {data.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={DonutTooltip} />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartFrame>
+        ) : null}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="font-sans text-[28px] font-medium leading-none tracking-tight">{centerValue}</span>
           <span className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">

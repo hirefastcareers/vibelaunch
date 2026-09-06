@@ -19,6 +19,7 @@ import { StatsTicker } from "@/components/home/stats-ticker";
 import { SiteNav } from "@/components/home/site-nav";
 import { TrendChart } from "@/components/dashboard/trend-chart";
 import { Logo } from "@/components/logo";
+import { CHART_COLOR } from "@/lib/chart-colors";
 import type { CitationTrendPoint } from "@/lib/geo/analytics";
 
 export const dynamic = "force-dynamic";
@@ -39,9 +40,9 @@ const heatmapData = HEATMAP_VALUES.map((citations, i) => ({
 }));
 
 const engineSlices = [
-  { name: "ChatGPT", value: 42, color: "hsl(var(--primary))" },
-  { name: "Perplexity", value: 35, color: "hsl(var(--info))" },
-  { name: "Claude", value: 23, color: "hsl(var(--chart-4))" },
+  { name: "ChatGPT", value: 42, color: CHART_COLOR.primary },
+  { name: "Perplexity", value: 35, color: CHART_COLOR.info },
+  { name: "Claude", value: 23, color: CHART_COLOR.chart4 },
 ];
 
 const competitorRows = [

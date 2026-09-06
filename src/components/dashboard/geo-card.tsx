@@ -118,7 +118,7 @@ export function GeoCard() {
           </p>
           <div className="flex flex-wrap gap-2">
             {PROVIDER_KEYS.map((key) => {
-              const provider = data?.byProvider[key];
+              const provider = data?.byProvider?.[key];
               const active = provider && provider.cited > 0;
               return (
                 <StatusPill key={key} tone={active ? "ok" : "neutral"}>
