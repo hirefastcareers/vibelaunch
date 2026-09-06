@@ -55,7 +55,7 @@ export async function getValidAccessToken(userId: string): Promise<string> {
   }
 
   const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-  const response = await fetch("https://api.twitter.com/2/oauth2/token", {
+  const response = await fetch("https://api.x.com/2/oauth2/token", {
     method: "POST",
     headers: {
       Authorization: `Basic ${basic}`,

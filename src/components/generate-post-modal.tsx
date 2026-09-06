@@ -26,6 +26,7 @@ interface GeneratePostModalProps {
   onOpenChange: (open: boolean) => void;
   projects: Array<{ id: string; name: string }>;
   onGenerated?: (content: string) => void;
+  onQueued?: () => void;
 }
 
 export function GeneratePostModal({
@@ -33,6 +34,7 @@ export function GeneratePostModal({
   onOpenChange,
   projects,
   onGenerated,
+  onQueued,
 }: GeneratePostModalProps) {
   const [projectId, setProjectId] = useState(projects[0]?.id ?? "");
   const [topic, setTopic] = useState("");
@@ -43,6 +45,10 @@ export function GeneratePostModal({
   const [errorCode, setErrorCode] = useState<string | undefined>();
   const [queueing, setQueueing] = useState(false);
   const [queued, setQueued] = useState(false);
+  const [queuedPostId, setQueuedPostId] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const [publishDone, setPublishDone] = useState(false);
+  const [publishedUrl, setPublishedUrl] = useState("");
 
   useEffect(() => {
     if (!projectId && projects[0]?.id) {
@@ -57,6 +63,9 @@ export function GeneratePostModal({
     setError("");
     setErrorCode(undefined);
     setQueued(false);
+    setQueuedPostId("");
+    setPublishDone(false);
+    setPublishedUrl("");
 
     try {
       const res = await fetch("/api/generate", {
@@ -100,10 +109,37 @@ export function GeneratePostModal({
         return;
       }
       setQueued(true);
+      setQueuedPostId(typeof data.post?.id === "string" ? data.post.id : "");
+      onQueued?.();
     } catch {
       setError("Network error - please try again");
     } finally {
       setQueueing(false);
+    }
+  }
+
+  async function handlePublishToX() {
+    if (!queuedPostId) return;
+    setPublishing(true);
+    setError("");
+    setErrorCode(undefined);
+
+    try {
+      const res = await fetch(`/api/posts/${queuedPostId}/publish`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(typeof data.error === "string" ? data.error : "Publish failed");
+        return;
+      }
+      const url =
+        typeof data.post?.xPostUrl === "string" ? data.post.xPostUrl : "";
+      setPublishDone(true);
+      setPublishedUrl(url);
+      onQueued?.();
+    } catch {
+      setError("Network error - please try again");
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -202,12 +238,43 @@ export function GeneratePostModal({
                     Adding...
                   </>
                 ) : queued ? (
-                  "Added to queue"
+                  "Added to pending"
                 ) : (
                   "Add to queue"
                 )}
               </Button>
             )}
+            {queued && queuedPostId && !publishDone ? (
+              <Button
+                onClick={handlePublishToX}
+                disabled={publishing}
+                className="w-full font-mono text-xs tracking-wider"
+              >
+                {publishing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  "Publish to X"
+                )}
+              </Button>
+            ) : null}
+            {publishDone && publishedUrl ? (
+              <a
+                href={publishedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center font-mono text-xs tracking-wider text-primary hover:underline"
+              >
+                View on X
+              </a>
+            ) : null}
+            {publishDone && !publishedUrl ? (
+              <p className="text-center font-mono text-[11px] text-muted-foreground">
+                Queued. It will post with your connected X account.
+              </p>
+            ) : null}
           </div>
         </div>
       </DialogContent>

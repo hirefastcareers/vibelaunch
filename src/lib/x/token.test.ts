@@ -90,7 +90,7 @@ describe("getValidAccessToken", () => {
     await expect(getValidAccessToken("user_1")).resolves.toBe("access-new");
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.twitter.com/2/oauth2/token",
+      "https://api.x.com/2/oauth2/token",
       expect.objectContaining({
         method: "POST",
         headers: expect.objectContaining({

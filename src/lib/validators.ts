@@ -28,7 +28,7 @@ export const seoPublishSchema = z.object({
   projectId: z.string().cuid(),
   title: z.string().min(1).max(200),
   summary: z.string().min(1).max(500),
-  body: z.string().min(1),
+  body: z.string().min(1).optional(),
   keywords: z.array(z.string()).max(20).optional(),
 });
 

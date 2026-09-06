@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { enqueuePost } from "@/lib/queue/qstash";
+import { dispatchPostPublish } from "@/lib/queue/dispatch-post";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -27,24 +27,19 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
   }
 
   try {
-    const queueOptions = post.scheduledAt
-      ? { notBefore: post.scheduledAt }
-      : undefined;
-
-    const jobId = await enqueuePost(
-      { postId: post.id, projectId: post.projectId, userId: session.user.id },
-      queueOptions
-    );
-
-    const updated = await prisma.post.update({
-      where: { id: postId },
-      data: { status: "QUEUED", queueJobId: jobId },
+    const result = await dispatchPostPublish({
+      postId: post.id,
+      projectId: post.projectId,
+      userId: session.user.id,
+      content: post.content,
+      mediaUrls: post.mediaUrls,
+      scheduledAt: post.scheduledAt,
     });
 
-    return NextResponse.json({ post: updated, queueJobId: jobId });
+    return NextResponse.json(result);
   } catch (err) {
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Queue failed" },
+      { error: err instanceof Error ? err.message : "Publish failed" },
       { status: 500 }
     );
   }

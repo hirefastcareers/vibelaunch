@@ -74,7 +74,7 @@ describe("publishToX media upload", () => {
           headers: { "content-type": "application/json" },
         });
       }
-      if (href === "https://api.twitter.com/2/tweets") {
+      if (href === "https://api.x.com/2/tweets") {
         return new Response(JSON.stringify({ data: { id: "tweet_1" } }), {
           status: 201,
           headers: { "content-type": "application/json" },
