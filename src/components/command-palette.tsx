@@ -104,49 +104,49 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <LayoutDashboard className="h-4 w-4" />
-                Command Center
+                Home
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/dashboard/queue"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <Sparkles className="h-4 w-4" />
-                AI Post Generator & Hooks
+                Posts
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/dashboard#articles"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <FileText className="h-4 w-4" />
-                Auto-Published Articles
+                Publish an article
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/dashboard#ai-search"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <Bot className="h-4 w-4" />
-                AI Search (ChatGPT/Perplexity)
+                AI search
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/dashboard/replies"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <MessageSquare className="h-4 w-4" />
-                Smart Replies
+                Replies
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/dashboard/diagnostics"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <ShieldCheck className="h-4 w-4" />
-                App Health & Audits
+                Health
               </Command.Item>
               <Command.Item
                 onSelect={() => run(() => router.push("/onboard"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <Rocket className="h-4 w-4" />
-                Onboard Project
+                Projects
               </Command.Item>
             </Command.Group>
           </Command.List>

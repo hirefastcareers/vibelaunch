@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import { SUITE_LABELS, type DiagnosticSuite } from "@/lib/diagnostics/types";
 import { StatusPill, statusLabel, statusTone } from "@/components/status-pill";
-import { StatCard } from "@/components/dashboard/stat-card";
 
 interface TestRunRecord {
   id: string;
@@ -99,65 +98,56 @@ export function DiagnosticCard() {
   }
 
   if (loading) {
-    return <Skeleton className="h-64 w-full" />;
+    return <Skeleton className="h-64 w-full rounded-xl" />;
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
+    <Card className="bg-background">
+      <CardHeader className="flex flex-row items-start justify-between gap-3 px-5 pb-2 pt-5">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-            AUDIT
-          </p>
-          <CardTitle className="mt-1 text-lg">App Health Checks</CardTitle>
+          <p className="text-xs font-medium text-muted-foreground">System</p>
+          <CardTitle className="mt-1 text-base font-medium">Health</CardTitle>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRunAll}
-          disabled={running}
-          className="font-mono text-[10px] tracking-wider"
-        >
+        <Button variant="outline" size="sm" onClick={handleRunAll} disabled={running}>
           <RefreshCw className={`h-3.5 w-3.5 ${running ? "animate-spin" : ""}`} />
-          {running ? "RUNNING..." : "RUN ALL"}
+          {running ? "Running" : "Run checks"}
         </Button>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-4 px-5 pb-5 pt-3">
         <div className="flex flex-wrap items-center gap-3">
-          <StatCard label="OVERALL" value={`${data?.overallScore ?? 0}%`} />
+          <p className="text-2xl font-medium tabular-nums tracking-tight">
+            {data?.overallScore ?? 0}%
+          </p>
           <StatusPill tone={statusTone(data?.overallStatus ?? "unknown")}>
             {statusLabel(data?.overallStatus ?? "unknown")}
           </StatusPill>
         </div>
 
-        <div className="border border-border divide-y divide-border">
-          {(data?.runs ?? []).map((run) => {
-            const label = SUITE_LABELS[run.suite as DiagnosticSuite] ?? run.suite;
-            return (
-              <div key={run.id} className="flex items-start gap-3 p-3">
-                <StatusPill tone={statusTone(run.status)}>{statusLabel(run.status)}</StatusPill>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm">{label}</p>
-                    <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
-                      {run.score}%
-                    </span>
+        {(data?.runs ?? []).length > 0 ? (
+          <div className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+            {(data?.runs ?? []).map((run) => {
+              const label = SUITE_LABELS[run.suite as DiagnosticSuite] ?? run.suite;
+              return (
+                <div key={run.id} className="flex items-start gap-3 px-3 py-3">
+                  <StatusPill tone={statusTone(run.status)}>{statusLabel(run.status)}</StatusPill>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm text-foreground">{label}</p>
+                      <span className="text-xs tabular-nums text-muted-foreground">{run.score}%</span>
+                    </div>
+                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                      {suiteSummary(run)}
+                    </p>
                   </div>
-                  <p className="font-mono text-[11px] text-muted-foreground mt-0.5 line-clamp-2">
-                    {suiteSummary(run)}
-                  </p>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {!data?.runs?.length && (
-          <div className="rounded-lg border border-border bg-background px-4 py-5">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">EMPTY</p>
-            <p className="mt-2 text-sm text-foreground">No health checks yet.</p>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-lg bg-muted/40 px-4 py-5">
+            <p className="text-sm font-medium text-foreground">No health checks yet</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Run all checks after you publish content, so the score reflects the real system instead of an empty project.
+              Run checks after you publish content so the score reflects a live project.
             </p>
           </div>
         )}

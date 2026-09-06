@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 export interface StatCardProps {
   label: string;
   value: string | number;
+  hint?: string;
   trend?: number;
   sparkline?: number[];
   className?: string;
@@ -18,7 +19,7 @@ export interface StatCardProps {
 
 const SPARKLINE_STROKE = CHART_COLOR.primary;
 
-export function StatCard({ label, value, trend, sparkline, className, id }: StatCardProps) {
+export function StatCard({ label, value, hint, trend, sparkline, className, id }: StatCardProps) {
   const mounted = useMounted();
   const sparkData = sparkline?.map((v, i) => ({ i, v }));
   const showSpark = Boolean(sparkData && sparkData.length > 1);
@@ -27,15 +28,18 @@ export function StatCard({ label, value, trend, sparkline, className, id }: Stat
     <div
       id={id}
       className={cn(
-        "ds-card group",
+        "rounded-xl border border-border bg-background p-5 shadow-sm",
         className
       )}
     >
-      <p className="ds-label">{label}</p>
-      <div className="mt-3 flex items-baseline gap-2.5">
-        <span className="ds-metric-sm">{value}</span>
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <div className="mt-2 flex items-baseline gap-2">
+        <span className="text-[1.75rem] font-medium leading-none tracking-tight tabular-nums">
+          {value}
+        </span>
         {trend != null && <TrendBadge value={trend} />}
       </div>
+      {hint ? <p className="mt-1.5 text-xs text-muted-foreground">{hint}</p> : null}
       {showSpark && sparkData && (
         <div className="mt-3 h-11 w-full">
           {mounted ? (

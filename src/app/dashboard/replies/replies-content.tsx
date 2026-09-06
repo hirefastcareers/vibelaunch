@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Copy, Check } from "lucide-react";
 import Link from "next/link";
+import { DashboardPage, PageHeader } from "@/components/dashboard-page";
 
 interface FeedItem {
   id: string;
@@ -78,52 +79,45 @@ export default function RepliesPage() {
 
   if (loading) {
     return (
-      <div className="p-8 space-y-6">
-        <Skeleton className="h-10 w-64" />
+      <DashboardPage>
+        <Skeleton className="h-8 w-64" />
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-48" />
+          <Skeleton key={i} className="h-48 rounded-xl" />
         ))}
-      </div>
+      </DashboardPage>
     );
   }
 
   return (
-    <div className="space-y-8 p-6">
-      <div>
-        <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
-          REPLIES
-        </p>
-        <h1 className="text-[38px] md:text-[48px]">Smart Reply Assistant</h1>
-        <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
-          Turn relevant mentions into warm replies. When the live feed is wired, this page becomes a lightweight reply queue instead of an empty tool screen.
-        </p>
-      </div>
+    <DashboardPage>
+      <PageHeader
+        title="Replies"
+        description="Turn relevant mentions into warm replies. This stays empty until the live X feed is wired."
+      />
 
       <div className="grid gap-4 lg:grid-cols-[1.35fr_0.95fr]">
         <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              WORKFLOW
-            </p>
-            <CardTitle className="mt-1 text-[24px]">How replies should work</CardTitle>
+            <p className="text-xs font-medium text-muted-foreground">Workflow</p>
+            <CardTitle className="mt-1 text-base font-medium">How replies should work</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-px p-0 md:grid-cols-3">
             <div className="bg-background px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">01</p>
+              <p className="text-xs font-medium text-muted-foreground">1</p>
               <h2 className="mt-2 text-[21px]">Track</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Watch targeted keywords and competitor-adjacent conversations.
               </p>
             </div>
             <div className="bg-card px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">02</p>
+              <p className="text-xs font-medium text-muted-foreground">2</p>
               <h2 className="mt-2 text-[21px]">Draft</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Generate helpful replies with enough product context to sound human.
               </p>
             </div>
             <div className="bg-background px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">03</p>
+              <p className="text-xs font-medium text-muted-foreground">3</p>
               <h2 className="mt-2 text-[21px]">Respond</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Copy or post only the replies worth sending. Volume should never beat quality.
@@ -134,14 +128,12 @@ export default function RepliesPage() {
 
         <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              READINESS
-            </p>
-            <CardTitle className="mt-1 text-[24px]">Integration status</CardTitle>
+            <p className="text-xs font-medium text-muted-foreground">Status</p>
+            <CardTitle className="mt-1 text-base font-medium">Integration status</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 pt-4">
             <div className="rounded-lg border border-border bg-background px-4 py-3">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">X API FEED</p>
+              <p className="text-xs font-medium text-muted-foreground">X API feed</p>
               <p className="mt-1 text-sm text-foreground">{configured ? "Connected" : "Not connected yet"}</p>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -149,9 +141,9 @@ export default function RepliesPage() {
             </p>
             <Link
               href="/onboard"
-              className="inline-block border-b border-border font-mono text-[11px] tracking-wider text-muted-foreground hover:text-foreground"
+              className="text-sm font-medium text-primary hover:underline"
             >
-              REVIEW PROJECT SETUP
+              Review project setup
             </Link>
           </CardContent>
         </Card>
@@ -159,10 +151,10 @@ export default function RepliesPage() {
 
       {Object.keys(feeds).length === 0 && (
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            {configured ? "EMPTY" : "NOT CONFIGURED"}
+          <p className="text-xs font-medium text-muted-foreground mb-1">
+            {configured ? "Empty" : "Not configured"}
           </p>
-          <h2 className="text-2xl">No live feed</h2>
+          <h2 className="text-base font-medium">No live feed</h2>
           <p className="mt-1 max-w-[48ch] text-sm text-muted-foreground">
             Smart replies are not wired to a live mention feed yet. Connect the X ingestion path before treating this as an active workflow.
           </p>
@@ -238,6 +230,6 @@ export default function RepliesPage() {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </DashboardPage>
   );
 }

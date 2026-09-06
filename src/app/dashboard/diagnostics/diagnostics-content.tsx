@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
 import { SUITE_LABELS, SUITE_DESCRIPTIONS, type DiagnosticSuite } from "@/lib/diagnostics/types";
 import { StatusPill, statusLabel, statusTone } from "@/components/status-pill";
+import { DashboardPage, PageHeader } from "@/components/dashboard-page";
 
 interface TestResult {
   suite: DiagnosticSuite;
@@ -102,51 +103,36 @@ export default function DiagnosticsPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 p-6 max-w-5xl">
-        <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-28 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
+      <DashboardPage>
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-28 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-xl" />
+      </DashboardPage>
     );
   }
 
   return (
-    <div className="p-6 max-w-5xl space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
-            HEALTH
-          </p>
-          <h1 className="text-[38px] md:text-[48px]">App Health & Audits</h1>
-          <p className="text-muted-foreground text-sm mt-1 max-w-[52ch]">
-            Checks Google indexing, AI learning, media, and whether ChatGPT and Perplexity mention you.
-          </p>
-        </div>
-        <Button
-          className="gap-2 font-mono text-xs tracking-wider"
-          disabled={running}
-          onClick={runDiagnostic}
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${running ? "animate-spin" : ""}`} />
-          {running ? "RUNNING..." : "RUN CHECK"}
-        </Button>
-      </div>
+    <DashboardPage>
+      <PageHeader
+        title="Health"
+        description="Checks Google indexing, AI learning, media, and whether ChatGPT and Perplexity mention you."
+        actions={
+          <Button disabled={running} onClick={runDiagnostic}>
+            <RefreshCw className={`h-3.5 w-3.5 ${running ? "animate-spin" : ""}`} />
+            {running ? "Running" : "Run checks"}
+          </Button>
+        }
+      />
 
       {error && (
-        <div className="rounded-xl border border-border bg-card px-5 py-4 shadow-sm">
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            NOTICE
-          </p>
+        <div className="rounded-xl border border-border bg-background px-5 py-4 shadow-sm">
           <p className="text-sm text-foreground">{error}</p>
         </div>
       )}
 
       {!report || report.results.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-8 shadow-sm">
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            EMPTY
-          </p>
-          <h2 className="text-2xl">No health checks yet</h2>
+        <div className="rounded-xl border border-border bg-background px-6 py-8 shadow-sm">
+          <h2 className="text-base font-medium">No health checks yet</h2>
           <p className="text-muted-foreground mt-1 text-sm max-w-[48ch]">
             Onboard a project, then run a check to verify indexing, learning, media, and AI citations.
           </p>
@@ -156,16 +142,14 @@ export default function DiagnosticsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="space-y-1">
-                <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-                  SYS_HEALTH
-                </p>
-                <CardTitle className="text-xl">App Health Score</CardTitle>
+                <p className="text-xs font-medium text-muted-foreground">Overall</p>
+                <CardTitle className="text-base font-medium">App health score</CardTitle>
                 <CardDescription>
                   Combined score across indexing, learning, media, and AI search checks
                 </CardDescription>
               </div>
               <div className="flex items-center gap-3">
-                <span className="font-mono text-4xl tabular-nums">
+                <span className="text-3xl font-medium tabular-nums tracking-tight">
                   {report.overallScore.toFixed(0)}%
                 </span>
                 <StatusPill tone={statusTone(report.overallStatus)}>
@@ -187,9 +171,9 @@ export default function DiagnosticsPage() {
                       {SUITE_LABELS[test.suite] ?? test.suite.replace(/_/g, " ")}
                     </h3>
                   </div>
-                  <span className="font-mono text-sm tabular-nums">{test.score}%</span>
+                  <span className="text-sm tabular-nums text-muted-foreground">{test.score}%</span>
                 </div>
-                <p className="font-mono text-[11px] text-muted-foreground mt-2">
+                <p className="mt-2 text-sm text-muted-foreground">
                   {SUITE_DESCRIPTIONS[test.suite] ?? ""}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
@@ -208,6 +192,6 @@ export default function DiagnosticsPage() {
           </div>
         </>
       )}
-    </div>
+    </DashboardPage>
   );
 }

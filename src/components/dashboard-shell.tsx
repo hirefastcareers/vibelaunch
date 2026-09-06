@@ -17,7 +17,7 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/20">
+    <div className="flex h-screen overflow-hidden bg-[#F7F6F3]">
       <div className="hidden lg:flex">
         <Sidebar
           userLabel={userLabel}
@@ -30,10 +30,10 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
           <button
             type="button"
             aria-label="Close navigation"
-            className="absolute inset-0 bg-ink/40"
+            className="absolute inset-0 bg-foreground/30"
             onClick={() => setMobileNavOpen(false)}
           />
-          <div className="relative z-10 h-full w-[min(19rem,88vw)] shadow-lg">
+          <div className="relative z-10 h-full w-[min(16rem,88vw)] shadow-lg">
             <Sidebar
               userLabel={userLabel}
               onOpenCommandPalette={() => {
@@ -47,20 +47,20 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur-md lg:hidden">
+        <header className="flex h-14 items-center justify-between border-b border-border bg-background px-4 lg:hidden">
           <Link href="/dashboard" className="flex items-center">
-            <Logo size={28} />
+            <Logo size={26} />
           </Link>
           <button
             type="button"
             aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
             onClick={() => setMobileNavOpen((open) => !open)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background text-foreground shadow-sm hover:bg-secondary"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-foreground hover:bg-muted"
           >
             {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </header>
-        <main className="flex-1 overflow-y-auto bg-background">{children}</main>
+        <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />

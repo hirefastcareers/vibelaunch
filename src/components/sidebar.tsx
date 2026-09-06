@@ -2,19 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  CreditCard,
+  FolderPlus,
+  HeartPulse,
+  LayoutDashboard,
+  MessageCircle,
+  Search,
+  Send,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/logo";
 
 const navItems = [
-  { href: "/dashboard", label: "Command Center", key: "01" },
-  { href: "/dashboard/queue", label: "AI Post Generator", key: "02" },
-  { href: "/dashboard#articles", label: "Published Articles", key: "03" },
-  { href: "/dashboard#ai-search", label: "AI Search", key: "04" },
-  { href: "/dashboard/replies", label: "Smart Replies", key: "05" },
-  { href: "/dashboard/diagnostics", label: "App Health", key: "06" },
-  { href: "/onboard", label: "Onboard Project", key: "07" },
-  { href: "/dashboard/billing", label: "Billing", key: "08" },
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { href: "/dashboard/queue", label: "Posts", icon: Send },
+  { href: "/dashboard/replies", label: "Replies", icon: MessageCircle },
+  { href: "/dashboard/diagnostics", label: "Health", icon: HeartPulse },
+];
+
+const accountItems = [
+  { href: "/onboard", label: "Projects", icon: FolderPlus },
+  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
 ];
 
 interface SidebarProps {
@@ -27,62 +36,92 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-72 flex-col border-r border-border bg-gradient-to-b from-card to-background">
-      <div className="flex h-16 items-center px-5">
+    <aside className="flex h-full w-60 flex-col border-r border-border bg-background">
+      <div className="flex h-14 items-center px-4">
         <Link href="/dashboard" className="flex items-center" onClick={onNavigate}>
-          <Logo size={28} />
+          <Logo size={26} />
         </Link>
       </div>
 
-      <Separator />
-
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navItems.map((item) => {
-          const itemPath = item.href.split("#")[0];
-          const active = pathname === itemPath && !item.href.includes("#");
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                "flex items-center gap-3 rounded-xl border border-transparent px-3.5 py-3 text-sm transition-all",
-                active
-                  ? "border-border bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:border-border hover:bg-background hover:text-foreground"
-              )}
-            >
-              <span
-                className={cn(
-                  "inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-muted px-1.5 font-mono text-[10px] tracking-wider",
-                  active ? "text-primary" : "text-muted-foreground"
-                )}
-              >
-                {item.key}
-              </span>
-              <span className="leading-snug">{item.label}</span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
+        <NavGroup
+          items={navItems}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+        <NavGroup
+          title="Workspace"
+          items={accountItems}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
       </nav>
 
-      <div className="space-y-3 border-t border-border p-4">
+      <div className="space-y-2 border-t border-border p-3">
         <button
           type="button"
           onClick={onOpenCommandPalette}
-          className="flex w-full items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-xs text-muted-foreground shadow-sm transition-all hover:bg-secondary hover:text-foreground hover:shadow-md"
+          className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          <span className="font-mono text-[10px] tracking-wider">QUICK ACTIONS</span>
-          <kbd className="rounded-md border border-border bg-card px-2 py-0.5 font-mono text-[10px]">
+          <span className="inline-flex items-center gap-2">
+            <Search className="h-4 w-4" />
+            Search
+          </span>
+          <kbd className="rounded-md border border-border bg-card px-1.5 py-0.5 text-[10px] text-muted-foreground">
             ⌘K
           </kbd>
         </button>
-        {userLabel && (
-          <p className="truncate px-1 font-mono text-[10px] tracking-wider text-muted-foreground">
-            {userLabel}
-          </p>
-        )}
+        {userLabel ? (
+          <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+              {userLabel.replace(/^@/, "").slice(0, 1).toUpperCase()}
+            </span>
+            <p className="truncate text-sm text-foreground">{userLabel}</p>
+          </div>
+        ) : null}
       </div>
     </aside>
+  );
+}
+
+function NavGroup({
+  title,
+  items,
+  pathname,
+  onNavigate,
+}: {
+  title?: string;
+  items: Array<{ href: string; label: string; icon: typeof LayoutDashboard }>;
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <div className="space-y-1">
+      {title ? (
+        <p className="px-2.5 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          {title}
+        </p>
+      ) : null}
+      {items.map((item) => {
+        const Icon = item.icon;
+        const active = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            className={cn(
+              "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors",
+              active
+                ? "bg-muted font-medium text-foreground"
+                : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+            )}
+          >
+            <Icon className="h-4 w-4 shrink-0" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </div>
   );
 }

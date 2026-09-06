@@ -1,0 +1,68 @@
+export type NextAction = {
+  title: string;
+  description: string;
+  href: string;
+  cta: string;
+};
+
+export type NextActionInput = {
+  projectCount: number;
+  draftCount: number;
+  publishedCount: number;
+  articleCount: number;
+};
+
+export function displayHandle(user: {
+  name: string | null;
+  xUsername: string | null;
+}): string | null {
+  if (user.xUsername) return `@${user.xUsername}`;
+  if (user.name) return user.name;
+  return null;
+}
+
+export function getNextAction(input: NextActionInput): NextAction {
+  if (input.projectCount === 0) {
+    return {
+      title: "Create your first project",
+      description: "Add a product URL and tone so Xoopa can draft posts, articles, and replies.",
+      href: "/onboard",
+      cta: "Set up a project",
+    };
+  }
+
+  if (input.draftCount > 0) {
+    const n = input.draftCount;
+    return {
+      title: n === 1 ? "1 draft is waiting" : `${n} drafts are waiting`,
+      description: "Review pending posts and publish to X when you are ready.",
+      href: "/dashboard/queue",
+      cta: "Open posts",
+    };
+  }
+
+  if (input.publishedCount === 0) {
+    return {
+      title: "Publish your first post",
+      description: "Generate a draft from your project, then send it live on X.",
+      href: "/dashboard/queue?generate=true",
+      cta: "Generate a post",
+    };
+  }
+
+  if (input.articleCount === 0) {
+    return {
+      title: "Ship a changelog article",
+      description: "Turn a product update into a public page that search and AI engines can cite.",
+      href: "/dashboard#articles",
+      cta: "Write an article",
+    };
+  }
+
+  return {
+    title: "Keep the loop going",
+    description: "Generate another post or check whether AI search is citing you.",
+    href: "/dashboard/queue?generate=true",
+    cta: "Generate a post",
+  };
+}

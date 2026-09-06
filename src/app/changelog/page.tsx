@@ -46,7 +46,7 @@ export default async function ChangelogIndexPage() {
 
       {entries.length === 0 ? (
         <p className="mt-10 text-sm text-muted-foreground">
-          No published articles yet. Sign in and publish one from Command Center.
+          No published articles yet. Sign in and publish one from Home.
         </p>
       ) : (
         <ul className="mt-10 divide-y divide-border rounded-xl border border-border bg-background">

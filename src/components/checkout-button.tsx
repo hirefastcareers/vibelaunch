@@ -44,7 +44,7 @@ export function CheckoutButton({
             : "rounded-full border border-border px-6 py-[15px] text-center font-mono text-xs tracking-[0.1em] text-muted-foreground hover:border-foreground"
         }
       >
-        {pending ? "REDIRECTING..." : children}
+        {pending ? "Redirecting..." : children}
       </a>
       {error ? (
         <span className="font-mono text-[11px] text-muted-foreground">{error}</span>

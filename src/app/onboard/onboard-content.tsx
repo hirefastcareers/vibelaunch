@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { LimitHitNotice } from "@/components/limit-hit-notice";
+import { DashboardPage, PageHeader } from "@/components/dashboard-page";
 
 const TONES = [
   { value: "build-in-public", label: "Build in Public" },
@@ -71,44 +72,36 @@ export default function OnboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 p-6">
-      <div className="mb-8">
-        <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
-          ONBOARD
-        </p>
-        <h1 className="mb-2 text-[38px] md:text-[48px]">Onboard your product</h1>
-        <p className="max-w-[56ch] text-sm leading-relaxed text-muted-foreground">
-          Give Xoopa a real product URL and a writing tone. It will pull context, create the project record,
-          and prepare the rest of the growth loop.
-        </p>
-      </div>
+    <DashboardPage>
+      <PageHeader
+        title="Create a project"
+        description="Give Xoopa a product URL and a writing tone. It will pull context and set up the rest of the growth loop."
+      />
 
       <div className="grid items-start gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <Card className="overflow-hidden">
           <CardHeader className="border-b border-border pb-4">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              BEFORE YOU START
-            </p>
-            <CardTitle className="mt-1 text-[24px]">Bring the minimum context</CardTitle>
+            <p className="text-xs font-medium text-muted-foreground">Before you start</p>
+            <CardTitle className="mt-1 text-base font-medium">Bring the minimum context</CardTitle>
             <CardDescription>
               Better input gives better hooks, better changelog structure, and cleaner citation prompts.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-0 p-0">
             <div className="border-b border-border bg-background px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">01 · URL</p>
+              <p className="text-xs font-medium text-muted-foreground">URL</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Use your main product page or the clearest feature page, not a generic company shell.
               </p>
             </div>
             <div className="border-b border-border bg-card px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">02 · TONE</p>
+              <p className="text-xs font-medium text-muted-foreground">Tone</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Pick the voice that already matches your posts. This steers the first batch of drafts.
               </p>
             </div>
             <div className="bg-background px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">03 · KEYWORDS</p>
+              <p className="text-xs font-medium text-muted-foreground">Keywords</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Seed 3 to 8 phrases you actually want to rank and be cited for. Xoopa will merge them with scraped context.
               </p>
@@ -118,7 +111,7 @@ export default function OnboardPage() {
 
         <Card className="overflow-hidden">
           <CardHeader className="border-b border-border bg-muted/30">
-            <CardTitle>Project Setup</CardTitle>
+            <CardTitle>Project setup</CardTitle>
             <CardDescription>
               Paste your product URL. We&apos;ll pull in your name, description, and keywords to get started.
             </CardDescription>
@@ -188,13 +181,13 @@ export default function OnboardPage() {
                     Setting up your workspace...
                   </>
                 ) : (
-                  "Launch Onboarding"
+                  "Create project"
                 )}
               </Button>
             </form>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </DashboardPage>
   );
 }

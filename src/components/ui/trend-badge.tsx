@@ -12,9 +12,11 @@ function formatMagnitude(value: number): string {
 }
 
 export function TrendBadge({ value, suffix = "%", className }: TrendBadgeProps) {
+  const amount = `${formatMagnitude(value)}${suffix}`;
+
   if (value === 0) {
     return (
-      <span className={cn("font-mono text-[11px] text-muted-foreground", className)}>
+      <span className={cn("text-xs font-medium tabular-nums text-muted-foreground", className)}>
         0{suffix}
       </span>
     );
@@ -22,17 +24,15 @@ export function TrendBadge({ value, suffix = "%", className }: TrendBadgeProps) 
 
   if (value > 0) {
     return (
-      <span className={cn("font-mono text-[11px] text-green-600", className)}>
-        ▲ +{formatMagnitude(value)}
-        {suffix}
+      <span className={cn("text-xs font-medium tabular-nums text-emerald-700", className)}>
+        +{amount}
       </span>
     );
   }
 
   return (
-    <span className={cn("font-mono text-[11px] text-red-500", className)}>
-      ▼ -{formatMagnitude(value)}
-      {suffix}
+    <span className={cn("text-xs font-medium tabular-nums text-red-600", className)}>
+      -{amount}
     </span>
   );
 }

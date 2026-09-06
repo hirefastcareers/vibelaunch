@@ -58,17 +58,15 @@ export function PublishArticleCard({ projects }: PublishArticleCardProps) {
   }
 
   return (
-    <Card id="articles" className="overflow-hidden rounded-xl shadow-sm">
-      <CardHeader className="border-b border-border bg-muted/30">
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-          SEO
-        </p>
-        <CardTitle className="mt-1 text-xl">Publish a changelog article</CardTitle>
+    <Card id="articles" className="overflow-hidden bg-background">
+      <CardHeader className="px-5 pb-2 pt-5">
+        <p className="text-xs font-medium text-muted-foreground">SEO</p>
+        <CardTitle className="mt-1 text-base font-medium">Publish an article</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 p-6">
+      <CardContent className="space-y-4 px-5 pb-5 pt-3">
         <p className="text-sm text-muted-foreground">
-          Expands into a public /changelog page, sitemap entry, and a Google indexing request when
-          the service account is configured.
+          Creates a public changelog page, sitemap entry, and a Google indexing request when the
+          service account is configured.
         </p>
         <div className="space-y-2">
           <Label>Project</Label>
@@ -91,7 +89,7 @@ export function PublishArticleCard({ projects }: PublishArticleCardProps) {
             id="article-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="X OAuth is live on Sorano"
+            placeholder="X OAuth is live on Xoopa"
           />
         </div>
         <div className="space-y-2">
@@ -104,9 +102,7 @@ export function PublishArticleCard({ projects }: PublishArticleCardProps) {
             rows={4}
           />
         </div>
-        {error ? (
-          <p className="font-mono text-[12px] text-muted-foreground">{error}</p>
-        ) : null}
+        {error ? <p className="text-sm text-destructive">{error}</p> : null}
         {url ? (
           <p className="text-sm">
             Live at{" "}
@@ -115,18 +111,14 @@ export function PublishArticleCard({ projects }: PublishArticleCardProps) {
             </a>
           </p>
         ) : null}
-        <Button
-          onClick={handlePublish}
-          disabled={loading || !title || !summary || !projectId}
-          className="font-mono text-xs tracking-wider"
-        >
+        <Button onClick={handlePublish} disabled={loading || !title || !summary || !projectId}>
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              PUBLISHING...
+              Publishing
             </>
           ) : (
-            "PUBLISH ARTICLE"
+            "Publish article"
           )}
         </Button>
       </CardContent>

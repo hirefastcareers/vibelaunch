@@ -4,13 +4,14 @@ import type { UsageSnapshot } from "@/lib/billing/limits";
 import Link from "next/link";
 import { CheckoutButton } from "@/components/checkout-button";
 import { StatusPill } from "@/components/status-pill";
+import { DashboardPage, PageHeader } from "@/components/dashboard-page";
 
 const TIERS: PlanTier[] = ["FREE", "STARTER", "PRO"];
 
 function statusNote(status: string | null | undefined): string | null {
   if (!status || status === "active") return null;
   if (status === "cancelled") {
-    return "Cancellation is scheduled — access continues until the current period ends.";
+    return "Cancellation is scheduled. Access continues until the current period ends.";
   }
   if (status === "failed") {
     return "The last payment failed. Update your payment method to keep the plan.";
@@ -54,44 +55,41 @@ export default function BillingContent({
   );
 
   return (
-    <div className="max-w-5xl space-y-8 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-        <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
-          BILLING
-        </p>
-        <h1 className="text-[38px] md:text-[48px]">Billing</h1>
-        <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
-          Project and monthly post limits. Everything else stays available on every plan.
-        </p>
-        </div>
-        <StatusPill tone={subscriptionStatus === "active" || !subscriptionStatus ? "ok" : "warn"}>
-          {subscriptionStatus ? `[${subscriptionStatus.toUpperCase()}]` : "[FREE PLAN]"}
-        </StatusPill>
-      </div>
+    <DashboardPage>
+      <PageHeader
+        title="Billing"
+        description="Project and monthly post limits. Everything else stays available on every plan."
+        actions={
+          <StatusPill tone={subscriptionStatus === "active" || !subscriptionStatus ? "ok" : "warn"}>
+            {subscriptionStatus
+              ? subscriptionStatus.replaceAll("_", " ")
+              : "Free plan"}
+          </StatusPill>
+        }
+      />
 
       <section className="grid gap-4 md:grid-cols-2">
         <div className="rounded-xl border border-border bg-card px-5 py-5 shadow-sm">
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground">POST CAP</p>
+          <p className="text-sm text-muted-foreground">Posts this month</p>
           <div className="mt-2 flex items-end justify-between gap-4">
-            <p className="font-serif text-[32px] tracking-[-0.02em]">
+            <p className="text-[32px] font-medium tracking-tight">
               {usage.postCount}
               <span className="ml-2 text-[18px] text-muted-foreground">of {usage.postLimit}</span>
             </p>
-            <p className="font-mono text-[11px] text-muted-foreground">{postUsagePct}% used</p>
+            <p className="text-xs text-muted-foreground">{postUsagePct}% used</p>
           </div>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
             <div className="h-full bg-primary" style={{ width: `${postUsagePct}%` }} />
           </div>
         </div>
         <div className="rounded-xl border border-border bg-card px-5 py-5 shadow-sm">
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground">PROJECT CAP</p>
+          <p className="text-sm text-muted-foreground">Projects</p>
           <div className="mt-2 flex items-end justify-between gap-4">
-            <p className="font-serif text-[32px] tracking-[-0.02em]">
+            <p className="text-[32px] font-medium tracking-tight">
               {usage.projectCount}
               <span className="ml-2 text-[18px] text-muted-foreground">of {usage.projectLimit}</span>
             </p>
-            <p className="font-mono text-[11px] text-muted-foreground">{projectUsagePct}% used</p>
+            <p className="text-xs text-muted-foreground">{projectUsagePct}% used</p>
           </div>
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
             <div className="h-full bg-ink" style={{ width: `${projectUsagePct}%` }} />
@@ -100,35 +98,33 @@ export default function BillingContent({
       </section>
 
       <section>
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-          01 — CURRENT PLAN
-        </p>
-        <div className="border border-border divide-y divide-border">
+        <p className="mb-3 text-sm font-medium text-foreground">Current plan</p>
+        <div className="overflow-hidden rounded-xl border border-border divide-y divide-border bg-background">
           <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] bg-background">
-            <div className="px-5 py-4 font-mono text-[11px] tracking-wider text-muted-foreground border-b border-border lg:border-b-0 lg:border-r">
-              PLAN
+            <div className="px-5 py-4 text-sm text-muted-foreground border-b border-border lg:border-b-0 lg:border-r">
+              Plan
             </div>
             <div className="px-5 py-4">
-              <span className="font-serif text-[21px]">{current.label}</span>
-              <span className="ml-3 font-mono text-[11px] text-muted-foreground">
+              <span className="text-lg font-medium">{current.label}</span>
+              <span className="ml-3 text-sm text-muted-foreground">
                 {current.price}
               </span>
             </div>
           </div>
           {note && (
             <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] bg-card">
-              <div className="px-5 py-4 font-mono text-[11px] tracking-wider text-muted-foreground border-b border-border lg:border-b-0 lg:border-r">
-                STATUS
+              <div className="px-5 py-4 text-sm text-muted-foreground border-b border-border lg:border-b-0 lg:border-r">
+                Status
               </div>
               <div className="px-5 py-4 text-sm text-muted-foreground">{note}</div>
             </div>
           )}
           {planRenewsAt && (
             <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr]">
-              <div className="px-5 py-4 font-mono text-[11px] tracking-wider text-muted-foreground border-b border-border lg:border-b-0 lg:border-r">
-                RENEWS
+              <div className="px-5 py-4 text-sm text-muted-foreground border-b border-border lg:border-b-0 lg:border-r">
+                Renews
               </div>
-              <div className="px-5 py-4 font-mono text-[12px] text-muted-foreground">
+              <div className="px-5 py-4 text-sm text-muted-foreground">
                 {new Date(planRenewsAt).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
@@ -142,31 +138,29 @@ export default function BillingContent({
           <p className="mt-3">
             <Link
               href={portalHref}
-              className="font-mono text-[11px] tracking-wider text-muted-foreground border-b border-border hover:text-foreground"
+              className="text-sm font-medium text-primary hover:underline"
             >
-              MANAGE SUBSCRIPTION
+              Manage subscription
             </Link>
           </p>
         )}
       </section>
 
       <section>
-        <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-          02 — PLANS
-        </p>
+        <p className="mb-3 text-sm font-medium text-foreground">Plans</p>
         <div className="border border-ink bg-background">
           <div className="hidden lg:grid grid-cols-[1.2fr_1fr_1fr_140px] gap-px bg-ink">
-            <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-              PLAN
+            <div className="bg-ink px-5 py-3.5 text-xs font-medium text-[#8C857A]">
+              Plan
             </div>
-            <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-              PROJECTS
+            <div className="bg-ink px-5 py-3.5 text-xs font-medium text-[#8C857A]">
+              Projects
             </div>
-            <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-              POSTS / MONTH
+            <div className="bg-ink px-5 py-3.5 text-xs font-medium text-[#8C857A]">
+              Posts / month
             </div>
-            <div className="bg-ink px-5 py-3.5 font-mono text-[10px] tracking-[0.14em] text-[#8C857A]">
-              PRICE
+            <div className="bg-ink px-5 py-3.5 text-xs font-medium text-[#8C857A]">
+              Price
             </div>
           </div>
           {TIERS.map((tier) => {
@@ -178,28 +172,28 @@ export default function BillingContent({
                 key={tier}
                 className="grid grid-cols-1 border-b border-border last:border-b-0 lg:grid-cols-[1.2fr_1fr_1fr_140px]"
               >
-                <div className="px-5 py-[18px] font-serif text-[21px] tracking-[-0.01em] lg:border-r border-border">
+                <div className="px-5 py-[18px] text-lg font-medium tracking-tight lg:border-r border-border">
                   {display.label}
                   {isCurrent && (
-                    <span className="ml-2 font-mono text-[10px] tracking-wider text-muted-foreground">
-                      CURRENT
+                    <span className="ml-2 text-xs font-medium text-muted-foreground">
+                      Current
                     </span>
                   )}
                 </div>
-                <div className="px-5 py-[18px] font-mono text-[12px] text-muted-foreground lg:border-r border-border">
+                <div className="px-5 py-[18px] text-sm text-muted-foreground lg:border-r border-border">
                   {limits.projects}
                 </div>
-                <div className="px-5 py-[18px] font-mono text-[12px] text-muted-foreground lg:border-r border-border">
+                <div className="px-5 py-[18px] text-sm text-muted-foreground lg:border-r border-border">
                   {limits.postsPerMonth}
                 </div>
-                <div className="px-5 py-[18px] font-mono text-[12px]">
+                <div className="px-5 py-[18px] text-sm">
                   {display.price}
                 </div>
               </div>
             );
           })}
         </div>
-        <p className="mt-3 font-mono text-[11px] text-muted-foreground">
+        <p className="mt-3 text-xs text-muted-foreground">
           Billed in your local currency at checkout.
         </p>
 
@@ -207,17 +201,17 @@ export default function BillingContent({
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             {showStarterUpgrade && starterCheckoutHref && (
               <CheckoutButton href={starterCheckoutHref}>
-                UPGRADE TO STARTER
+                Upgrade to Starter
               </CheckoutButton>
             )}
             {showProUpgrade && proCheckoutHref && (
               <CheckoutButton href={proCheckoutHref} primary={!showStarterUpgrade}>
-                UPGRADE TO PRO
+                Upgrade to Pro
               </CheckoutButton>
             )}
           </div>
         )}
       </section>
-    </div>
+    </DashboardPage>
   );
 }

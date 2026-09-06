@@ -31,7 +31,7 @@ const PROVIDER_LABELS: Record<(typeof PROVIDER_KEYS)[number], string> = {
   claude: "Claude",
 };
 
-/** Feature the leader only when it is clearly ahead — within 5pts, show all comparison-tone. */
+/** Feature the leader only when it is clearly ahead. Within 5pts, show all comparison-tone. */
 function featuredProvider(byProvider: GeoData["byProvider"] | undefined): string | null {
   if (!byProvider) return null;
 
@@ -77,52 +77,45 @@ export function GeoCard() {
   }
 
   if (loading) {
-    return <Skeleton className="h-72 w-full" />;
+    return <Skeleton className="h-72 w-full rounded-xl" />;
   }
 
   const citationTrend = data?.citationTrend ?? [];
   const showCitationChart = citationTrend.length >= 2;
   const featured = featuredProvider(data?.byProvider);
+  const suggestions = data?.suggestions ?? [];
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <Card className="bg-background">
+      <CardHeader className="flex flex-row items-start justify-between gap-3 px-5 pb-2 pt-5">
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-            AI SEARCH
+          <p className="text-xs font-medium text-muted-foreground">Visibility</p>
+          <CardTitle className="mt-1 text-base font-medium">AI search</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">
+            How often ChatGPT, Perplexity, and Claude recommend {data?.projectName ?? "you"}
           </p>
-          <CardTitle className="text-xl">AI Search (ChatGPT/Perplexity)</CardTitle>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRecheck}
-          disabled={checking}
-          className="font-mono text-[10px] tracking-wider"
-        >
+        <Button variant="outline" size="sm" onClick={handleRecheck} disabled={checking}>
           <RefreshCw className={`h-3.5 w-3.5 ${checking ? "animate-spin" : ""}`} />
-          {checking ? "CHECKING..." : "RECHECK"}
+          {checking ? "Checking" : "Recheck"}
         </Button>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div>
-          <StatCard label="CITED" value={`${data?.citationScore ?? 0}%`} />
-          <p className="text-xs text-muted-foreground mt-2">
-            Niche AI prompts where {data?.projectName ?? "your product"} is recommended
-          </p>
-        </div>
+      <CardContent className="space-y-6 px-5 pb-5 pt-3">
+        <StatCard
+          label="Cited"
+          hint="Niche prompts where you are recommended"
+          value={`${data?.citationScore ?? 0}%`}
+        />
 
         <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-            PROVIDERS
-          </p>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Providers</p>
           <div className="flex flex-wrap gap-2">
             {PROVIDER_KEYS.map((key) => {
               const provider = data?.byProvider?.[key];
               const active = provider && provider.cited > 0;
               return (
                 <StatusPill key={key} tone={active ? "ok" : "neutral"}>
-                  {active ? "[OK]" : "[--]"} {provider?.label ?? key}
+                  {provider?.label ?? PROVIDER_LABELS[key]}
                   {provider && provider.total > 0 ? ` ${provider.cited}/${provider.total}` : ""}
                 </StatusPill>
               );
@@ -141,32 +134,29 @@ export function GeoCard() {
             xKey="date"
           />
         ) : (
-          <div>
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-              EMPTY
-            </p>
-            <h2 className="text-2xl">Not enough data yet</h2>
-            <p className="text-muted-foreground mt-1 text-sm">
-              Citation trend builds up as weekly sweeps run — check back after a few cycles.
+          <div className="rounded-lg bg-muted/40 px-4 py-6">
+            <p className="text-sm font-medium text-foreground">Not enough data yet</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Citation trend builds as weekly sweeps run. Check back after a few cycles.
             </p>
           </div>
         )}
 
-        <div>
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-3">
-            TWEAKS
-          </p>
-          <ul className="space-y-2">
-            {(data?.suggestions ?? []).map((suggestion, i) => (
-              <li
-                key={i}
-                className="text-sm text-muted-foreground leading-relaxed pl-3 border-l border-border"
-              >
-                {suggestion}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {suggestions.length > 0 ? (
+          <div>
+            <p className="mb-2 text-xs font-medium text-muted-foreground">Ways to improve</p>
+            <ul className="space-y-2">
+              {suggestions.map((suggestion, i) => (
+                <li
+                  key={i}
+                  className="border-l-2 border-primary/30 pl-3 text-sm leading-relaxed text-muted-foreground"
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );

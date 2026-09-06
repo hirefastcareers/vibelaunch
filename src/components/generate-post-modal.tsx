@@ -147,7 +147,7 @@ export function GeneratePostModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Generate New Post</DialogTitle>
+          <DialogTitle>Generate a post</DialogTitle>
           <DialogDescription>
             Uses your viral posts to write stronger hooks and copy.
           </DialogDescription>
@@ -155,7 +155,7 @@ export function GeneratePostModal({
 
         <div className="space-y-4">
           {!projects.length && (
-            <div className="rounded-sm border border-border bg-muted p-3 font-mono text-[12px] text-muted-foreground">
+            <div className="rounded-lg border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
               No project available yet. Onboard a project before generating posts.
             </div>
           )}
@@ -199,13 +199,13 @@ export function GeneratePostModal({
           </div>
 
           {error && (
-            <div className="rounded-sm border border-border p-3 font-mono text-[12px] text-muted-foreground">
+            <div className="rounded-lg border border-border p-3 text-sm text-muted-foreground">
               <LimitHitNotice code={errorCode} fallback={error} />
             </div>
           )}
 
           {result && (
-            <div className="rounded-sm border border-border bg-muted p-4 font-mono text-sm">
+            <div className="rounded-lg border border-border bg-muted/50 p-4 text-sm leading-relaxed">
               {result}
             </div>
           )}
@@ -214,7 +214,7 @@ export function GeneratePostModal({
             <Button
               onClick={handleGenerate}
               disabled={loading || !topic || !projectId}
-              className="w-full font-mono text-xs tracking-wider"
+              className="w-full"
             >
               {loading ? (
                 <>
@@ -222,7 +222,7 @@ export function GeneratePostModal({
                   Generating...
                 </>
               ) : (
-                "Generate Post"
+                "Generate post"
               )}
             </Button>
             {result && (
@@ -230,7 +230,7 @@ export function GeneratePostModal({
                 variant="secondary"
                 onClick={handleAddToQueue}
                 disabled={queueing || queued}
-                className="w-full font-mono text-xs tracking-wider"
+                className="w-full"
               >
                 {queueing ? (
                   <>
@@ -248,7 +248,7 @@ export function GeneratePostModal({
               <Button
                 onClick={handlePublishToX}
                 disabled={publishing}
-                className="w-full font-mono text-xs tracking-wider"
+                className="w-full"
               >
                 {publishing ? (
                   <>
@@ -265,13 +265,13 @@ export function GeneratePostModal({
                 href={publishedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-center font-mono text-xs tracking-wider text-primary hover:underline"
+                className="text-center text-sm font-medium text-primary hover:underline"
               >
                 View on X
               </a>
             ) : null}
             {publishDone && !publishedUrl ? (
-              <p className="text-center font-mono text-[11px] text-muted-foreground">
+              <p className="text-center text-sm text-muted-foreground">
                 Queued. It will post with your connected X account.
               </p>
             ) : null}

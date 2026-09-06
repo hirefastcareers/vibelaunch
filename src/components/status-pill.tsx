@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type Tone = "ok" | "warn" | "fail" | "neutral";
+export type Tone = "ok" | "warn" | "fail" | "neutral";
 
 const TONE: Record<Tone, string> = {
-  ok: "border-primary text-primary",
-  warn: "border-border text-muted-foreground",
-  fail: "border-border text-muted-foreground",
-  neutral: "border-border text-muted-foreground",
+  ok: "bg-emerald-50 text-emerald-700",
+  warn: "bg-amber-50 text-amber-800",
+  fail: "bg-red-50 text-red-700",
+  neutral: "bg-muted text-muted-foreground",
 };
 
 interface StatusPillProps {
@@ -20,7 +20,7 @@ export function StatusPill({ children, tone = "neutral", className }: StatusPill
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
+        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
         TONE[tone],
         className
       )}
@@ -40,12 +40,16 @@ export function statusTone(status: string): Tone {
 export function statusLabel(status: string): string {
   switch (status) {
     case "passed":
-      return "[SYS_OK]";
+    case "ok":
+    case "active":
+      return "Healthy";
     case "warning":
-      return "[WARN]";
+    case "warn":
+      return "Needs attention";
     case "failed":
-      return "[FAIL]";
+    case "fail":
+      return "Failing";
     default:
-      return `[${status.toUpperCase()}]`;
+      return status ? status.replaceAll("_", " ") : "Unknown";
   }
 }

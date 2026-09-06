@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button";
 import { EriBadge } from "@/components/eri-badge";
 import { GeneratePostModal } from "@/components/generate-post-modal";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatusPill } from "@/components/status-pill";
+import { StatusPill, type Tone } from "@/components/status-pill";
 import { formatRelativeTime } from "@/lib/utils";
 import { FileText, Video } from "lucide-react";
-import { StatCard } from "@/components/dashboard/stat-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardPage, PageHeader } from "@/components/dashboard-page";
 
 interface QueuePost {
   id: string;
@@ -38,15 +37,21 @@ interface Project {
   name: string;
 }
 
-function statusTag(status: string) {
-  const map: Record<string, string> = {
-    pending: "[PENDING]",
-    scheduled: "[SCHED]",
-    published: "[LIVE]",
-    FAILED: "[FAILED]",
-    PUBLISHING: "[PUBLISHING]",
-  };
-  return map[status] ?? `[${status.toUpperCase()}]`;
+function postStatusMeta(status: string): { label: string; tone: Tone } {
+  switch (status) {
+    case "PUBLISHED":
+      return { label: "Live", tone: "ok" };
+    case "FAILED":
+      return { label: "Failed", tone: "fail" };
+    case "PUBLISHING":
+      return { label: "Publishing", tone: "warn" };
+    case "SCHEDULED":
+      return { label: "Scheduled", tone: "neutral" };
+    case "QUEUED":
+      return { label: "Queued", tone: "neutral" };
+    default:
+      return { label: "Draft", tone: "neutral" };
+  }
 }
 
 function stripErrorPrefix(errorMessage: string): string {
@@ -56,15 +61,12 @@ function stripErrorPrefix(errorMessage: string): string {
 function PublishError({ errorMessage }: { errorMessage: string }) {
   if (errorMessage.startsWith("[AUTH:")) {
     return (
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px]">
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
         <span className="text-muted-foreground">
-          Your X connection expired - reconnect to keep publishing
+          Your X connection expired. Reconnect to keep publishing.
         </span>
-        <Link
-          href="/auth/signin"
-          className="text-primary tracking-wider hover:underline"
-        >
-          RECONNECT
+        <Link href="/auth/signin" className="font-medium text-primary hover:underline">
+          Reconnect
         </Link>
       </div>
     );
@@ -72,16 +74,14 @@ function PublishError({ errorMessage }: { errorMessage: string }) {
 
   if (errorMessage.startsWith("[API:429]")) {
     return (
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">
-        Rate limited by X - this will retry automatically
+      <p className="mt-2 text-sm text-muted-foreground">
+        Rate limited by X. This will retry automatically.
       </p>
     );
   }
 
   return (
-    <p className="mt-2 font-mono text-[10px] text-muted-foreground">
-      {stripErrorPrefix(errorMessage)}
-    </p>
+    <p className="mt-2 text-sm text-muted-foreground">{stripErrorPrefix(errorMessage)}</p>
   );
 }
 
@@ -90,7 +90,7 @@ function MediaThumbnail({ urls }: { urls: string[] }) {
   const isVideo = url?.includes("video") || url?.includes("placeholder?type=video");
 
   return (
-    <div className="h-14 w-14 rounded-sm border border-border bg-muted flex items-center justify-center shrink-0 overflow-hidden">
+    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-muted">
       {!url ? (
         <FileText className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
       ) : isVideo ? (
@@ -112,6 +112,7 @@ function PostCard({
   const [publishing, setPublishing] = useState(false);
   const [actionError, setActionError] = useState("");
   const canPublish = ["DRAFT", "FAILED"].includes(post.status);
+  const meta = postStatusMeta(post.status);
 
   async function handlePublish() {
     setPublishing(true);
@@ -120,9 +121,7 @@ function PostCard({
       const res = await fetch(`/api/posts/${post.id}/publish`, { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setActionError(
-          typeof data.error === "string" ? data.error : "Publish failed",
-        );
+        setActionError(typeof data.error === "string" ? data.error : "Publish failed");
         return;
       }
       onChanged?.();
@@ -134,23 +133,19 @@ function PostCard({
   }
 
   return (
-    <div className="border-b border-border bg-card p-4 last:border-b-0">
+    <div className="border-b border-border bg-background p-4 last:border-b-0">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <MediaThumbnail urls={post.mediaUrls} />
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <StatusPill>{statusTag(post.status)}</StatusPill>
-            <span className="font-mono text-[10px] text-muted-foreground">
-              {post.projectName}
-            </span>
+            <StatusPill tone={meta.tone}>{meta.label}</StatusPill>
+            <span className="text-xs text-muted-foreground">{post.projectName}</span>
             {post.eri !== null && <EriBadge eri={post.eri} />}
           </div>
-          <p className="line-clamp-2 font-mono text-sm">{post.content}</p>
+          <p className="line-clamp-2 text-sm leading-relaxed">{post.content}</p>
           {post.errorMessage ? <PublishError errorMessage={post.errorMessage} /> : null}
-          {actionError ? (
-            <p className="mt-2 font-mono text-[10px] text-muted-foreground">{actionError}</p>
-          ) : null}
-          <div className="mt-2 flex flex-wrap items-center gap-3 font-mono text-[10px] text-muted-foreground">
+          {actionError ? <p className="mt-2 text-sm text-destructive">{actionError}</p> : null}
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             {post.scheduledAt && <span>{new Date(post.scheduledAt).toLocaleString()}</span>}
             {post.publishedAt && <span>{formatRelativeTime(post.publishedAt)}</span>}
             {post.xPostUrl ? (
@@ -158,9 +153,9 @@ function PostCard({
                 href={post.xPostUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tracking-wider text-primary hover:underline"
+                className="font-medium text-primary hover:underline"
               >
-                VIEW ON X
+                View on X
               </a>
             ) : null}
           </div>
@@ -170,9 +165,9 @@ function PostCard({
             type="button"
             onClick={handlePublish}
             disabled={publishing}
-            className="shrink-0 font-mono text-xs tracking-wider sm:mt-0"
+            className="shrink-0 sm:mt-0"
           >
-            {publishing ? "PUBLISHING..." : "PUBLISH TO X"}
+            {publishing ? "Publishing..." : "Publish to X"}
           </Button>
         ) : null}
       </div>
@@ -191,13 +186,13 @@ function PostList({
 }) {
   if (!posts.length) {
     return (
-      <div className="py-8 px-4 font-mono text-[12px] text-muted-foreground border border-border">
+      <div className="rounded-xl border border-border bg-background px-5 py-10 text-center text-sm text-muted-foreground">
         {emptyMessage}
       </div>
     );
   }
   return (
-    <div className="border border-border">
+    <div className="overflow-hidden rounded-xl border border-border bg-background shadow-sm">
       {posts.map((post) => (
         <PostCard key={post.id} post={post} onChanged={onChanged} />
       ))}
@@ -233,142 +228,49 @@ export default function QueueStudioPage() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-4">
+      <DashboardPage>
         <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-64" />
-      </div>
+        <Skeleton className="h-64 rounded-xl" />
+      </DashboardPage>
     );
   }
 
-  const pendingCount = data?.pending.length ?? 0;
-  const scheduledCount = data?.scheduled.length ?? 0;
-  const publishedCount = data?.published.length ?? 0;
-  const queueTotal = pendingCount + scheduledCount + publishedCount;
-  const latestPublished = data?.published[0];
   const hasProjects = projects.length > 0;
 
   return (
-    <div className="space-y-8 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <p className="font-mono mb-1 text-[10px] tracking-widest text-muted-foreground">
-            QUEUE
-          </p>
-          <h1 className="text-[38px] md:text-[48px]">AI Post Generator & Hooks</h1>
-          <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">
-            Generate a draft, then click Publish to X on the pending card. It posts with your connected account.
-          </p>
-        </div>
-        {hasProjects ? (
-          <Button onClick={() => setModalOpen(true)} className="font-mono text-xs tracking-wider">
-            GENERATE POST
-          </Button>
-        ) : (
-          <Button asChild className="font-mono text-xs tracking-wider">
-            <Link href="/onboard">ONBOARD PROJECT</Link>
-          </Button>
-        )}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="TOTAL" value={queueTotal} />
-        <StatCard label="PENDING" value={pendingCount} />
-        <StatCard label="SCHEDULED" value={scheduledCount} />
-        <StatCard label="PUBLISHED" value={publishedCount} />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[1.3fr_0.9fr]">
-        <Card className="overflow-hidden">
-          <CardHeader className="border-b border-border pb-4">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              WORKFLOW
-            </p>
-            <CardTitle className="mt-1 text-[24px]">How this queue works</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-px p-0 md:grid-cols-3">
-            <div className="bg-background px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">01</p>
-              <h2 className="mt-2 text-[21px]">Generate</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Start with AI drafts and hooks tailored to your project tone.
-              </p>
-            </div>
-            <div className="bg-card px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">02</p>
-              <h2 className="mt-2 text-[21px]">Schedule</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Hold posts for a better publish window, or click Publish to X on a pending draft.
-              </p>
-            </div>
-            <div className="bg-background px-5 py-5">
-              <p className="font-mono text-[10px] tracking-widest text-muted-foreground">03</p>
-              <h2 className="mt-2 text-[21px]">Learn</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Published posts feed analytics back into the next round of drafts.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader className="border-b border-border pb-4">
-            <p className="font-mono text-[10px] tracking-widest text-muted-foreground">
-              LAST OUTPUT
-            </p>
-            <CardTitle className="mt-1 text-[24px]">Latest published post</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            {latestPublished ? (
-              <div className="space-y-3">
-                <p className="text-sm leading-relaxed">{latestPublished.content}</p>
-                <div className="flex flex-wrap gap-2 font-mono text-[10px] text-muted-foreground">
-                  <span>{formatRelativeTime(latestPublished.publishedAt)}</span>
-                  {latestPublished.eri !== null && <EriBadge eri={latestPublished.eri} />}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  Nothing has been published yet. {hasProjects ? "Generate a post, then click Publish to X on the pending draft." : "Onboard a project first, then generate your first post."}
-                </p>
-                {!hasProjects && (
-                  <Link
-                    href="/onboard"
-                    className="inline-block border-b border-border font-mono text-[11px] tracking-wider text-muted-foreground hover:text-foreground"
-                  >
-                    GO TO ONBOARDING
-                  </Link>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+    <DashboardPage>
+      <PageHeader
+        title="Posts"
+        description="Generate a draft, then publish it to X with your connected account."
+        actions={
+          hasProjects ? (
+            <Button onClick={() => setModalOpen(true)}>Generate post</Button>
+          ) : (
+            <Button asChild>
+              <Link href="/onboard">Create project</Link>
+            </Button>
+          )
+        }
+      />
 
       <Tabs defaultValue="pending">
         <TabsList>
-          <TabsTrigger value="pending">
-            PENDING ({data?.pending.length ?? 0})
-          </TabsTrigger>
-          <TabsTrigger value="scheduled">
-            SCHED ({data?.scheduled.length ?? 0})
-          </TabsTrigger>
-          <TabsTrigger value="published">
-            LIVE ({data?.published.length ?? 0})
-          </TabsTrigger>
+          <TabsTrigger value="pending">Pending ({data?.pending.length ?? 0})</TabsTrigger>
+          <TabsTrigger value="scheduled">Scheduled ({data?.scheduled.length ?? 0})</TabsTrigger>
+          <TabsTrigger value="published">Live ({data?.published.length ?? 0})</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pending">
+        <TabsContent value="pending" className="mt-4">
           <PostList
             posts={data?.pending ?? []}
             emptyMessage="No pending drafts. Generate a post, then Publish to X appears on the card."
             onChanged={reloadQueue}
           />
         </TabsContent>
-        <TabsContent value="scheduled">
+        <TabsContent value="scheduled" className="mt-4">
           <PostList posts={data?.scheduled ?? []} emptyMessage="No scheduled posts." />
         </TabsContent>
-        <TabsContent value="published">
+        <TabsContent value="published" className="mt-4">
           <PostList posts={data?.published ?? []} emptyMessage="No published posts yet." />
         </TabsContent>
       </Tabs>
@@ -384,6 +286,6 @@ export default function QueueStudioPage() {
           void reloadQueue();
         }}
       />
-    </div>
+    </DashboardPage>
   );
 }

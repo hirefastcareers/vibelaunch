@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { StatusPill } from "@/components/status-pill";
 
 interface EriBadgeProps {
   eri: number;
@@ -9,10 +8,22 @@ interface EriBadgeProps {
 }
 
 export function EriBadge({ eri, className }: EriBadgeProps) {
-  const tone = eri >= 5 ? "ok" : eri >= 2 ? "warn" : "fail";
+  const tone =
+    eri >= 5
+      ? "bg-emerald-50 text-emerald-700"
+      : eri >= 2
+        ? "bg-amber-50 text-amber-800"
+        : "bg-muted text-muted-foreground";
+
   return (
-    <StatusPill tone={tone} className={cn(className)}>
-      {`[VIRALITY: ${eri.toFixed(1)}]`}
-    </StatusPill>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium tabular-nums",
+        tone,
+        className
+      )}
+    >
+      {eri.toFixed(1)} score
+    </span>
   );
 }
