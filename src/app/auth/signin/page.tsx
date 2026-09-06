@@ -11,11 +11,12 @@ type PageProps = {
 export default async function SignInPage({ searchParams }: PageProps) {
   const { error } = await searchParams;
   const configured = isXOauthConfigured();
+  const callbackUrls = getXOauthCallbackAllowlist();
   return (
     <SignInForm
       configured={configured}
-      callbackUrls={getXOauthCallbackAllowlist()}
-      errorMessage={getSignInErrorMessage(error, configured)}
+      callbackUrls={callbackUrls}
+      errorMessage={getSignInErrorMessage(error, configured, callbackUrls)}
     />
   );
 }

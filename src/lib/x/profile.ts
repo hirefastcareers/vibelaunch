@@ -41,8 +41,12 @@ export async function persistXUserProfile(
   const data = extractXProfile(account, profile);
   if (!data) return;
 
-  await prisma.user.updateMany({
-    where: { id: userId },
-    data,
-  });
+  try {
+    await prisma.user.updateMany({
+      where: { id: userId },
+      data,
+    });
+  } catch (error) {
+    console.error("[auth] persistXUserProfile failed", error);
+  }
 }

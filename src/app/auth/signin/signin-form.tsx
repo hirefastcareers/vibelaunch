@@ -38,7 +38,8 @@ export default function SignInForm({
             <p className="ds-label mb-3">START</p>
             <h2 className="mb-2 text-[28px] leading-tight">Continue with X</h2>
             <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
-              One login. No API keys to paste, no second CMS, no scheduling tool on the side.
+              You must already be logged into X in this same browser. If X shows a
+              Log in button, use that first, then Authorize.
             </p>
 
             {errorMessage ? (
@@ -60,9 +61,10 @@ export default function SignInForm({
 
             <div className="mt-6 space-y-2 text-[11px] leading-relaxed text-muted-foreground">
               <p>
-                If X says you were not able to give access, the developer portal callback is
-                wrong. Under User authentication settings, type of app must be Web App, and
-                Callback URI must be exactly:
+                If X blocks the app, User authentication must be a Web App (confidential
+                client), and every Callback URI must match a box below character for
+                character. No trailing slash. Keep both the live https URL and the
+                localhost http URLs.
               </p>
               {callbackUrls.map((url) => (
                 <code
@@ -73,7 +75,8 @@ export default function SignInForm({
                 </code>
               ))}
               <p>
-                Do not use /auth/signin, https, or a trailing slash. Save, then try again.
+                Do not use /auth/signin as the callback. Production must start with https.
+                Localhost must start with http, not https.
               </p>
               {!configured ? (
                 <p>

@@ -3,7 +3,7 @@ import TwitterProvider from "next-auth/providers/twitter";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
-import { ensureAuthEnv, getXOauthCredentials } from "./env";
+import { ensureAuthEnv, getXOauthCallbackUrl, getXOauthCredentials } from "./env";
 import { persistXUserProfile } from "./x/profile";
 
 ensureAuthEnv();
@@ -23,6 +23,7 @@ const twitterProvider = TwitterProvider({
     url: "https://x.com/i/oauth2/authorize",
     params: {
       scope: X_OAUTH_SCOPES,
+      redirect_uri: getXOauthCallbackUrl(),
     },
   },
   token: {
@@ -83,7 +84,11 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signIn({ user, account, profile }) {
-      await persistXUserProfile(user.id, account, profile);
+      try {
+        await persistXUserProfile(user.id, account, profile);
+      } catch (error) {
+        console.error("[auth] persistXUserProfile failed", error);
+      }
     },
   },
   pages: { signIn: "/auth/signin" },
