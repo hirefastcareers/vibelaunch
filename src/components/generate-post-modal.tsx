@@ -149,7 +149,8 @@ export function GeneratePostModal({
         <DialogHeader>
           <DialogTitle>Generate a post</DialogTitle>
           <DialogDescription>
-            Uses your viral posts to write stronger hooks and copy.
+            Writes a short changelog post: what shipped, then what someone can do now.
+            No slogans, hashtags, or emoji piles.
           </DialogDescription>
         </DialogHeader>
 
@@ -179,7 +180,7 @@ export function GeneratePostModal({
             <Input
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="e.g. shipped dark mode, hit 100 users"
+              placeholder="e.g. X sign-in is live"
             />
           </div>
 

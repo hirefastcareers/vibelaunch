@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { findSimilarPosts } from "@/lib/vector/embeddings";
+import {
+  buildFallbackPost,
+  buildPostPrompt,
+  cleanGeneratedPost,
+} from "./post-voice";
 
 export interface GeneratedContent {
   content: string;
@@ -45,15 +50,14 @@ async function generateWithOpenAI(
     .map((p) => `- (ERI ${p.eriScore}): "${p.content}"`)
     .join("\n");
 
-  const prompt = `Generate a single X/Twitter post (max 280 chars) for the product "${project.name}".
-Tagline: ${project.tagline ?? "N/A"}
-Topic: ${topic}
-Tone: ${tone}
-
-High-performing past posts for inspiration:
-${examples || "No examples yet - write something engaging."}
-
-Return ONLY the post text, no quotes or explanation.`;
+  const prompt = buildPostPrompt({
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    topic,
+    tone,
+    examples,
+  });
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -64,8 +68,8 @@ Return ONLY the post text, no quotes or explanation.`;
     body: JSON.stringify({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 100,
-      temperature: 0.8,
+      max_tokens: 120,
+      temperature: 0.4,
     }),
   });
 
@@ -77,7 +81,7 @@ Return ONLY the post text, no quotes or explanation.`;
     choices: Array<{ message: { content: string } }>;
   };
 
-  const content = data.choices[0].message.content.trim().slice(0, 280);
+  const content = cleanGeneratedPost(data.choices[0].message.content);
 
   return {
     content,
@@ -87,22 +91,13 @@ Return ONLY the post text, no quotes or explanation.`;
 }
 
 function generateFallback(
-  project: { name: string; tagline: string | null },
+  project: { name: string; tagline: string | null; description?: string | null },
   topic: string,
   tone: string,
-  similarPosts: Array<{ postId: string; content: string }>
+  similarPosts: Array<{ postId: string }>
 ): GeneratedContent {
-  const templates: Record<string, string> = {
-    professional: `Excited to share an update on ${topic} for ${project.name}. ${project.tagline ?? ""}`.trim(),
-    casual: `Just shipped something cool for ${project.name} - ${topic}! 🚀`,
-    hype: `🔥 ${project.name} just leveled up! ${topic} is HERE. Don't sleep on this.`,
-    technical: `New in ${project.name}: ${topic}. Built for developers who care about quality.`,
-  };
-
-  const content = (templates[tone] ?? templates.casual).slice(0, 280);
-
   return {
-    content,
+    content: buildFallbackPost(project, topic),
     tone,
     inspiredBy: similarPosts.map((p) => p.postId),
   };
