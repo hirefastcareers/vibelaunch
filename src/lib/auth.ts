@@ -4,7 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 import type { Adapter } from "next-auth/adapters";
 import { ensureAuthEnv, getXOauthCredentials } from "./env";
-import { persistXUserProfile } from "./x/profile";
+import { persistXOauthTokens, persistXUserProfile } from "./x/profile";
 
 ensureAuthEnv();
 
@@ -84,6 +84,7 @@ export const authOptions: NextAuthOptions = {
   events: {
     async signIn({ user, account, profile }) {
       await persistXUserProfile(user.id, account, profile);
+      await persistXOauthTokens(user.id, account);
     },
   },
   pages: { signIn: "/auth/signin" },

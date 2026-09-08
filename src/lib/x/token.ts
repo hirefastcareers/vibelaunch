@@ -13,6 +13,7 @@ export class XAuthError extends Error {
 
 const REFRESH_SKEW_SECONDS = 5 * 60;
 const UNIX_EXPIRY_FLOOR = 1_000_000_000;
+const UNIX_MS_FLOOR = 1_000_000_000_000;
 const REAUTH_MESSAGE =
   "X needs a fresh login before it can post. Sign out, then Sign in with X, and try Publish again.";
 
@@ -24,7 +25,25 @@ interface TokenRefreshResponse {
 
 /** NextAuth sometimes stores expires_in (e.g. 7200) instead of a unix timestamp. */
 export function isUnixExpiry(expiresAt: number | null | undefined): boolean {
-  return expiresAt != null && expiresAt >= UNIX_EXPIRY_FLOOR;
+  return expiresAt != null && expiresAt >= UNIX_EXPIRY_FLOOR && expiresAt < UNIX_MS_FLOOR;
+}
+
+export function oauthExpiryUnix(input: {
+  expires_at?: number | null;
+  expires_in?: number | null;
+}): number | null {
+  const expiresAt = input.expires_at ?? null;
+  if (expiresAt != null && expiresAt >= UNIX_MS_FLOOR) {
+    return Math.floor(expiresAt / 1000);
+  }
+  if (isUnixExpiry(expiresAt)) return expiresAt;
+  if (input.expires_in && input.expires_in > 0 && input.expires_in < UNIX_EXPIRY_FLOOR) {
+    return Math.floor(Date.now() / 1000) + input.expires_in;
+  }
+  if (expiresAt && expiresAt > 0 && expiresAt < UNIX_EXPIRY_FLOOR) {
+    return Math.floor(Date.now() / 1000) + expiresAt;
+  }
+  return null;
 }
 
 /**
