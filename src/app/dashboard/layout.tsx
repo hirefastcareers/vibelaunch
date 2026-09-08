@@ -10,7 +10,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect("/auth/signin?callbackUrl=/dashboard");
 
   const userLabel = session.user.xUsername
     ? `@${session.user.xUsername}`

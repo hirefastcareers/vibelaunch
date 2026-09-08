@@ -6,6 +6,9 @@ import {
   isXOauthConfigured,
   getXOauthCallbackUrl,
   getXOauthCallbackAllowlist,
+  isLocalUrl,
+  getRequestOrigin,
+  applyRequestAuthUrl,
 } from "@/lib/env";
 
 describe("env helpers", () => {
@@ -43,6 +46,44 @@ describe("env helpers", () => {
     process.env.NEXTAUTH_URL = "";
     ensureAuthEnv();
     expect(process.env.NEXTAUTH_URL).toBe("http://localhost:3000");
+  });
+
+  it("skips localhost NEXTAUTH_URL on Vercel", () => {
+    process.env.VERCEL = "1";
+    process.env.NEXTAUTH_URL = "http://localhost:3000";
+    process.env.VERCEL_URL = "vibelaunch-nu.vercel.app";
+    delete process.env.APP_URL;
+    delete process.env.NEXT_PUBLIC_APP_URL;
+    expect(getBaseUrl()).toBe("https://vibelaunch-nu.vercel.app");
+    ensureAuthEnv();
+    expect(process.env.NEXTAUTH_URL).toBe("https://vibelaunch-nu.vercel.app");
+  });
+
+  it("reads the request origin from forwarded headers", () => {
+    const origin = getRequestOrigin(
+      new Headers({
+        "x-forwarded-host": "vibelaunch-nu.vercel.app",
+        "x-forwarded-proto": "https",
+      }),
+    );
+    expect(origin).toBe("https://vibelaunch-nu.vercel.app");
+  });
+
+  it("points NextAuth at the request origin", () => {
+    process.env.NEXTAUTH_URL = "http://localhost:3000";
+    const origin = applyRequestAuthUrl(
+      new Headers({
+        host: "vibelaunch-nu.vercel.app",
+        "x-forwarded-proto": "https",
+      }),
+    );
+    expect(origin).toBe("https://vibelaunch-nu.vercel.app");
+    expect(process.env.NEXTAUTH_URL).toBe("https://vibelaunch-nu.vercel.app");
+  });
+
+  it("detects local URLs", () => {
+    expect(isLocalUrl("http://localhost:3000")).toBe(true);
+    expect(isLocalUrl("https://vibelaunch-nu.vercel.app")).toBe(false);
   });
 
   it("treats empty X OAuth strings as unset", () => {

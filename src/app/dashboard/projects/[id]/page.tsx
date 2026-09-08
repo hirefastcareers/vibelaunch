@@ -11,7 +11,7 @@ type PageProps = { params: Promise<{ id: string }> };
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const session = await getSession();
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect("/auth/signin?callbackUrl=/dashboard");
 
   const { id } = await params;
   const project = await prisma.project.findFirst({

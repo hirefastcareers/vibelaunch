@@ -23,7 +23,7 @@ function checkoutHref(
 
 export default async function BillingPage() {
   const session = await getSession();
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect("/auth/signin?callbackUrl=/dashboard/billing");
 
   const starterId = productIdForTier("STARTER");
   const proId = productIdForTier("PRO");

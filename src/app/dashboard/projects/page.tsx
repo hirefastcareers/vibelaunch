@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
   const session = await getSession();
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect("/auth/signin?callbackUrl=/dashboard/projects");
 
   const projects = await prisma.project.findMany({
     where: { userId: session.user.id },

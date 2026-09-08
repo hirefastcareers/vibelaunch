@@ -7,7 +7,7 @@ import DashboardHome from "./dashboard-content";
 
 export default async function DashboardPage() {
   const session = await getSession();
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect("/auth/signin?callbackUrl=/dashboard");
 
   const user = {
     name: session.user.name ?? null,

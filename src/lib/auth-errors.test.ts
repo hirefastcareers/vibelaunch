@@ -10,10 +10,13 @@ describe("getSignInErrorMessage", () => {
     expect(getSignInErrorMessage("twitter", true)).toMatch(/OAuth 2\.0 Client ID/);
   });
 
-  it("explains callback mismatches", () => {
-    expect(getSignInErrorMessage("OAuthCallback", true)).toMatch(
-      /api\/auth\/callback\/twitter/,
-    );
+  it("explains callback mismatches with the live callback URI", () => {
+    expect(
+      getSignInErrorMessage("OAuthCallback", true, [
+        "https://vibelaunch-nu.vercel.app/api/auth/callback/twitter",
+      ]),
+    ).toMatch(/vibelaunch-nu\.vercel\.app\/api\/auth\/callback\/twitter/);
+    expect(getSignInErrorMessage("OAuthCallback", true, [])).not.toMatch(/localhost:3000/);
   });
 
   it("returns null when configured and there is no error", () => {

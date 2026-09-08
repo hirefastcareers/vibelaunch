@@ -8,12 +8,14 @@ interface SignInFormProps {
   configured: boolean;
   callbackUrls: string[];
   errorMessage: string | null;
+  callbackUrl?: string;
 }
 
 export default function SignInForm({
   configured,
   callbackUrls,
   errorMessage,
+  callbackUrl = "/dashboard",
 }: SignInFormProps) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
@@ -52,35 +54,28 @@ export default function SignInForm({
 
             <button
               type="button"
-              onClick={() => signIn("twitter", { callbackUrl: "/dashboard" })}
+              onClick={() => signIn("twitter", { callbackUrl })}
               className="w-full rounded-xl bg-primary px-6 py-4 text-xs font-medium tracking-[0.04em] text-primary-foreground shadow-sm transition-all hover:bg-accent hover:shadow-md"
             >
               Sign in with X
             </button>
 
-            <div className="mt-6 space-y-2 text-[11px] leading-relaxed text-muted-foreground">
-              <p>
-                If X says you were not able to give access, the developer portal callback is
-                wrong. Under User authentication settings, type of app must be Web App, and
-                Callback URI must be exactly:
-              </p>
-              {callbackUrls.map((url) => (
-                <code
-                  key={url}
-                  className="block break-all rounded-lg border border-border bg-muted/50 px-3 py-2 font-mono text-[11px] text-foreground"
-                >
-                  {url}
-                </code>
-              ))}
-              <p>
-                Do not use /auth/signin, https, or a trailing slash. Save, then try again.
-              </p>
-              {!configured ? (
+            {errorMessage ? (
+              <div className="mt-6 space-y-2 text-[11px] leading-relaxed text-muted-foreground">
                 <p>
-                  Also set X_CLIENT_ID and X_CLIENT_SECRET, then restart npm run dev.
+                  Under User authentication settings, type of app must be Web App. Add every
+                  Callback URI below, with no trailing slash:
                 </p>
-              ) : null}
-            </div>
+                {callbackUrls.map((url) => (
+                  <code
+                    key={url}
+                    className="block break-all rounded-lg border border-border bg-muted/50 px-3 py-2 font-mono text-[11px] text-foreground"
+                  >
+                    {url}
+                  </code>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

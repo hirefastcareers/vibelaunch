@@ -1,8 +1,37 @@
 const LOCAL_FALLBACK = "http://localhost:3000";
 
+function firstNonEmpty(...values: Array<string | undefined>): string {
+  for (const value of values) {
+    const trimmed = value?.trim();
+    if (trimmed) return trimmed;
+  }
+  return "";
+}
+
+function normalizeOrigin(url: string): string {
+  const trimmed = url.trim().replace(/\/$/, "");
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://${trimmed}`;
+}
+
+export function isLocalUrl(url: string): boolean {
+  try {
+    const host = new URL(normalizeOrigin(url)).hostname;
+    return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+  } catch {
+    return false;
+  }
+}
+
+function isVercelRuntime(): boolean {
+  return process.env.VERCEL === "1";
+}
+
 /**
  * Resolve the app base URL with safe fallbacks for build time and Vercel deploys.
  * Treats empty env strings as unset (common when vars exist but have no value).
+ * On Vercel, localhost NEXTAUTH_URL values are ignored so production login
+ * does not send X back to the developer's laptop.
  */
 export function getBaseUrl(): string {
   const candidates = [
@@ -14,20 +43,41 @@ export function getBaseUrl(): string {
 
   for (const candidate of candidates) {
     const trimmed = candidate?.trim();
-    if (trimmed) {
-      return trimmed.replace(/\/$/, "");
-    }
+    if (!trimmed) continue;
+    const origin = normalizeOrigin(trimmed);
+    if (isVercelRuntime() && isLocalUrl(origin)) continue;
+    return origin;
   }
 
   return LOCAL_FALLBACK;
 }
 
-function firstNonEmpty(...values: Array<string | undefined>): string {
-  for (const value of values) {
-    const trimmed = value?.trim();
-    if (trimmed) return trimmed;
+export function getRequestOrigin(headerList: Headers): string | null {
+  const host =
+    headerList.get("x-forwarded-host")?.split(",")[0]?.trim() ||
+    headerList.get("host")?.split(",")[0]?.trim();
+  if (!host) return null;
+
+  const forwardedProto = headerList.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const hostname = host.replace(/:\d+$/, "").toLowerCase();
+  const proto =
+    forwardedProto ||
+    (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]"
+      ? "http"
+      : "https");
+  return `${proto}://${host}`.replace(/\/$/, "");
+}
+
+/**
+ * Point NextAuth at the origin the browser actually used for this request.
+ */
+export function applyRequestAuthUrl(headerList: Headers): string {
+  const origin = getRequestOrigin(headerList) ?? getBaseUrl();
+  process.env.NEXTAUTH_URL = origin;
+  if (!process.env.APP_URL?.trim() || (isVercelRuntime() && isLocalUrl(process.env.APP_URL))) {
+    process.env.APP_URL = origin;
   }
-  return "";
+  return origin;
 }
 
 /**
@@ -85,14 +135,15 @@ export function getXOauthCallbackAllowlist(baseUrl = getBaseUrl()): string[] {
  * Ensure NextAuth's required env vars are never empty strings during build/runtime.
  */
 export function ensureAuthEnv(): void {
-  if (!process.env.NEXTAUTH_URL?.trim()) {
+  const current = process.env.NEXTAUTH_URL?.trim();
+  if (!current || (isVercelRuntime() && isLocalUrl(current))) {
     process.env.NEXTAUTH_URL = getBaseUrl();
   }
   if (!process.env.NEXTAUTH_SECRET?.trim()) {
     process.env.NEXTAUTH_SECRET =
       "xoopa-demo-secret-replace-in-production-32chars";
   }
-  if (!process.env.APP_URL?.trim()) {
+  if (!process.env.APP_URL?.trim() || (isVercelRuntime() && isLocalUrl(process.env.APP_URL))) {
     process.env.APP_URL = getBaseUrl();
   }
 }
