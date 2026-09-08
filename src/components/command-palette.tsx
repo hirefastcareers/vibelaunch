@@ -66,6 +66,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
             <Command.Group heading="Actions">
               <Command.Item
+                onSelect={() => run(() => router.push("/dashboard?ship=true"))}
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
+              >
+                <FileText className="h-4 w-4" />
+                Ship update
+              </Command.Item>
+              <Command.Item
                 onSelect={() => run(async () => {
                   await fetch("/api/generate/x-thread", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
                   router.push("/dashboard/queue");
