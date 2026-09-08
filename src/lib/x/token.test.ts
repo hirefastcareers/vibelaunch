@@ -56,6 +56,12 @@ describe("getValidAccessToken", () => {
     expect(update).not.toHaveBeenCalled();
   });
 
+  it("uses the access token when expires_at looks like a duration, not a unix time", async () => {
+    findFirst.mockResolvedValue(twitterAccount({ expires_at: 7200 }));
+    await expect(getValidAccessToken("user_1")).resolves.toBe("access-old");
+    expect(update).not.toHaveBeenCalled();
+  });
+
   it("throws REAUTH_REQUIRED when expired with no refresh_token", async () => {
     findFirst.mockResolvedValue(
       twitterAccount({
@@ -89,6 +95,11 @@ describe("getValidAccessToken", () => {
 
     await expect(getValidAccessToken("user_1")).resolves.toBe("access-new");
 
+    const [, init] = fetchMock.mock.calls[0] as [string, { body: URLSearchParams }];
+    expect(init.body.get("grant_type")).toBe("refresh_token");
+    expect(init.body.get("refresh_token")).toBe("refresh-old");
+    expect(init.body.get("client_id")).toBe("client-id");
+
     expect(fetchMock).toHaveBeenCalledWith(
       "https://api.x.com/2/oauth2/token",
       expect.objectContaining({
@@ -121,7 +132,7 @@ describe("getValidAccessToken", () => {
 
     await expect(getValidAccessToken("user_1")).rejects.toMatchObject({
       code: "REAUTH_REQUIRED",
-      message: expect.stringContaining("400"),
+      message: expect.stringContaining("Sign in with X"),
     });
     expect(update).not.toHaveBeenCalled();
   });

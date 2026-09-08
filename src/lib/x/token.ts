@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getXOauthCredentials } from "@/lib/env";
 
 export class XAuthError extends Error {
   constructor(
@@ -11,11 +12,19 @@ export class XAuthError extends Error {
 }
 
 const REFRESH_SKEW_SECONDS = 5 * 60;
+const UNIX_EXPIRY_FLOOR = 1_000_000_000;
+const REAUTH_MESSAGE =
+  "X needs a fresh login before it can post. Sign out, then Sign in with X, and try Publish again.";
 
 interface TokenRefreshResponse {
   access_token?: string;
   refresh_token?: string;
   expires_in?: number;
+}
+
+/** NextAuth sometimes stores expires_in (e.g. 7200) instead of a unix timestamp. */
+export function isUnixExpiry(expiresAt: number | null | undefined): boolean {
+  return expiresAt != null && expiresAt >= UNIX_EXPIRY_FLOOR;
 }
 
 /**
@@ -32,21 +41,18 @@ export async function getValidAccessToken(userId: string): Promise<string> {
 
   const now = Math.floor(Date.now() / 1000);
   const needsRefresh =
-    account.expires_at != null && account.expires_at <= now + REFRESH_SKEW_SECONDS;
+    isUnixExpiry(account.expires_at) &&
+    account.expires_at! <= now + REFRESH_SKEW_SECONDS;
 
   if (!needsRefresh) {
     return account.access_token;
   }
 
   if (!account.refresh_token) {
-    throw new XAuthError(
-      "X session expired and cannot be refreshed automatically",
-      "REAUTH_REQUIRED"
-    );
+    throw new XAuthError(REAUTH_MESSAGE, "REAUTH_REQUIRED");
   }
 
-  const clientId = process.env.X_CLIENT_ID;
-  const clientSecret = process.env.X_CLIENT_SECRET;
+  const { clientId, clientSecret } = getXOauthCredentials();
   if (!clientId || !clientSecret) {
     throw new XAuthError(
       "X token refresh failed: missing client credentials",
@@ -64,32 +70,27 @@ export async function getValidAccessToken(userId: string): Promise<string> {
     body: new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: account.refresh_token,
+      client_id: clientId,
     }),
   });
 
   const body = await response.text();
   if (!response.ok) {
-    throw new XAuthError(
-      `X token refresh failed: ${response.status} ${body}`,
-      "REAUTH_REQUIRED"
-    );
+    console.error("[x-token] refresh failed", response.status, body);
+    throw new XAuthError(REAUTH_MESSAGE, "REAUTH_REQUIRED");
   }
 
   let data: TokenRefreshResponse;
   try {
     data = JSON.parse(body) as TokenRefreshResponse;
   } catch {
-    throw new XAuthError(
-      `X token refresh failed: ${response.status} ${body}`,
-      "REAUTH_REQUIRED"
-    );
+    console.error("[x-token] refresh returned non-JSON", response.status, body);
+    throw new XAuthError(REAUTH_MESSAGE, "REAUTH_REQUIRED");
   }
 
   if (!data.access_token || typeof data.expires_in !== "number") {
-    throw new XAuthError(
-      `X token refresh failed: ${response.status} ${body}`,
-      "REAUTH_REQUIRED"
-    );
+    console.error("[x-token] refresh missing access_token", body);
+    throw new XAuthError(REAUTH_MESSAGE, "REAUTH_REQUIRED");
   }
 
   await prisma.account.update({
