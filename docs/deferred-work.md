@@ -8,6 +8,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 - [2026-09-02] Google AI Overviews citation checking is not implemented — no official Google API exists for this, it would require a paid third-party SERP-scraping service (e.g. Apify-style actors, ~$5/1,000 checks) and carries Google ToS gray-area risk since it involves rendering/parsing live search results rather than calling an official endpoint. Landing page copy was corrected to only claim what's real (ChatGPT, Perplexity, Claude) — revisit as a real feature only if there's clear demand and appetite for the recurring cost/risk.
 - [2026-09-03] Handover rewrite landed with competitive research + P0–P2 roadmap. Keep `docs/handover.md` status tables in sync when P0 items ship (especially video→X and wiring checklist checkoffs). Replies feed (P0.7) shipped: mentions + optional keyword search + generate/post.
 - [2026-09-08] Replies keyword search needs X Basic+ access for recent search. Mentions work on user OAuth alone.
+- [2026-09-08] GEO still silently calls `simulateResponse()` when a provider key is missing or the HTTP call fails, then stores rows as if live. Need live-vs-simulated labeling (or hard fail) even though keys are now set in Vercel.
+- [2026-09-08] Wiring checklist refreshed against morning env + afternoon Replies/Ship work. See `docs/plan-2026-09-08.md` for the remaining P0 order.
 
 ## Resolved
 

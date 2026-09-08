@@ -2,6 +2,7 @@
 
 Claude Project instructions (short brief): `docs/claude-project.md`.  
 Wiring checklist: `docs/wiring-checklist.md`.  
+Today’s done / next plan: `docs/plan-2026-09-08.md`.  
 Deferred issues: `docs/deferred-work.md`.  
 Deployments: `docs/deployments.md`.
 
@@ -148,7 +149,7 @@ Priorities are ordered for **becoming the best loop**, not for adding surface ar
 
 | # | Work | Why |
 |---|---|---|
-| P0.1 | Finish **production wiring** (`docs/wiring-checklist.md`): Postgres+pgvector, X OAuth, OpenAI, QStash, Blob, crons, Dodo, Google Indexing | Without this, nothing compounds |
+| P0.1 | Finish **production wiring** (`docs/wiring-checklist.md`). Core AI + QStash + X OAuth set 2026-09-08; verify Blob / Google Indexing / bearer / Dodo | Without this, nothing compounds |
 | P0.2 | Prove **Command Center truth**: empty/503 when integrations missing; live stats when wired. No fake dashboards | Trust |
 | P0.3 | **Ship-feature pack:** Home → **Ship update** (`POST /api/ship`) runs generate + changelog + screenshot attach + GEO check in one pass | This is the product |
 | P0.4 | **ERI cron + reinforcement** visible in UI (“used your top posts”) | Learning is the moat |
@@ -206,24 +207,25 @@ Landing promise to protect: **~40 seconds of founder time per shipped feature**,
 
 Spec numbers **1, 2, 3, 4, 6, 7**. Phase 5 in the codebase is Command Center / onboard / media / replies between SEO and GEO.
 
-| Phase | Status (as of handover rewrite) |
+| Phase | Status (as of 2026-09-08) |
 |---|---|
-| 1 Foundation | Implemented (Prisma, pgvector, X OAuth, projects, demo mode) |
-| 2 Publishing | Implemented (Sharp, QStash, X publish + token refresh hardened) — production-proven only when env is live |
-| 3 Analytics + AI | Implemented (ERI cron, reinforcement, adaptive generator) |
-| 4 SEO | Implemented (expander, changelog pages, sitemap, Google Indexing) |
-| 5 Surface | UI + APIs exist. Media capture code is real (Playwright/Blob); video→X still incomplete. Replies feed loads live @mentions (keyword search needs bearer token). |
-| 6 GEO | Implemented; simulates without provider keys. Engines: ChatGPT, Perplexity, Claude. AI Overviews deferred. |
-| 7 Diagnostics | Implemented (suites + cron + UI) |
-| Billing | Implemented (Dodo, Free/Starter/Pro, usage caps). Product IDs via env. |
-| Design | Marketing + much of app on **Satoshi** + soft grey/orange system. Old `docs/design.md` paper/ink notes are obsolete; follow current `globals.css` / landing patterns. |
+| 1 Foundation | Live (Prisma, pgvector, X OAuth, projects). Demo mode removed. |
+| 2 Publishing | Live (Sharp, QStash, X publish + token refresh). Morning fixes proved production sign-in/publish. |
+| 3 Analytics + AI | Implemented (ERI cron, reinforcement, adaptive generator). UI still weak on “used your top posts”. |
+| 4 SEO | Implemented (expander, changelog, sitemap, Google Indexing best-effort). |
+| 5 Surface | Ship update pack + Replies live. Media screenshot path real; video→X still incomplete. |
+| 6 GEO | Live keys in Vercel; code still falls back to silent simulation if a provider call fails — label/honesty remaining. |
+| 7 Diagnostics | Implemented (suites + cron + UI). |
+| Billing | Implemented (Dodo, Free/Starter/Pro, usage caps). Confirm live product IDs if charging. |
+| Design | Satoshi + soft grey/orange. |
 
-### Still weak / deferred (see also `docs/deferred-work.md`)
+### Still weak / deferred (see also `docs/deferred-work.md`, `docs/plan-2026-09-08.md`)
 
 - Video recording outputs WebM; X needs mp4 + chunked upload — not wired  
 - Google AI Overviews — no official API; deferred  
-- Replies feed — empty / not configured  
-- Full production env may still be incomplete (treat `docs/wiring-checklist.md` as source of truth)  
+- GEO silent simulation on provider failure — fix honesty labeling  
+- ERI reinforcement not clearly shown in generate / Ship update UI  
+- Confirm Blob + Google Indexing + optional X bearer in Vercel (`docs/wiring-checklist.md`)  
 
 ---
 
