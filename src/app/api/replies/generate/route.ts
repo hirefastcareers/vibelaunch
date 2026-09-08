@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+import { generateSmartReply } from "@/lib/generator/reply";
 
 export const dynamic = "force-dynamic";
 
 const replySchema = z.object({
-  originalPost: z.string().min(1),
+  originalPost: z.string().min(1).max(4000),
   keyword: z.string().optional(),
+  projectId: z.string().optional(),
   projectName: z.string().optional(),
 });
 
@@ -22,11 +25,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  return NextResponse.json(
-    {
-      error: "Smart replies aren't connected to a live feed yet.",
-      configured: false,
-    },
-    { status: 503 }
-  );
+  const { originalPost, keyword, projectId, projectName } = parsed.data;
+
+  const project = projectId
+    ? await prisma.project.findFirst({
+        where: { id: projectId, userId: session.user.id },
+        select: { name: true, tagline: true, description: true, tone: true },
+      })
+    : await prisma.project.findFirst({
+        where: { userId: session.user.id },
+        orderBy: { updatedAt: "desc" },
+        select: { name: true, tagline: true, description: true, tone: true },
+      });
+
+  const reply = await generateSmartReply(originalPost, {
+    keyword,
+    project: project
+      ? project
+      : projectName
+        ? { name: projectName }
+        : null,
+  });
+
+  return NextResponse.json({ reply, configured: true });
 }

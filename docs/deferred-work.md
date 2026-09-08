@@ -6,7 +6,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 - [2026-09-02] Video-to-X publishing is not implemented. recordSiteVideo() outputs .webm, which X does not accept for video posts (requires mp4). Full support would need: (a) X's chunked INIT/APPEND/FINALIZE upload flow for video specifically, (b) a webm-to-mp4 transcode step (likely ffmpeg, not currently a dependency), and (c) actually wiring recordSiteVideo's output into a Post's mediaUrls somewhere in the UI, which doesn't happen today. uploadMedia() now throws a clear error if a non-image media type is ever passed, rather than silently failing or misbehaving.
 - [2026-09-02] Google AI Overviews citation checking is not implemented — no official Google API exists for this, it would require a paid third-party SERP-scraping service (e.g. Apify-style actors, ~$5/1,000 checks) and carries Google ToS gray-area risk since it involves rendering/parsing live search results rather than calling an official endpoint. Landing page copy was corrected to only claim what's real (ChatGPT, Perplexity, Claude) — revisit as a real feature only if there's clear demand and appetite for the recurring cost/risk.
-- [2026-09-03] Handover rewrite landed with competitive research + P0–P2 roadmap. Keep `docs/handover.md` status tables in sync when P0 items ship (especially replies feed, video→X, and wiring checklist checkoffs).
+- [2026-09-03] Handover rewrite landed with competitive research + P0–P2 roadmap. Keep `docs/handover.md` status tables in sync when P0 items ship (especially video→X and wiring checklist checkoffs). Replies feed (P0.7) shipped: mentions + optional keyword search + generate/post.
+- [2026-09-08] Replies keyword search needs X Basic+ access for recent search. Mentions work on user OAuth alone.
 
 ## Resolved
 
