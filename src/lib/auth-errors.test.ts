@@ -19,6 +19,11 @@ describe("getSignInErrorMessage", () => {
     expect(getSignInErrorMessage("OAuthCallback", true, [])).not.toMatch(/localhost:3000/);
   });
 
+  it("does not blame the X portal when the database cannot save the login", () => {
+    expect(getSignInErrorMessage("Callback", true)).toMatch(/database was busy/);
+    expect(getSignInErrorMessage("Callback", true)).not.toMatch(/Callback URI/);
+  });
+
   it("returns null when configured and there is no error", () => {
     expect(getSignInErrorMessage(undefined, true)).toBeNull();
   });

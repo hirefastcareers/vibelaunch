@@ -17,10 +17,11 @@ export function getSignInErrorMessage(
     case "OAuthSignin":
       return "Could not start X sign-in. Use the OAuth 2.0 Client ID and Client Secret (not the API Key), and confirm they have no extra quotes or spaces.";
     case "OAuthCallback":
-    case "Callback":
       return `X approved the app, then could not send you back into Xoopa. ${callbackHelp}`;
+    case "Callback":
+      return "X approved the app, but Xoopa could not save your login. The database was busy. Wait a few seconds, then click Sign in with X again.";
     case "OAuthCreateAccount":
-      return "Signed in with X, but the account could not be saved. Check DATABASE_URL and that the database schema is up to date.";
+      return "Signed in with X, but the account could not be saved. Wait a few seconds and try again.";
     case "OAuthAccountNotLinked":
       return "This X account is already linked to another user. Sign in with that same X account.";
     case "AccessDenied":
@@ -30,4 +31,8 @@ export function getSignInErrorMessage(
     default:
       return error ? `X sign-in failed (${error}). ${callbackHelp}` : null;
   }
+}
+
+export function shouldShowXPortalHelp(error: string | undefined): boolean {
+  return error === "OAuthCallback" || error === "twitter" || error === "OAuthSignin";
 }

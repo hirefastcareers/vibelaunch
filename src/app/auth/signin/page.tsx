@@ -8,7 +8,7 @@ import {
   getXOauthCallbackAllowlist,
   isXOauthConfigured,
 } from "@/lib/env";
-import { getSignInErrorMessage } from "@/lib/auth-errors";
+import { getSignInErrorMessage, shouldShowXPortalHelp } from "@/lib/auth-errors";
 import { getSession } from "@/lib/session";
 
 type PageProps = {
@@ -40,6 +40,7 @@ export default async function SignInPage({ searchParams }: PageProps) {
       callbackUrls={callbackUrls}
       errorMessage={getSignInErrorMessage(error, configured, callbackUrls)}
       callbackUrl={callbackUrl}
+      showCallbackHelp={shouldShowXPortalHelp(error)}
     />
   );
 }

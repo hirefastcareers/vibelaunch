@@ -9,6 +9,7 @@ interface SignInFormProps {
   callbackUrls: string[];
   errorMessage: string | null;
   callbackUrl?: string;
+  showCallbackHelp?: boolean;
 }
 
 export default function SignInForm({
@@ -16,6 +17,7 @@ export default function SignInForm({
   callbackUrls,
   errorMessage,
   callbackUrl = "/dashboard",
+  showCallbackHelp = false,
 }: SignInFormProps) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
@@ -60,7 +62,7 @@ export default function SignInForm({
               Sign in with X
             </button>
 
-            {errorMessage ? (
+            {errorMessage && showCallbackHelp ? (
               <div className="mt-6 space-y-2 text-[11px] leading-relaxed text-muted-foreground">
                 <p>
                   1. Open the X developer portal → your app → User authentication settings
