@@ -36,6 +36,27 @@ describe("publishToX media upload", () => {
     findUnique.mockResolvedValue({ xUsername: "demo" } as never);
   });
 
+  it("includes in_reply_to_tweet_id when posting a reply", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async (input) => {
+      if (String(input) === "https://api.x.com/2/tweets") {
+        return Response.json({ data: { id: "reply-1" } });
+      }
+      throw new Error(`unexpected fetch: ${String(input)}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await publishToX("user_1", "Thanks!", {
+      inReplyToTweetId: "parent-9",
+    });
+
+    expect(result.id).toBe("reply-1");
+    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+    expect(body).toEqual({
+      text: "Thanks!",
+      reply: { in_reply_to_tweet_id: "parent-9" },
+    });
+  });
+
   it("throws a 422 XApiError for video/non-image media without calling the upload endpoint", async () => {
     const fetchMock = vi.fn<typeof fetch>(
       async () =>

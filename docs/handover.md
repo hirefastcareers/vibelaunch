@@ -154,7 +154,7 @@ Priorities are ordered for **becoming the best loop**, not for adding surface ar
 | P0.4 | **ERI cron + reinforcement** visible in UI (“used your top posts”) | Learning is the moat |
 | P0.5 | **GEO live keys** path (OpenAI / Perplexity / Anthropic) with clear simulated vs live labeling | Stop lying about citations |
 | P0.6 | **Media honesty:** Playwright capture exists; video→X (webm/mp4) is still deferred — do not oversell video-on-X until `docs/deferred-work.md` is resolved. Screenshots/code cards must work end-to-end with Blob | Landing still sells Playwright |
-| P0.7 | **Replies feed:** currently returns `{ feeds: {}, configured: false }`. Either ship a real X mentions/replies path or remove from marketing/sidebar until ready | Honesty |
+| P0.7 | **Replies feed:** live X mentions via user OAuth; optional keyword search via `X_BEARER_TOKEN` / `X_API_KEY`; generate + post reply wired | Honesty |
 
 **Exit criteria:** A new user with live env can onboard a URL, generate from an update, publish to X, publish a changelog page, run a citation check, and see ERI move after cron — without demo lies.
 
@@ -212,7 +212,7 @@ Spec numbers **1, 2, 3, 4, 6, 7**. Phase 5 in the codebase is Command Center / o
 | 2 Publishing | Implemented (Sharp, QStash, X publish + token refresh hardened) — production-proven only when env is live |
 | 3 Analytics + AI | Implemented (ERI cron, reinforcement, adaptive generator) |
 | 4 SEO | Implemented (expander, changelog pages, sitemap, Google Indexing) |
-| 5 Surface | UI + APIs exist. Media capture code is real (Playwright/Blob); video→X still incomplete. Replies feed not configured. |
+| 5 Surface | UI + APIs exist. Media capture code is real (Playwright/Blob); video→X still incomplete. Replies feed loads live @mentions (keyword search needs bearer token). |
 | 6 GEO | Implemented; simulates without provider keys. Engines: ChatGPT, Perplexity, Claude. AI Overviews deferred. |
 | 7 Diagnostics | Implemented (suites + cron + UI) |
 | Billing | Implemented (Dodo, Free/Starter/Pro, usage caps). Product IDs via env. |

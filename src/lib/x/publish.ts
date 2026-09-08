@@ -15,19 +15,28 @@ export class XApiError extends Error {
   }
 }
 
+export interface PublishToXOptions {
+  mediaUrls?: string[];
+  inReplyToTweetId?: string;
+}
+
 /**
  * Publish a tweet to X using the user's OAuth access token.
  */
 export async function publishToX(
   userId: string,
   content: string,
-  mediaUrls?: string[]
+  mediaUrlsOrOptions?: string[] | PublishToXOptions
 ): Promise<XPostResult> {
+  const options: PublishToXOptions = Array.isArray(mediaUrlsOrOptions)
+    ? { mediaUrls: mediaUrlsOrOptions }
+    : mediaUrlsOrOptions ?? {};
+
   const accessToken = await getValidAccessToken(userId);
 
   const mediaIds: string[] = [];
-  if (mediaUrls?.length) {
-    for (const url of mediaUrls) {
+  if (options.mediaUrls?.length) {
+    for (const url of options.mediaUrls) {
       const mediaId = await uploadMedia(accessToken, url);
       mediaIds.push(mediaId);
     }
@@ -36,6 +45,9 @@ export async function publishToX(
   const tweetBody: Record<string, unknown> = { text: content };
   if (mediaIds.length > 0) {
     tweetBody.media = { media_ids: mediaIds };
+  }
+  if (options.inReplyToTweetId) {
+    tweetBody.reply = { in_reply_to_tweet_id: options.inReplyToTweetId };
   }
 
   const response = await fetch("https://api.x.com/2/tweets", {
