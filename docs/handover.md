@@ -150,7 +150,7 @@ Priorities are ordered for **becoming the best loop**, not for adding surface ar
 |---|---|---|
 | P0.1 | Finish **production wiring** (`docs/wiring-checklist.md`): Postgres+pgvector, X OAuth, OpenAI, QStash, Blob, crons, Dodo, Google Indexing | Without this, nothing compounds |
 | P0.2 | Prove **Command Center truth**: empty/503 when integrations missing; live stats when wired. No fake dashboards | Trust |
-| P0.3 | **Ship-feature pack:** one update → post draft(s) + changelog article + media attach + enqueue GEO check | This is the product |
+| P0.3 | **Ship-feature pack:** Home → **Ship update** (`POST /api/ship`) runs generate + changelog + screenshot attach + GEO check in one pass | This is the product |
 | P0.4 | **ERI cron + reinforcement** visible in UI (“used your top posts”) | Learning is the moat |
 | P0.5 | **GEO live keys** path (OpenAI / Perplexity / Anthropic) with clear simulated vs live labeling | Stop lying about citations |
 | P0.6 | **Media honesty:** Playwright capture exists; video→X (webm/mp4) is still deferred — do not oversell video-on-X until `docs/deferred-work.md` is resolved. Screenshots/code cards must work end-to-end with Blob | Landing still sells Playwright |

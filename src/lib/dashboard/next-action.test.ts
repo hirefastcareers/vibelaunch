@@ -38,7 +38,7 @@ describe("getNextAction", () => {
     ).toBe("1 draft is waiting");
   });
 
-  it("asks for a first post when the queue is empty", () => {
+  it("asks for a first ship when the queue is empty", () => {
     expect(
       getNextAction({
         projectCount: 1,
@@ -46,7 +46,7 @@ describe("getNextAction", () => {
         publishedCount: 0,
         articleCount: 0,
       }).href
-    ).toBe("/dashboard/queue?generate=true");
+    ).toBe("/dashboard?ship=true");
   });
 
   it("asks for an article after posts are live", () => {
@@ -57,10 +57,10 @@ describe("getNextAction", () => {
         publishedCount: 2,
         articleCount: 0,
       }).href
-    ).toBe("/dashboard#articles");
+    ).toBe("/dashboard?ship=true");
   });
 
-  it("falls back to generating another post", () => {
+  it("falls back to shipping another update", () => {
     expect(
       getNextAction({
         projectCount: 1,
@@ -68,7 +68,7 @@ describe("getNextAction", () => {
         publishedCount: 2,
         articleCount: 1,
       }).href
-    ).toBe("/dashboard/queue?generate=true");
+    ).toBe("/dashboard?ship=true");
   });
 });
 

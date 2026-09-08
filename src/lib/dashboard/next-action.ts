@@ -43,26 +43,29 @@ export function getNextAction(input: NextActionInput): NextAction {
 
   if (input.publishedCount === 0) {
     return {
-      title: "Publish your first post",
-      description: "Generate a draft from your project, then send it live on X.",
-      href: "/dashboard/queue?generate=true",
-      cta: "Generate a post",
+      title: "Ship your first update",
+      description:
+        "Paste what you shipped. Xoopa drafts the X post, publishes the article, captures a screenshot, and checks AI citations.",
+      href: "/dashboard?ship=true",
+      cta: "Ship update",
     };
   }
 
   if (input.articleCount === 0) {
     return {
       title: "Ship a changelog article",
-      description: "Turn a product update into a public page that search and AI engines can cite.",
-      href: "/dashboard#articles",
-      cta: "Write an article",
+      description:
+        "Turn a product update into a public page that search and AI engines can cite.",
+      href: "/dashboard?ship=true",
+      cta: "Ship update",
     };
   }
 
   return {
     title: "Keep the loop going",
-    description: "Generate another post or check whether AI search is citing you.",
-    href: "/dashboard/queue?generate=true",
-    cta: "Generate a post",
+    description:
+      "Ship another update, or check whether AI search is citing you.",
+    href: "/dashboard?ship=true",
+    cta: "Ship update",
   };
 }

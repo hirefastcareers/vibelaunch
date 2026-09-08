@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { TrendChart } from "@/components/dashboard/trend-chart";
 import { NextActionBanner } from "@/components/dashboard/next-action-banner";
 import { DashboardPage, PageHeader } from "@/components/dashboard-page";
+import { ShipUpdateLauncher } from "@/components/ship-update-launcher";
 import { displayHandle, getNextAction } from "@/lib/dashboard/next-action";
 import type { DashboardStats } from "@/lib/dashboard/get-stats";
 import { formatRelativeTime } from "@/lib/utils";
@@ -38,9 +40,15 @@ export default function DashboardHome({ data }: { data: DashboardStats }) {
               <Link href="/dashboard/queue">View posts</Link>
             </Button>
             {hasProjects ? (
-              <Button asChild size="sm">
-                <Link href="/dashboard/queue?generate=true">Generate post</Link>
-              </Button>
+              <Suspense
+                fallback={
+                  <Button size="sm" disabled>
+                    Ship update
+                  </Button>
+                }
+              >
+                <ShipUpdateLauncher projects={data.projects} />
+              </Suspense>
             ) : (
               <Button asChild size="sm">
                 <Link href="/onboard">Create project</Link>
@@ -109,7 +117,9 @@ export default function DashboardHome({ data }: { data: DashboardStats }) {
         <div id="ai-search" className="scroll-mt-8">
           <GeoCard />
         </div>
-        <PublishArticleCard projects={data.projects} />
+        <div id="articles" className="scroll-mt-8">
+          <PublishArticleCard projects={data.projects} />
+        </div>
       </div>
     </DashboardPage>
   );
