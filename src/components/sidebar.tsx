@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
+import { SignOutButton } from "@/components/sign-out-button";
 
 const navItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
@@ -72,11 +73,14 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
           </kbd>
         </button>
         {userLabel ? (
-          <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
-              {userLabel.replace(/^@/, "").slice(0, 1).toUpperCase()}
-            </span>
-            <p className="truncate text-sm text-foreground">{userLabel}</p>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-2">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                {userLabel.replace(/^@/, "").slice(0, 1).toUpperCase()}
+              </span>
+              <p className="truncate text-sm text-foreground">{userLabel}</p>
+            </div>
+            <SignOutButton />
           </div>
         ) : null}
       </div>

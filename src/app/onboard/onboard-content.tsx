@@ -47,6 +47,7 @@ export default function OnboardPage() {
     try {
       const res = await fetch("/api/project/onboard", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           targetUrl: form.get("targetUrl"),
@@ -59,7 +60,13 @@ export default function OnboardPage() {
       const data = await res.json();
       if (!res.ok) {
         setErrorCode(typeof data.code === "string" ? data.code : undefined);
-        setError(typeof data.error === "string" ? data.error : "Onboarding failed");
+        setError(
+          typeof data.error === "string"
+            ? data.error === "Unauthorized"
+              ? "Your sign-in was not sent with this request. Refresh the page, then try Create project again."
+              : data.error
+            : "Onboarding failed",
+        );
         return;
       }
 

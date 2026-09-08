@@ -13,7 +13,9 @@ import {
   Rocket,
   ShieldCheck,
   Bot,
+  LogOut,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface CommandPaletteProps {
@@ -147,6 +149,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               >
                 <Rocket className="h-4 w-4" />
                 Projects
+              </Command.Item>
+              <Command.Item
+                onSelect={() => run(() => signOut({ callbackUrl: "/" }))}
+                className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
               </Command.Item>
             </Command.Group>
           </Command.List>
