@@ -63,9 +63,10 @@ export default function SignInForm({
             {errorMessage ? (
               <div className="mt-6 space-y-2 text-[11px] leading-relaxed text-muted-foreground">
                 <p>
-                  Under User authentication settings, type of app must be Web App. Add every
-                  Callback URI below, with no trailing slash:
+                  1. Open the X developer portal → your app → User authentication settings
                 </p>
+                <p>2. Type of app: Web App. App permissions: Read and write.</p>
+                <p>3. Add every Callback URI below, with no trailing slash, then Save:</p>
                 {callbackUrls.map((url) => (
                   <code
                     key={url}
@@ -74,6 +75,7 @@ export default function SignInForm({
                     {url}
                   </code>
                 ))}
+                <p>4. Come back here and click Sign in with X again.</p>
               </div>
             ) : null}
           </div>

@@ -56,7 +56,7 @@ describe("env helpers", () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
     expect(getBaseUrl()).toBe("https://vibelaunch-nu.vercel.app");
     ensureAuthEnv();
-    expect(process.env.NEXTAUTH_URL).toBe("https://vibelaunch-nu.vercel.app");
+    expect(process.env.NEXTAUTH_URL).toBeUndefined();
   });
 
   it("reads the request origin from forwarded headers", () => {
@@ -69,7 +69,8 @@ describe("env helpers", () => {
     expect(origin).toBe("https://vibelaunch-nu.vercel.app");
   });
 
-  it("points NextAuth at the request origin", () => {
+  it("unpins NEXTAUTH_URL on Vercel so NextAuth uses the request host", () => {
+    process.env.VERCEL = "1";
     process.env.NEXTAUTH_URL = "http://localhost:3000";
     const origin = applyRequestAuthUrl(
       new Headers({
@@ -78,7 +79,20 @@ describe("env helpers", () => {
       }),
     );
     expect(origin).toBe("https://vibelaunch-nu.vercel.app");
-    expect(process.env.NEXTAUTH_URL).toBe("https://vibelaunch-nu.vercel.app");
+    expect(process.env.NEXTAUTH_URL).toBeUndefined();
+  });
+
+  it("points NextAuth at the request origin locally", () => {
+    delete process.env.VERCEL;
+    process.env.NEXTAUTH_URL = "http://localhost:3000";
+    const origin = applyRequestAuthUrl(
+      new Headers({
+        host: "localhost:3000",
+        "x-forwarded-proto": "http",
+      }),
+    );
+    expect(origin).toBe("http://localhost:3000");
+    expect(process.env.NEXTAUTH_URL).toBe("http://localhost:3000");
   });
 
   it("detects local URLs", () => {
@@ -114,6 +128,15 @@ describe("env helpers", () => {
     expect(getXOauthCallbackAllowlist()).toEqual([
       "http://localhost:3000/api/auth/callback/twitter",
       "http://127.0.0.1:3000/api/auth/callback/twitter",
+    ]);
+  });
+
+  it("lists both live production callbacks", () => {
+    expect(
+      getXOauthCallbackAllowlist("https://vibelaunch-nu.vercel.app"),
+    ).toEqual([
+      "https://vibelaunch-nu.vercel.app/api/auth/callback/twitter",
+      "https://xoopa.app/api/auth/callback/twitter",
     ]);
   });
 });

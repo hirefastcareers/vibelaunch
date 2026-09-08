@@ -1,5 +1,10 @@
 const LOCAL_FALLBACK = "http://localhost:3000";
 
+export const PRODUCTION_APP_ORIGINS = [
+  "https://xoopa.app",
+  "https://vibelaunch-nu.vercel.app",
+];
+
 function firstNonEmpty(...values: Array<string | undefined>): string {
   for (const value of values) {
     const trimmed = value?.trim();
@@ -28,6 +33,17 @@ function isVercelRuntime(): boolean {
 }
 
 /**
+ * NextAuth v4 uses NEXTAUTH_URL whenever it is set and ignores the request
+ * host. On Vercel that pins X login to localhost, a preview URL, or the
+ * other production domain, so the callback cookie never matches.
+ */
+function unpinNextAuthUrlOnVercel(): void {
+  if (isVercelRuntime()) {
+    delete process.env.NEXTAUTH_URL;
+  }
+}
+
+/**
  * Resolve the app base URL with safe fallbacks for build time and Vercel deploys.
  * Treats empty env strings as unset (common when vars exist but have no value).
  * On Vercel, localhost NEXTAUTH_URL values are ignored so production login
@@ -38,6 +54,7 @@ export function getBaseUrl(): string {
     process.env.NEXTAUTH_URL,
     process.env.NEXT_PUBLIC_APP_URL,
     process.env.APP_URL,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
   ];
 
@@ -70,10 +87,15 @@ export function getRequestOrigin(headerList: Headers): string | null {
 
 /**
  * Point NextAuth at the origin the browser actually used for this request.
+ * On Vercel, leave NEXTAUTH_URL unset so NextAuth reads x-forwarded-host.
  */
 export function applyRequestAuthUrl(headerList: Headers): string {
   const origin = getRequestOrigin(headerList) ?? getBaseUrl();
-  process.env.NEXTAUTH_URL = origin;
+  if (isVercelRuntime()) {
+    unpinNextAuthUrlOnVercel();
+  } else {
+    process.env.NEXTAUTH_URL = origin;
+  }
   if (!process.env.APP_URL?.trim() || (isVercelRuntime() && isLocalUrl(process.env.APP_URL))) {
     process.env.APP_URL = origin;
   }
@@ -110,20 +132,25 @@ export function getXOauthCallbackUrl(baseUrl = getBaseUrl()): string {
 }
 
 /**
- * Localhost and 127.0.0.1 are different origins to X. Register both when
- * developing locally so either host works.
+ * Every Callback URI that should be saved in the X developer portal for the
+ * current site. Localhost and 127.0.0.1 are different origins. Live login
+ * needs both production domains.
  */
 export function getXOauthCallbackAllowlist(baseUrl = getBaseUrl()): string[] {
-  const primary = getXOauthCallbackUrl(baseUrl);
-  const urls = new Set([primary]);
+  const urls = new Set<string>();
+  urls.add(getXOauthCallbackUrl(baseUrl));
   try {
-    const parsed = new URL(baseUrl);
+    const parsed = new URL(normalizeOrigin(baseUrl));
     if (parsed.hostname === "localhost") {
       parsed.hostname = "127.0.0.1";
       urls.add(getXOauthCallbackUrl(parsed.origin));
     } else if (parsed.hostname === "127.0.0.1") {
       parsed.hostname = "localhost";
       urls.add(getXOauthCallbackUrl(parsed.origin));
+    } else {
+      for (const origin of PRODUCTION_APP_ORIGINS) {
+        urls.add(getXOauthCallbackUrl(origin));
+      }
     }
   } catch {
     // Ignore invalid base URLs; the primary callback is still useful.
@@ -135,8 +162,9 @@ export function getXOauthCallbackAllowlist(baseUrl = getBaseUrl()): string[] {
  * Ensure NextAuth's required env vars are never empty strings during build/runtime.
  */
 export function ensureAuthEnv(): void {
-  const current = process.env.NEXTAUTH_URL?.trim();
-  if (!current || (isVercelRuntime() && isLocalUrl(current))) {
+  if (isVercelRuntime()) {
+    unpinNextAuthUrlOnVercel();
+  } else if (!process.env.NEXTAUTH_URL?.trim()) {
     process.env.NEXTAUTH_URL = getBaseUrl();
   }
   if (!process.env.NEXTAUTH_SECRET?.trim()) {

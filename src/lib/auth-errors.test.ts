@@ -15,7 +15,7 @@ describe("getSignInErrorMessage", () => {
       getSignInErrorMessage("OAuthCallback", true, [
         "https://vibelaunch-nu.vercel.app/api/auth/callback/twitter",
       ]),
-    ).toMatch(/vibelaunch-nu\.vercel\.app\/api\/auth\/callback\/twitter/);
+    ).toMatch(/Callback URI listed on this page/);
     expect(getSignInErrorMessage("OAuthCallback", true, [])).not.toMatch(/localhost:3000/);
   });
 
