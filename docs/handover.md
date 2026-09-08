@@ -154,7 +154,7 @@ Priorities are ordered for **becoming the best loop**, not for adding surface ar
 | P0.4 | **ERI cron + reinforcement** visible in UI (“used your top posts”) | Learning is the moat |
 | P0.5 | **GEO live keys** path (OpenAI / Perplexity / Anthropic) with clear simulated vs live labeling | Stop lying about citations |
 | P0.6 | **Media honesty:** Playwright capture exists; video→X (webm/mp4) is still deferred — do not oversell video-on-X until `docs/deferred-work.md` is resolved. Screenshots/code cards must work end-to-end with Blob | Landing still sells Playwright |
-| P0.7 | **Replies feed:** currently returns `{ feeds: {}, configured: false }`. Either ship a real X mentions/replies path or remove from marketing/sidebar until ready | Honesty |
+| P0.7 | **Replies feed:** live X recent-search + mentions via `/api/replies/feed`, AI drafts via `/api/replies/generate`, optional Post to X via `/api/replies/post`. Stays `configured: false` until X user OAuth or `X_BEARER_TOKEN`/`X_API_KEY` is available | Honesty |
 
 **Exit criteria:** A new user with live env can onboard a URL, generate from an update, publish to X, publish a changelog page, run a citation check, and see ERI move after cron — without demo lies.
 

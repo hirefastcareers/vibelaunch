@@ -106,4 +106,27 @@ describe("publishToX media upload", () => {
       )
     ).toBe(false);
   });
+
+  it("posts a reply with in_reply_to_tweet_id", async () => {
+    const fetchMock = vi.fn<typeof fetch>(async (input) => {
+      if (String(input) === "https://api.x.com/2/tweets") {
+        return new Response(JSON.stringify({ data: { id: "reply_1" } }), {
+          status: 201,
+          headers: { "content-type": "application/json" },
+        });
+      }
+      return new Response("unexpected", { status: 500 });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { publishReplyToX } = await import("./publish");
+    const result = await publishReplyToX("user_1", "Thanks!", "parent_1");
+    expect(result.id).toBe("reply_1");
+
+    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+    expect(body).toEqual({
+      text: "Thanks!",
+      reply: { in_reply_to_tweet_id: "parent_1" },
+    });
+  });
 });

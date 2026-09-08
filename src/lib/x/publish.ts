@@ -17,11 +17,13 @@ export class XApiError extends Error {
 
 /**
  * Publish a tweet to X using the user's OAuth access token.
+ * Pass `inReplyToTweetId` to post as a reply in that conversation.
  */
 export async function publishToX(
   userId: string,
   content: string,
-  mediaUrls?: string[]
+  mediaUrls?: string[],
+  inReplyToTweetId?: string
 ): Promise<XPostResult> {
   const accessToken = await getValidAccessToken(userId);
 
@@ -36,6 +38,9 @@ export async function publishToX(
   const tweetBody: Record<string, unknown> = { text: content };
   if (mediaIds.length > 0) {
     tweetBody.media = { media_ids: mediaIds };
+  }
+  if (inReplyToTweetId) {
+    tweetBody.reply = { in_reply_to_tweet_id: inReplyToTweetId };
   }
 
   const response = await fetch("https://api.x.com/2/tweets", {
@@ -65,6 +70,15 @@ export async function publishToX(
     id: tweetId,
     url: `https://x.com/${username}/status/${tweetId}`,
   };
+}
+
+/** Convenience wrapper for posting a reply to an existing tweet. */
+export async function publishReplyToX(
+  userId: string,
+  content: string,
+  inReplyToTweetId: string
+): Promise<XPostResult> {
+  return publishToX(userId, content, undefined, inReplyToTweetId);
 }
 
 const SUPPORTED_IMAGE_TYPES = new Set([

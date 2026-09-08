@@ -36,8 +36,8 @@ After that: Command Center → Recheck (GEO), Publish a changelog article, Queue
 ## X (Twitter)
 - [ ] `X_CLIENT_ID`
 - [ ] `X_CLIENT_SECRET`
-- [ ] `X_API_KEY`
-  Gates: sign-in with X, post publishing, replies feed (src/app/api/replies/feed/route.ts falls back to an honest "not configured" empty state without this, per the replies feed fix).
+- [ ] `X_BEARER_TOKEN` (or `X_API_KEY` as alias) — optional app-only bearer for recent search
+  Gates: Smart Replies keyword feed (`/api/replies/feed`). Without it, the feed still works via the signed-in user's OAuth token when X is connected; otherwise it returns an honest `configured: false` empty state. Mentions always use the user token.
 
 ## AI / embeddings
 - [ ] `OPENAI_API_KEY` — embeddings (src/lib/vector/embeddings.ts) + adaptive generation
