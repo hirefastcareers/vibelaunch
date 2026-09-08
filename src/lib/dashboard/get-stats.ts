@@ -32,6 +32,26 @@ export type DashboardStats = {
   projects: Array<{ id: string; name: string }>;
 };
 
+export function emptyDashboardStats(user: DashboardUser): DashboardStats {
+  return {
+    stats: {
+      impressionsVelocity: 0,
+      totalImpressions: 0,
+      avgEri: 0,
+      seoPagesPublished: 0,
+      postCount: 0,
+      publishedCount: 0,
+      draftCount: 0,
+      impressionsTrend: null,
+      eriTrendPct: null,
+    },
+    user,
+    topPosts: [],
+    eriTrend: [],
+    projects: [],
+  };
+}
+
 export async function getDashboardStats(
   userId: string,
   user: DashboardUser

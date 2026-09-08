@@ -104,10 +104,11 @@ function NavGroup({
       ) : null}
       {items.map((item) => {
         const Icon = item.icon;
+        const path = pathname ?? "";
         const active =
           item.href === "/dashboard/projects"
-            ? pathname.startsWith("/dashboard/projects")
-            : pathname === item.href;
+            ? path === "/dashboard/projects" || path.startsWith("/dashboard/projects/")
+            : path === item.href;
         return (
           <Link
             key={item.href}
