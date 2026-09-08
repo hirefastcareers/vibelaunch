@@ -142,7 +142,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 Health
               </Command.Item>
               <Command.Item
-                onSelect={() => run(() => router.push("/onboard"))}
+                onSelect={() => run(() => router.push("/dashboard/projects"))}
                 className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm aria-selected:bg-accent"
               >
                 <Rocket className="h-4 w-4" />

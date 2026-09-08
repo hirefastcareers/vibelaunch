@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CreditCard,
-  FolderPlus,
+  Folder,
   HeartPulse,
   LayoutDashboard,
   MessageCircle,
@@ -22,7 +22,7 @@ const navItems = [
 ];
 
 const accountItems = [
-  { href: "/onboard", label: "Projects", icon: FolderPlus },
+  { href: "/dashboard/projects", label: "Projects", icon: Folder },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
 ];
 
@@ -104,7 +104,10 @@ function NavGroup({
       ) : null}
       {items.map((item) => {
         const Icon = item.icon;
-        const active = pathname === item.href;
+        const active =
+          item.href === "/dashboard/projects"
+            ? pathname.startsWith("/dashboard/projects")
+            : pathname === item.href;
         return (
           <Link
             key={item.href}

@@ -1,0 +1,16 @@
+---
+description: Ship finished Xoopa work to production without waiting to be asked
+alwaysApply: true
+---
+
+# Ship to production
+
+When a change is meant for the live product, commit it and get it onto `main`. Do not wait for a separate "please push" message.
+
+Production is Vercel from `main` (`https://xoopa.app` and `https://vibelaunch-nu.vercel.app`). Feature-branch pushes do not update production.
+
+- Commit with a concise message focused on why.
+- Push the branch and open or update a PR if needed.
+- `cursor/*` PRs auto-merge to `main` after the Vercel check passes. Use that path when already on a `cursor/*` branch.
+- Confirm production has the new commit before telling the user it is live.
+- Do not force-push `main`.

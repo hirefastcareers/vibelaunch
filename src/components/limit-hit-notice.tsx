@@ -14,19 +14,38 @@ export function LimitHitNotice({
     return <>{fallback}</>;
   }
 
-  const message = isProject
-    ? "You've reached your plan's project limit — upgrade to add more"
-    : "You've reached this month's post limit — upgrade to add more";
+  if (isProject) {
+    return (
+      <>
+        You have reached your plan&apos;s project limit.{" "}
+        <Link
+          href="/dashboard/projects"
+          className="text-primary underline underline-offset-2 hover:text-accent"
+        >
+          Delete a project
+        </Link>{" "}
+        or{" "}
+        <Link
+          href="/dashboard/billing"
+          className="text-primary underline underline-offset-2 hover:text-accent"
+        >
+          upgrade
+        </Link>{" "}
+        to add more.
+      </>
+    );
+  }
 
   return (
     <>
-      {message}{" "}
+      You have reached this month&apos;s post limit.{" "}
       <Link
         href="/dashboard/billing"
         className="text-primary underline underline-offset-2 hover:text-accent"
       >
-        View billing
-      </Link>
+        Upgrade
+      </Link>{" "}
+      to add more.
     </>
   );
 }

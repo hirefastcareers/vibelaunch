@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { StatusPill } from "@/components/status-pill";
+import { DeleteProjectButton } from "@/components/dashboard/delete-project-button";
 
 export const dynamic = "force-dynamic";
 
@@ -31,11 +32,20 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       </Link>
 
       <header className="mb-8 mt-4">
-        <div className="flex items-center gap-3">
-          <h1 className="text-[38px] md:text-[48px]">{project.name}</h1>
-          <StatusPill>{`[${project.status}]`}</StatusPill>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-[38px] md:text-[48px]">{project.name}</h1>
+              <StatusPill>{`[${project.status}]`}</StatusPill>
+            </div>
+            {project.tagline && <p className="mt-2 text-muted-foreground">{project.tagline}</p>}
+          </div>
+          <DeleteProjectButton
+            projectId={project.id}
+            projectName={project.name}
+            redirectTo="/dashboard/projects"
+          />
         </div>
-        {project.tagline && <p className="mt-2 text-muted-foreground">{project.tagline}</p>}
       </header>
 
       <div className="grid md:grid-cols-2 gap-8">
