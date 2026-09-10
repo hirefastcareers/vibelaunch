@@ -33,8 +33,8 @@ export default function SignInForm({
               Sign in. Ship once. Get found everywhere.
             </h1>
             <p className="max-w-[42ch] text-pretty text-[17px] leading-[1.7] text-muted-foreground">
-              Connect X once. Xoopa turns your product updates into posts, articles,
-              and AI search citations automatically.
+              Connect X once. Xoopa turns product updates into citeable posts, articles,
+              and AI search citation checks. X stays one distribution channel.
             </p>
           </div>
 

@@ -38,8 +38,10 @@ describe("buildPostPrompt", () => {
     });
 
     expect(prompt).toContain("X sign-in is live on Xoopa. Connect X once");
+    expect(prompt).toContain("citeable");
     expect(prompt).toContain("No emojis, hashtags, slogans");
     expect(prompt).toContain("X sign-in is live");
+    expect(prompt).toContain("GEO");
   });
 });
 

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { FEATURES } from "@/lib/feature-flags";
 
 export type DashboardUser = {
   name: string | null;
@@ -94,8 +95,15 @@ export async function getDashboardStats(
       : 0;
 
   const topPosts = publishedPosts
-    .filter((p) => p.analytics)
-    .sort((a, b) => (b.analytics?.eri ?? 0) - (a.analytics?.eri ?? 0))
+    .filter((p) => p.analytics || p.publishedAt)
+    .sort((a, b) => {
+      if (FEATURES.ERI_ANALYTICS) {
+        return (b.analytics?.eri ?? 0) - (a.analytics?.eri ?? 0);
+      }
+      const bt = b.publishedAt?.getTime() ?? 0;
+      const at = a.publishedAt?.getTime() ?? 0;
+      return bt - at;
+    })
     .slice(0, 8)
     .map((p) => ({
       id: p.id,

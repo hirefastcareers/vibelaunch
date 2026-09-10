@@ -29,7 +29,7 @@ export const SUITE_LABELS: Record<DiagnosticSuite, string> = {
 
 export const SUITE_DESCRIPTIONS: Record<DiagnosticSuite, string> = {
   seo_audit: "Checks meta tags, schema, and page length",
-  feedback_loop: "Verifies the system is learning from viral posts",
+  feedback_loop: "Verifies the system is learning from published posts",
   media_render: "Ensures media renders cleanly",
   geo_audit: "Verifies mentions in ChatGPT & Perplexity",
 };

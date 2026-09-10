@@ -1,6 +1,8 @@
 import { Client } from "@upstash/qstash";
 import { getBaseUrl } from "@/lib/env";
 
+// getBaseUrl is used for QStash callback absolute URLs.
+
 let qstashClient: Client | null = null;
 
 function getQStashClient(): Client {
@@ -88,4 +90,30 @@ export async function verifyQStashSignature(
   } catch {
     return false;
   }
+}
+
+export interface QueueCitationSweepPayload {
+  trackedQueryId: string;
+}
+
+/**
+ * Enqueue a single TrackedQuery citation sweep (all 5 models) via QStash.
+ */
+export async function enqueueCitationSweep(
+  payload: QueueCitationSweepPayload
+): Promise<string> {
+  const client = getQStashClient();
+  const callbackUrl = `${getBaseUrl()}/api/queue/citation-run`;
+
+  const result = await client.publishJSON({
+    url: callbackUrl,
+    body: payload,
+    retries: 2,
+  });
+
+  return result.messageId;
+}
+
+export function isQStashConfigured(): boolean {
+  return Boolean(process.env.QSTASH_TOKEN?.trim());
 }

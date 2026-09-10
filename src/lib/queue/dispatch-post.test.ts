@@ -44,12 +44,12 @@ describe("dispatchPostPublish", () => {
       postId: "post_1",
       projectId: "proj_1",
       userId: "user_1",
-      content: "hello from sorano",
+      content: "hello from xoopa",
       mediaUrls: [],
       scheduledAt: null,
     });
     expect(hasQStash()).toBe(false);
-    expect(publish).toHaveBeenCalledWith("user_1", "hello from sorano", []);
+    expect(publish).toHaveBeenCalledWith("user_1", "hello from xoopa", []);
     expect(enqueue).not.toHaveBeenCalled();
     expect(result.mode).toBe("published");
   });
@@ -62,7 +62,7 @@ describe("dispatchPostPublish", () => {
       postId: "post_1",
       projectId: "proj_1",
       userId: "user_1",
-      content: "hello from sorano",
+      content: "hello from xoopa",
       mediaUrls: [],
       scheduledAt: null,
     });

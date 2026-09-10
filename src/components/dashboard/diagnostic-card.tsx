@@ -27,7 +27,7 @@ function suiteSummary(run: TestRunRecord): string {
     return `${passed}/${total} indexing checks passed`;
   }
   if (typeof d.embeddingsCount === "number") {
-    return `Learning from ${d.embeddingsCount} viral post(s)`;
+    return `Learning from ${d.embeddingsCount} published post(s)`;
   }
   if (typeof d.citationsFound === "number") {
     return `Cited in ${d.citationsFound} of ${d.totalQueriesChecked ?? 0} AI searches`;

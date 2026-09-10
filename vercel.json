@@ -1,6 +1,6 @@
 {
   "crons": [
     { "path": "/api/cron/diagnostics", "schedule": "0 6 * * *" },
-    { "path": "/api/cron/analytics", "schedule": "0 */6 * * *" }
+    { "path": "/api/cron/citation-runs", "schedule": "0 6 * * 1,4" }
   ]
 }

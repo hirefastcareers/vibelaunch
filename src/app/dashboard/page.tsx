@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { emptyDashboardStats, getDashboardStats } from "@/lib/dashboard/get-stats";
+import { isDemoMode } from "@/lib/demo-mode";
 import DashboardHome from "./dashboard-content";
 
 export default async function DashboardPage() {
@@ -22,5 +23,5 @@ export default async function DashboardPage() {
     data = emptyDashboardStats(user);
   }
 
-  return <DashboardHome data={data} />;
+  return <DashboardHome data={data} demoMode={isDemoMode()} />;
 }

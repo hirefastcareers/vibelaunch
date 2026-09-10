@@ -152,7 +152,7 @@ export default async function HomePage() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
               </span>
               <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-                Autonomous growth engine
+                GEO citation tracking
               </span>
             </div>
             <h1 className="mb-6 text-[40px] md:text-[56px] lg:text-[72px]">
@@ -161,8 +161,8 @@ export default async function HomePage() {
               everywhere.
             </h1>
             <p className="mx-auto mb-10 max-w-[52ch] text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Xoopa turns your product updates into viral social posts, Google-ranked articles,
-              and AI search citations - automatically.
+              Xoopa tracks whether AI search cites your brand, and turns product updates into
+              citeable posts and articles you can distribute on X.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href={ctaHref} className="ds-btn px-8 py-4 text-sm">
@@ -503,7 +503,7 @@ export default async function HomePage() {
           <div>
             <Logo size={32} />
             <p className="mb-0 mt-3 max-w-[30ch] text-sm leading-relaxed text-muted-foreground">
-              Autonomous SEO, GEO and X growth for solo founders shipping fast.
+              GEO and AI citation tracking for solo founders shipping fast.
             </p>
           </div>
           {footerCols.map((col) => (

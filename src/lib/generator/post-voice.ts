@@ -1,7 +1,7 @@
 const MAX_POST_CHARS = 280;
 
 const GOLDEN_EXAMPLE =
-  "X sign-in is live on Xoopa. Connect X once, then product updates can become posts and articles without a second tool.";
+  "X sign-in is live on Xoopa. Connect X once, then product updates become citeable posts and articles without a second tool.";
 
 const SLOP_PHRASES = [
   /\bexciting news!?\b/gi,
@@ -29,13 +29,25 @@ export function buildPostPrompt(input: {
   topic: string;
   tone: string;
   examples: string;
+  trackedQueries?: string[];
 }): string {
+  const queryBlock =
+    input.trackedQueries && input.trackedQueries.length > 0
+      ? `Tracked queries this content should support (write so AI search could cite these facts):\n${input.trackedQueries
+          .map((q) => `- ${q}`)
+          .join("\n")}`
+      : "Write content likely to be cited by AI search when someone asks for tools or topics related to this product.";
+
   return `Write one X post for ${input.name}. Max ${MAX_POST_CHARS} characters.
 
 Topic: ${input.topic}
 Tagline: ${input.tagline ?? "none"}
 Product: ${input.description ?? "none"}
 Voice: ${input.tone}, but never marketing copy.
+
+Goal: one concrete, citeable product fact for AI search / GEO — X is a distribution channel, not an engagement farm.
+
+${queryBlock}
 
 Write like a founder posting a changelog. Name the thing that shipped, then say what someone can do now.
 
@@ -47,6 +59,7 @@ Exciting news! X sign-in is now live on Xoopa! Effortlessly turn your product up
 
 Rules:
 - One or two short sentences
+- Prefer specific nouns, numbers, and capabilities AI engines can quote
 - No emojis, hashtags, slogans, or "exciting news"
 - No em dashes
 - Do not say viral, effortlessly, game-changer, or shine

@@ -20,14 +20,14 @@ const TYPE_STYLES = {
 } as const;
 
 const FEED_ITEMS: ActivityItem[] = [
-  { id: 1, icon: Send, text: "Post shipped to X with hook score 0.81", time: "2m ago", type: "post" },
+  { id: 1, icon: Send, text: "Citeable update shipped to X", time: "2m ago", type: "post" },
   { id: 2, icon: FileText, text: "Article indexed: /changelog/v1-4-media", time: "14m ago", type: "seo" },
   { id: 3, icon: Target, text: "Cited by Perplexity at position #2", time: "1h ago", type: "citation" },
   { id: 4, icon: RefreshCw, text: "Health audit passed: 12/12 pages indexed", time: "3h ago", type: "audit" },
   { id: 5, icon: Send, text: "Thread 1/4 queued for the next publish window", time: "4h ago", type: "post" },
   { id: 6, icon: Target, text: "Cited by ChatGPT at position #1", time: "6h ago", type: "citation" },
   { id: 7, icon: FileText, text: "Pillar page crawled by Google", time: "8h ago", type: "seo" },
-  { id: 8, icon: Send, text: "Post reinforced after ERI improved to 2.3", time: "12h ago", type: "post" },
+  { id: 8, icon: Target, text: "Citation share up 8pts on tracked query set", time: "12h ago", type: "citation" },
 ];
 
 export function LiveActivityFeed() {

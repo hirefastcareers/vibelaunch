@@ -17,6 +17,7 @@ import { SignOutButton } from "@/components/sign-out-button";
 
 const navItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { href: "/dashboard#ai-citation-tracking", label: "Citations", icon: Search },
   { href: "/dashboard/queue", label: "Posts", icon: Send },
   { href: "/dashboard/replies", label: "Replies", icon: MessageCircle },
   { href: "/dashboard/diagnostics", label: "Health", icon: HeartPulse },

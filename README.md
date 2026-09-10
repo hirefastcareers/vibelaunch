@@ -1,15 +1,15 @@
 # Xoopa.app
 
-Autonomous growth and GEO engine - continuous organic growth, Playwright UI media capture, social-to-static SEO, and Generative Engine Optimization.
+GEO and AI citation tracking - know whether ChatGPT, Perplexity, Claude, and Gemini cite your brand, and ship citeable product updates from one workspace.
 
 ## Features
 
-- **X OAuth** - Sign in with your X account
-- **Project Management** - Create and manage launch projects
+- **AI Citation Tracking** - Track brand mentions across AI search engines (demo stub gated by `isDemoMode()`)
+- **X as a distribution channel** - Sign in with X and publish updates (not an engagement-growth suite)
+- **Project Management** - Create and manage products and tracked topics
 - **Post Queue** - Schedule and publish posts via QStash
 - **Media Engine** - Process images for X constraints
-- **ERI Analytics** - Track engagement rate index across posts
-- **Adaptive Generator** - AI content inspired by top-performing posts
+- **Citeable content generation** - AI drafts oriented toward AI-search citation, not viral hooks
 - **SEO Changelog** - Publish changelog pages with Google indexing
 
 ## Quick Start
@@ -41,7 +41,7 @@ npm run build
 
 ## Architecture
 
-See `.cursor/rules/vibelaunch-spec.mdc` for the full platform specification and `.memory-bank/` for project context.
+See `.cursor/rules/vibelaunch-spec.mdc` for the platform specification and `.memory-bank/` for project context. Phase 1 GEO pivot notes live in `docs/deferred-work.md`.
 
 ## Deployments
 
@@ -50,15 +50,6 @@ Xoopa uses Vercel. **Preview** deploys run on PR branches; **production** deploy
 Cloud Agent PRs on `cursor/*` branches auto-merge to `main` once Vercel checks pass (see `.github/workflows/auto-ship-cursor-prs.yml`). Leave a PR as **draft** if you only want a preview.
 
 Full details: [docs/deployments.md](docs/deployments.md)
-
-## Phases
-
-| Phase | Description |
-|-------|-------------|
-| 1 | Prisma + pgvector, X OAuth, project CRUD |
-| 2 | Media engine, QStash post queue, X publish |
-| 3 | ERI analytics cron, vector reinforcement, adaptive generator |
-| 4 | SEO expander, changelog pages, sitemap, Google indexing |
 
 ## Writing
 

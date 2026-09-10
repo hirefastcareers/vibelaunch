@@ -4,6 +4,7 @@ import { getSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { StatusPill } from "@/components/status-pill";
 import { DeleteProjectButton } from "@/components/dashboard/delete-project-button";
+import { isFeatureEnabled } from "@/lib/feature-flags";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   });
 
   if (!project) notFound();
+
+  const showEri = isFeatureEnabled("ERI_ANALYTICS");
 
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-6 py-8">
@@ -60,9 +63,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   <p className="font-mono">{post.content}</p>
                   <div className="mt-2 flex gap-3 font-mono text-[10px] text-muted-foreground">
                     <span>{post.status}</span>
-                    {post.analytics && (
+                    {showEri && post.analytics ? (
                       <StatusPill>{`[VIRALITY: ${post.analytics.eri}]`}</StatusPill>
-                    )}
+                    ) : null}
                   </div>
                 </li>
               ))}
@@ -92,7 +95,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         </section>
       </div>
 
-      {project.analytics.length > 0 && (
+      {showEri && project.analytics.length > 0 ? (
         <section className="mt-8">
           <h2 className="text-2xl mb-4">Virality Snapshots</h2>
           <div className="overflow-hidden rounded-xl border border-border shadow-sm">
@@ -116,7 +119,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </table>
           </div>
         </section>
-      )}
+      ) : null}
     </main>
   );
 }

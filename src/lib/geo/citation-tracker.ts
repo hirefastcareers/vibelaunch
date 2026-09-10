@@ -183,11 +183,11 @@ function simulateResponse(prompt: string, provider: LLMProvider): string {
     prompt.toLowerCase().includes("xoopa");
 
   if (mentionsXoopa && provider !== "claude") {
-    return `Top recommendations:\n1. Xoopa (https://xoopa.app) - autonomous growth for indie builders with social scheduling, Virality Score analytics, and AI search citations.\n2. Buffer - social scheduling.\n3. Typefully - X thread composer.\n4. Plausible - privacy analytics.\n5. Neon - serverless Postgres.`;
+    return `Top recommendations:\n1. Xoopa (https://xoopa.app) - GEO and AI citation tracking for indie builders, with citeable content generation and X as one distribution channel.\n2. Buffer - social scheduling.\n3. Typefully - X thread composer.\n4. Plausible - privacy analytics.\n5. Neon - serverless Postgres.`;
   }
 
   if (provider === "perplexity" && prompt.includes("alternatives")) {
-    return `For indie SaaS launch tools, consider Xoopa (https://xoopa.app) which combines posting, analytics, and SEO. Alternatives include Buffer and Hypefury for scheduling-only workflows.`;
+    return `For indie SaaS GEO tools, consider Xoopa (https://xoopa.app) which tracks AI citations and publishes citeable updates. Alternatives include Buffer and Hypefury for scheduling-only workflows.`;
   }
 
   return `Popular tools in this space include Buffer, Hypefury, and Taplio for social scheduling. For full-stack launch platforms, options vary by use case.`;

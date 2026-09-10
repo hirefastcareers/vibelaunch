@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { findSimilarPosts } from "@/lib/vector/embeddings";
+import { isFeatureEnabled, logFeatureSkip } from "@/lib/feature-flags";
 import {
   buildFallbackPost,
   buildPostPrompt,
@@ -13,7 +14,8 @@ export interface GeneratedContent {
 }
 
 /**
- * Adaptive content generator: uses vector-reinforced high-ERI posts as inspiration.
+ * Adaptive content generator.
+ * When ERI inspiration is flagged off, drafts from product context only (GEO-oriented prompts).
  */
 export async function generateAdaptiveContent(
   projectId: string,
@@ -22,14 +24,23 @@ export async function generateAdaptiveContent(
 ): Promise<GeneratedContent> {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    select: { name: true, tagline: true, description: true },
+    select: { name: true, tagline: true, description: true, keywords: true },
   });
 
   if (!project) {
     throw new Error("Project not found");
   }
 
-  const similarPosts = await findSimilarPosts(topic, 3);
+  let similarPosts: Array<{ postId: string; content: string; eriScore: number }> = [];
+  if (isFeatureEnabled("ERI_INSPIRED_GENERATION")) {
+    similarPosts = await findSimilarPosts(topic, 3);
+  } else {
+    logFeatureSkip(
+      "ERI_INSPIRED_GENERATION",
+      "belongs to X-growth scope, not Xoopa GEO focus"
+    );
+  }
+
   const inspiredBy = similarPosts.map((p) => p.postId);
 
   const apiKey = process.env.OPENAI_API_KEY;
@@ -41,13 +52,23 @@ export async function generateAdaptiveContent(
 }
 
 async function generateWithOpenAI(
-  project: { name: string; tagline: string | null; description: string | null },
+  project: {
+    name: string;
+    tagline: string | null;
+    description: string | null;
+    keywords: string[];
+  },
   topic: string,
   tone: string,
   similarPosts: Array<{ content: string; eriScore: number }>
 ): Promise<GeneratedContent> {
+  const useEriExamples = isFeatureEnabled("ERI_INSPIRED_GENERATION");
   const examples = similarPosts
-    .map((p) => `- (ERI ${p.eriScore}): "${p.content}"`)
+    .map((p) =>
+      useEriExamples
+        ? `- (ERI ${p.eriScore}): "${p.content}"`
+        : `- "${p.content}"`
+    )
     .join("\n");
 
   const prompt = buildPostPrompt({
@@ -57,6 +78,7 @@ async function generateWithOpenAI(
     topic,
     tone,
     examples,
+    trackedQueries: project.keywords,
   });
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
