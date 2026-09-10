@@ -32,9 +32,9 @@ const satoshi = localFont({
   display: "swap",
 });
 
-const title = "Xoopa.app | GEO and AI Citation Tracking";
+const title = "AI Citation Tracking for SaaS & Indie Hackers | Xoopa";
 const description =
-  "Track whether ChatGPT, Perplexity, Claude, and Gemini cite your brand. Ship citeable updates to X and the web from one workspace.";
+  "See whether ChatGPT, Claude, Gemini, Perplexity, and Grok recommend your product — then close the loop with content fixes, not just scorekeeping.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),

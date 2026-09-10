@@ -4,6 +4,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
+- [2026-09-10] **Phase 8 — real testimonials / social proof.** Landing page ships an honest empty placeholder marked for Tom. Do not invent quotes, logos, or user counts. Fill once early customers consent to be named.
+- [2026-09-10] **Phase 8 — additional marketing pages deferred.** Blog and competitor comparison pages (pattern SuperX uses heavily) not built in Phase 8. Sitemap already has an extensible `marketingPages` list — add routes there when those pages ship.
 - [2026-09-10] **Phase 7 / cost validation vs live invoices.** Tier caps shipped from Phase 2/5 *list-price estimates* (~$0.04–0.12 per 5-model query sweep; sentiment ~$0.00005–0.0002/call). No production invoice lines available yet. After the first paid week, compare actual OpenAI/Anthropic/Gemini/Perplexity/xAI spend to FREE/STARTER/PRO allowances and adjust caps if margins are wrong.
 - [2026-09-10] **Phase 7 — Dodo catalogue price sync.** UI now shows £15 / £39; `DODO_STARTER_PRODUCT_ID` / `DODO_PRO_PRODUCT_ID` still point at whatever products are configured in env. Update Dodo product prices (and currency) to match — code cannot change Dodo catalogue amounts.
 - [2026-09-10] **Phase 7 UX polish deferred:** in-app upgrade modal (currently inline error + Billing link); per-model “not on your plan” empty states on Share charts for Free; self-serve schedule preview (“next sweep Monday”); usage meters for suggestions/prompts on Billing.
