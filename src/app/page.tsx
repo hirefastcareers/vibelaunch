@@ -503,7 +503,7 @@ export default async function HomePage() {
           <div>
             <Logo size={32} />
             <p className="mb-0 mt-3 max-w-[30ch] text-sm leading-relaxed text-muted-foreground">
-              Autonomous SEO, GEO and X growth for solo founders shipping fast.
+              GEO and AI citation tracking for solo founders shipping fast.
             </p>
           </div>
           {footerCols.map((col) => (
