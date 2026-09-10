@@ -1,8 +1,9 @@
 export type PlanTier = "FREE" | "STARTER" | "PRO";
 
 /**
- * Placeholder tracked-query + competitor caps pending Phase 7 pricing decisions.
- * Logged in docs/deferred-work.md — do not treat as final commercial limits.
+ * Placeholder tracked-query, competitor, and suggestion-regen caps pending
+ * Phase 7 pricing decisions. Logged in docs/deferred-work.md — do not treat
+ * as final commercial limits.
  */
 export const PLAN_LIMITS: Record<
   PlanTier,
