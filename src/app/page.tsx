@@ -152,7 +152,7 @@ export default async function HomePage() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
               </span>
               <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-                Autonomous growth engine
+                GEO citation tracking
               </span>
             </div>
             <h1 className="mb-6 text-[40px] md:text-[56px] lg:text-[72px]">
