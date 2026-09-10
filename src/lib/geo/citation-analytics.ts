@@ -1,4 +1,4 @@
-import type { CitationModel } from "@prisma/client";
+import type { CitationModel, CitationSentiment } from "@prisma/client";
 import { formatFirstResultsMessage } from "@/lib/geo/next-citation-sweep";
 import { prisma } from "@/lib/prisma";
 
@@ -36,6 +36,14 @@ export type CitationDashboardTrendPoint = {
   grok: number;
 };
 
+export type SentimentCounts = {
+  positive: number;
+  neutral: number;
+  negative: number;
+  /** Mentions that still lack a classifier label (honest nulls). */
+  unclassified: number;
+};
+
 export type CitationDashboardData = {
   demo: false;
   brandName: string | null;
@@ -49,6 +57,14 @@ export type CitationDashboardData = {
   trend: CitationDashboardTrendPoint[];
   mentionTrend: Array<{ date: string; mentionRate: number }>;
   recentUrls: string[];
+  /** Brand-mention sentiment totals (only brandMentioned=true runs). */
+  sentiment: SentimentCounts;
+  /** Per-model brand-mention sentiment split. */
+  sentimentByModel: Array<{
+    model: CitationModel;
+    label: string;
+    counts: SentimentCounts;
+  }>;
   note: string;
 };
 
@@ -71,6 +87,7 @@ export async function buildCitationDashboard(
 
   const allRuns = trackedQueries.flatMap((q) => q.runs);
   const successful = allRuns.filter((run) => !run.error);
+  const mentionedRuns = successful.filter((run) => run.brandMentioned);
 
   const rows: CitationDashboardRow[] = CITATION_MODELS.map((model) => {
     const modelRuns = successful.filter((run) => run.model === model);
@@ -107,6 +124,18 @@ export async function buildCitationDashboard(
     ...new Set(successful.flatMap((run) => run.citedUrls)),
   ].slice(0, 20);
 
+  const sentiment = countSentiments(mentionedRuns.map((r) => r.sentiment));
+  const sentimentByModel = CITATION_MODELS.map((model) => ({
+    model,
+    label: CITATION_MODEL_LABELS[model],
+    counts: countSentiments(
+      mentionedRuns.filter((r) => r.model === model).map((r) => r.sentiment)
+    ),
+  }));
+
+  const classified =
+    sentiment.positive + sentiment.neutral + sentiment.negative;
+
   return {
     demo: false,
     brandName: trackedQueries[0]?.brandName ?? null,
@@ -120,12 +149,37 @@ export async function buildCitationDashboard(
     trend,
     mentionTrend,
     recentUrls,
+    sentiment,
+    sentimentByModel,
     note:
       successful.length === 0
         ? `${formatFirstResultsMessage()} Sweeps run Mon & Thu at 06:00 UTC.`
-        : `Live results from ${successful.length} successful model run(s) across 5 providers. Sentiment classification remains deferred.`,
+        : mentionedRuns.length === 0
+          ? `Live results from ${successful.length} successful model run(s). No brand mentions yet — sentiment stays empty until a mention is classified.`
+          : classified === 0
+            ? `Live results from ${successful.length} successful model run(s). ${mentionedRuns.length} mention(s) awaiting sentiment classification (null until the classifier succeeds).`
+            : `Live results from ${successful.length} successful model run(s). Sentiment on ${classified}/${mentionedRuns.length} brand mention(s); unclassified stays null.`,
   };
 }
+
+function countSentiments(
+  values: Array<CitationSentiment | null | undefined>
+): SentimentCounts {
+  const counts: SentimentCounts = {
+    positive: 0,
+    neutral: 0,
+    negative: 0,
+    unclassified: 0,
+  };
+  for (const value of values) {
+    if (value === "positive") counts.positive += 1;
+    else if (value === "neutral") counts.neutral += 1;
+    else if (value === "negative") counts.negative += 1;
+    else counts.unclassified += 1;
+  }
+  return counts;
+}
+
 
 function emptyBucket(): Record<CitationModel, { mentioned: number; total: number }> {
   return {

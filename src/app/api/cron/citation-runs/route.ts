@@ -7,6 +7,7 @@ import {
   enqueueCitationSweep,
   isQStashConfigured,
 } from "@/lib/queue/qstash";
+import { backfillSentimentBatch } from "@/lib/geo/backfill-sentiment";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -22,6 +23,16 @@ async function handleCron(req: NextRequest) {
 
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Keep Phase 5 historical backfill moving whenever sweeps run.
+  try {
+    await backfillSentimentBatch(15);
+  } catch (err) {
+    console.error(
+      "[cron/citation-runs] sentiment backfill error:",
+      err instanceof Error ? err.message : err
+    );
   }
 
   const queryIds = await listActiveTrackedQueryIds();

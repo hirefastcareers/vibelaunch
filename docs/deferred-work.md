@@ -4,7 +4,10 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
-- [2026-09-10] **Phase 5 — sentiment classification (NOT STARTED — next).** Classify `CitationRun.sentiment` (schema column exists, always null today). Explicitly remains next after Phase 6; do not drop from the roadmap.
+- [2026-09-10] **Phase 5 UX polish deferred:** sentiment filter / dimension on the citation TrendChart — TrendChart is multi-series rate-over-time and does not cleanly support a categorical sentiment filter without a new chart mode; kept as DataPill splits on Share + Compare instead.
+- [2026-09-10] **Phase 5 / Phase 7 — observed sentiment classification cost.** Classifier model: `gpt-4o-mini` (override `OPENAI_SENTIMENT_MODEL`). Rough list pricing ≈ $0.15/1M input + $0.60/1M output tokens. Typical call uses a ≤1.8k-char excerpt + ≤40 completion tokens → **about $0.00005–$0.0002 per classification** (orders of magnitude below search-grounded citation runs). Log exact OpenAI invoice lines after the first production week of Phase 5 for Phase 7 pricing.
+- [2026-09-10] **Phase 5 competitor mention persistence still partial:** mention *detection* for share-of-voice remains on-read (Phase 4); Phase 5 now persists competitor mention + sentiment rows when classified at run/backfill time, but share-of-voice rates still re-detect from `rawResponse`. Unifying detection into stored rows is still deferred.
+
 - [2026-09-10] **Phase 7 — real per-tier suggestion regeneration limits.** Phase 6 ships placeholder cap of **3 regenerations / suggestion / UTC day** via `PLAN_LIMITS.suggestionRegensPerDay` + `ContentSuggestion.regenerationCount` / `regenerationWindowStart`. Revisit with pricing before enforcing commercially differentiated caps.
 - [2026-09-10] **Phase 6 Fixes UX polish deferred:** dedicated Fixes page (currently a tab on the citation card); auto-generate briefs for new gaps without a click; show dismissed/actioned history filter; bulk dismiss; export briefs.
 - [2026-09-10] **Phase 7 — real per-tier competitor limits.** Phase 4 ships placeholder caps (FREE 1 / STARTER 3 / PRO 10) in `PLAN_LIMITS.competitors`. Revisit with pricing before enforcing commercially.
@@ -37,6 +40,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 - [2026-09-08] Wiring checklist refreshed against morning env + afternoon Replies/Ship work. See `docs/plan-2026-09-08.md` for the remaining P0 order.
 
 ## Resolved
+
+- [2026-09-10] Phase 5 sentiment classification: `gpt-4o-mini` classifier on brand mentions (`CitationRun.sentiment`), `CitationCompetitorMention` for competitor mention sentiment, automated hourly + sweep-triggered backfill, Share/Compare DataPill splits, honest nulls on failure.
 
 - [2026-09-10] Phase 6 “Fix it” content loop: citation-gap detection (latest miss or &lt;50% over last 5 successful runs), `ContentSuggestion` + OpenAI brief generation (honest failures), Fixes tab (generate / dismiss / actioned / regenerate), placeholder 3 regenerations/suggestion/UTC day.
 
