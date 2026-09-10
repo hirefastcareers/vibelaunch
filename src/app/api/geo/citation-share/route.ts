@@ -1,57 +1,90 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { isDemoMode, demoDelay } from "@/lib/demo-mode";
 import { buildCitationShareDemo } from "@/lib/geo/citation-share-demo";
+import { buildCitationDashboard } from "@/lib/geo/citation-analytics";
+import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Phase 1 stub: returns mocked citation-share only when isDemoMode() is true.
- * Live mode returns an honest empty payload (no fabricated provider metrics).
+ * GET live citation dashboard for the signed-in user.
+ * Falls back to labeled demo payload only when isDemoMode() AND no live runs exist.
  */
-export async function POST(req: NextRequest) {
+export async function GET() {
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = (await req.json().catch(() => ({}))) as {
-    brandName?: string;
-    trackedQueries?: string[] | string;
-  };
+  const liveRunCount = await prisma.citationRun.count({
+    where: { trackedQuery: { userId: session.user.id }, error: null },
+  });
 
-  const brandName = (body.brandName ?? "").trim();
-  const trackedQueries = normalizeQueries(body.trackedQueries);
-
-  if (!brandName) {
-    return NextResponse.json({ error: "brandName is required" }, { status: 400 });
+  if (liveRunCount > 0) {
+    const dashboard = await buildCitationDashboard(session.user.id);
+    return NextResponse.json(dashboard);
   }
 
-  if (!isDemoMode()) {
+  if (isDemoMode()) {
+    await demoDelay(300);
+    const queries = await prisma.trackedQuery.findMany({
+      where: { userId: session.user.id },
+      take: 5,
+    });
+    const brand = queries[0]?.brandName ?? "Your brand";
+    const prompts = queries.map((q) => q.promptText);
+    const demo = buildCitationShareDemo(brand, prompts);
     return NextResponse.json({
-      demo: false,
-      brandName,
-      trackedQueries,
-      rows: [],
-      trend: [],
-      note: "Live AI citation-share tracking is not wired yet. Enable DEMO_MODE to preview the stub UI with labeled mock data.",
+      demo: true as const,
+      brandName: demo.brandName,
+      trackedQueries: queries.map((q) => ({
+        id: q.id,
+        brandName: q.brandName,
+        promptText: q.promptText,
+        active: q.active,
+      })),
+      rows: demo.rows.map((row) => ({
+        model: mapDemoProvider(row.provider),
+        label: row.label,
+        mentionRate: row.citationShare,
+        mentioned: row.citedQueries,
+        total: row.totalQueries,
+        recentCitedUrls: [] as string[],
+      })),
+      trend: demo.trend.map((point) => ({
+        date: point.date,
+        openai: point.chatgpt,
+        anthropic: point.claude,
+        gemini: point.gemini,
+        perplexity: point.perplexity,
+      })),
+      mentionTrend: demo.trend.map((point) => ({
+        date: point.date,
+        mentionRate: Math.round(
+          (point.chatgpt + point.perplexity + point.claude + point.gemini) / 4
+        ),
+      })),
+      recentUrls: [] as string[],
+      note: `${demo.note} Live pipeline is ready — save tracked queries and run a sweep to replace this stub.`,
     });
   }
 
-  await demoDelay(400);
-  return NextResponse.json(buildCitationShareDemo(brandName, trackedQueries));
+  const empty = await buildCitationDashboard(session.user.id);
+  return NextResponse.json(empty);
 }
 
-function normalizeQueries(raw: string[] | string | undefined): string[] {
-  if (Array.isArray(raw)) {
-    return raw.map((q) => q.trim()).filter(Boolean).slice(0, 12);
+function mapDemoProvider(
+  provider: "chatgpt" | "perplexity" | "claude" | "gemini"
+): "openai" | "anthropic" | "gemini" | "perplexity" {
+  switch (provider) {
+    case "chatgpt":
+      return "openai";
+    case "claude":
+      return "anthropic";
+    case "gemini":
+      return "gemini";
+    case "perplexity":
+      return "perplexity";
   }
-  if (typeof raw === "string") {
-    return raw
-      .split(/[\n,]/)
-      .map((q) => q.trim())
-      .filter(Boolean)
-      .slice(0, 12);
-  }
-  return [];
 }

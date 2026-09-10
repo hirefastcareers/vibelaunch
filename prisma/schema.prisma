@@ -29,6 +29,7 @@ model User {
   accounts            Account[]
   sessions            Session[]
   projects            Project[]
+  trackedQueries      TrackedQuery[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -202,6 +203,55 @@ model ChangelogEntry {
 
   @@index([projectId])
   @@index([published])
+}
+
+// ─── Phase 2 GEO: AI citation tracking (TrackedQuery + CitationRun) ────────
+
+model TrackedQuery {
+  id         String        @id @default(cuid())
+  userId     String
+  brandName  String
+  promptText String
+  /// When false, cron / QStash sweeps skip this row.
+  active     Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runs       CitationRun[]
+
+  @@index([userId])
+  @@index([active])
+}
+
+enum CitationModel {
+  openai
+  anthropic
+  gemini
+  perplexity
+}
+
+enum CitationSentiment {
+  positive
+  neutral
+  negative
+}
+
+model CitationRun {
+  id             String             @id @default(cuid())
+  trackedQueryId String
+  model          CitationModel
+  runAt          DateTime           @default(now())
+  rawResponse    String             @db.Text
+  brandMentioned Boolean            @default(false)
+  citedUrls      String[]           @default([])
+  /// Phase 3 — always null in Phase 2 (classifier not implemented).
+  sentiment      CitationSentiment?
+  /// Non-null when the provider call failed; rawResponse may still hold error context.
+  error          String?
+  trackedQuery   TrackedQuery       @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+
+  @@index([trackedQueryId])
+  @@index([model])
+  @@index([runAt])
 }
 
 // ─── Phase 6: GEO (Generative Engine Optimization) ─────────────────────────
