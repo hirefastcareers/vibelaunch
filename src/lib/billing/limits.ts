@@ -4,7 +4,7 @@ import { PLAN_LIMITS, type PlanTier } from "@/lib/billing/plans";
 export class UsageLimitError extends Error {
   constructor(
     message: string,
-    public code: "PROJECT_LIMIT" | "POST_LIMIT",
+    public code: "PROJECT_LIMIT" | "POST_LIMIT" | "TRACKED_QUERY_LIMIT",
   ) {
     super(message);
     this.name = "UsageLimitError";
@@ -15,8 +15,10 @@ export interface UsageSnapshot {
   planTier: PlanTier;
   projectCount: number;
   postCount: number;
+  trackedQueryCount: number;
   projectLimit: number;
   postLimit: number;
+  trackedQueryLimit: number;
 }
 
 function startOfUtcMonth(now = new Date()): Date {
@@ -36,7 +38,7 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
   const limits = PLAN_LIMITS[planTier];
   const startOfMonth = startOfUtcMonth();
 
-  const [projectCount, postCount] = await Promise.all([
+  const [projectCount, postCount, trackedQueryCount] = await Promise.all([
     prisma.project.count({ where: { userId } }),
     prisma.post.count({
       where: {
@@ -45,14 +47,17 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
         createdAt: { gte: startOfMonth },
       },
     }),
+    prisma.trackedQuery.count({ where: { userId } }),
   ]);
 
   return {
     planTier,
     projectCount,
     postCount,
+    trackedQueryCount,
     projectLimit: limits.projects,
     postLimit: limits.postsPerMonth,
+    trackedQueryLimit: limits.trackedQueries,
   };
 }
 
@@ -72,6 +77,24 @@ export async function assertCanCreatePost(userId: string): Promise<void> {
     throw new UsageLimitError(
       `Post limit reached for the ${usage.planTier} plan this month`,
       "POST_LIMIT",
+    );
+  }
+}
+
+/**
+ * Ensure adding `additional` tracked queries would not exceed the plan cap.
+ * Placeholder caps — see docs/deferred-work.md (Phase 7).
+ */
+export async function assertCanCreateTrackedQueries(
+  userId: string,
+  additional = 1,
+): Promise<void> {
+  if (additional < 1) return;
+  const usage = await getUsage(userId);
+  if (usage.trackedQueryCount + additional > usage.trackedQueryLimit) {
+    throw new UsageLimitError(
+      `Tracked query limit reached for the ${usage.planTier} plan (${usage.trackedQueryLimit} max). Upgrade or delete unused prompts.`,
+      "TRACKED_QUERY_LIMIT",
     );
   }
 }

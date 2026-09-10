@@ -1,9 +1,16 @@
 export type PlanTier = "FREE" | "STARTER" | "PRO";
 
-export const PLAN_LIMITS: Record<PlanTier, { projects: number; postsPerMonth: number }> = {
-  FREE: { projects: 1, postsPerMonth: 8 },
-  STARTER: { projects: 3, postsPerMonth: 40 },
-  PRO: { projects: 10, postsPerMonth: 200 },
+/**
+ * Placeholder tracked-query caps pending Phase 7 pricing decisions.
+ * Logged in docs/deferred-work.md — do not treat as final commercial limits.
+ */
+export const PLAN_LIMITS: Record<
+  PlanTier,
+  { projects: number; postsPerMonth: number; trackedQueries: number }
+> = {
+  FREE: { projects: 1, postsPerMonth: 8, trackedQueries: 10 },
+  STARTER: { projects: 3, postsPerMonth: 40, trackedQueries: 25 },
+  PRO: { projects: 10, postsPerMonth: 200, trackedQueries: 50 },
 };
 
 export const PLAN_DISPLAY: Record<

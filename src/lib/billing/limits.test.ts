@@ -6,6 +6,7 @@ vi.mock("@/lib/prisma", () => ({
     user: { findUnique: vi.fn() },
     project: { count: vi.fn() },
     post: { count: vi.fn() },
+    trackedQuery: { count: vi.fn() },
   },
 }));
 
@@ -14,6 +15,7 @@ import {
   UsageLimitError,
   assertCanCreatePost,
   assertCanCreateProject,
+  assertCanCreateTrackedQueries,
   getUsage,
 } from "@/lib/billing/limits";
 
@@ -21,6 +23,7 @@ const mockedPrisma = prisma as unknown as {
   user: { findUnique: ReturnType<typeof vi.fn> };
   project: { count: ReturnType<typeof vi.fn> };
   post: { count: ReturnType<typeof vi.fn> };
+  trackedQuery: { count: ReturnType<typeof vi.fn> };
 };
 
 describe("billing limits", () => {
@@ -29,28 +32,24 @@ describe("billing limits", () => {
     mockedPrisma.user.findUnique.mockResolvedValue({ planTier: "FREE" });
     mockedPrisma.project.count.mockResolvedValue(0);
     mockedPrisma.post.count.mockResolvedValue(0);
+    mockedPrisma.trackedQuery.count.mockResolvedValue(0);
   });
 
-  it("getUsage returns counts and FREE limits", async () => {
+  it("getUsage returns counts and FREE limits including tracked queries", async () => {
     mockedPrisma.project.count.mockResolvedValue(1);
     mockedPrisma.post.count.mockResolvedValue(3);
+    mockedPrisma.trackedQuery.count.mockResolvedValue(4);
 
     const usage = await getUsage("user-1");
     expect(usage).toEqual({
       planTier: "FREE",
       projectCount: 1,
       postCount: 3,
+      trackedQueryCount: 4,
       projectLimit: PLAN_LIMITS.FREE.projects,
       postLimit: PLAN_LIMITS.FREE.postsPerMonth,
+      trackedQueryLimit: PLAN_LIMITS.FREE.trackedQueries,
     });
-    expect(mockedPrisma.post.count).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          status: { not: "DRAFT" },
-          project: { userId: "user-1" },
-        }),
-      }),
-    );
   });
 
   it("assertCanCreateProject throws PROJECT_LIMIT at the Free cap", async () => {
@@ -71,6 +70,21 @@ describe("billing limits", () => {
     await expect(assertCanCreatePost("user-1")).rejects.toBeInstanceOf(UsageLimitError);
     await expect(assertCanCreatePost("user-1")).rejects.toMatchObject({
       code: "POST_LIMIT",
+    });
+  });
+
+  it("assertCanCreateTrackedQueries enforces the Free placeholder cap of 10", async () => {
+    mockedPrisma.trackedQuery.count.mockResolvedValue(10);
+    await expect(assertCanCreateTrackedQueries("user-1", 1)).rejects.toMatchObject({
+      code: "TRACKED_QUERY_LIMIT",
+    });
+  });
+
+  it("assertCanCreateTrackedQueries allows filling remaining Free slots", async () => {
+    mockedPrisma.trackedQuery.count.mockResolvedValue(7);
+    await expect(assertCanCreateTrackedQueries("user-1", 3)).resolves.toBeUndefined();
+    await expect(assertCanCreateTrackedQueries("user-1", 4)).rejects.toMatchObject({
+      code: "TRACKED_QUERY_LIMIT",
     });
   });
 

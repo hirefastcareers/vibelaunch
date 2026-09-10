@@ -1,4 +1,5 @@
 import type { CitationModel } from "@prisma/client";
+import { formatFirstResultsMessage } from "@/lib/geo/next-citation-sweep";
 import { prisma } from "@/lib/prisma";
 
 export const CITATION_MODEL_LABELS: Record<CitationModel, string> = {
@@ -121,8 +122,8 @@ export async function buildCitationDashboard(
     recentUrls,
     note:
       successful.length === 0
-        ? "No live citation runs yet. Add tracked queries and wait for the 2x/week sweep, or trigger a run."
-        : `Live results from ${successful.length} successful model run(s) across 5 providers. Sentiment classification is deferred to Phase 3.`,
+        ? `${formatFirstResultsMessage()} Sweeps run Mon & Thu at 06:00 UTC.`
+        : `Live results from ${successful.length} successful model run(s) across 5 providers. Sentiment classification remains deferred.`,
   };
 }
 

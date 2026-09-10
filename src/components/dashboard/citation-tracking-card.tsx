@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { TrendChart } from "@/components/dashboard/trend-chart";
 import { DataPill } from "@/components/ui/data-pill";
 import { SegmentedTabs } from "@/components/ui/segmented-tabs";
+import { formatFirstResultsMessage } from "@/lib/geo/next-citation-sweep";
 
 type DashboardRow = {
   model: string;
@@ -19,15 +21,17 @@ type DashboardRow = {
   recentCitedUrls: string[];
 };
 
+type TrackedQueryRow = {
+  id: string;
+  brandName: string;
+  promptText: string;
+  active: boolean;
+};
+
 type DashboardPayload = {
   demo: boolean;
   brandName: string | null;
-  trackedQueries: Array<{
-    id: string;
-    brandName: string;
-    promptText: string;
-    active: boolean;
-  }>;
+  trackedQueries: TrackedQueryRow[];
   rows: DashboardRow[];
   trend: Array<{
     date: string;
@@ -42,7 +46,13 @@ type DashboardPayload = {
   note: string;
 };
 
-type ViewMode = "share" | "trend" | "urls";
+type UsageInfo = {
+  planTier: string;
+  trackedQueryCount: number;
+  trackedQueryLimit: number;
+};
+
+type ViewMode = "share" | "trend" | "urls" | "prompts";
 
 export function CitationTrackingCard({
   demoMode,
@@ -56,22 +66,45 @@ export function CitationTrackingCard({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<DashboardPayload | null>(null);
+  const [usage, setUsage] = useState<UsageInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>("share");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState("");
+
+  const firstResultsMessage = useMemo(() => formatFirstResultsMessage(), []);
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/geo/citation-share");
-      const json = (await res.json()) as DashboardPayload & { error?: string };
-      if (!res.ok) {
-        setError(json.error ?? "Failed to load citation data");
+      const [shareRes, listRes] = await Promise.all([
+        fetch("/api/geo/citation-share"),
+        fetch("/api/geo/tracked-queries"),
+      ]);
+      const shareJson = (await shareRes.json()) as DashboardPayload & {
+        error?: string;
+      };
+      if (!shareRes.ok) {
+        setError(shareJson.error ?? "Failed to load citation data");
         setData(null);
         return;
       }
-      setData(json);
-      if (json.brandName) setBrandName((prev) => prev || json.brandName || "");
+      setData(shareJson);
+      if (shareJson.brandName) {
+        setBrandName((prev) => prev || shareJson.brandName || "");
+      }
+
+      if (listRes.ok) {
+        const listJson = (await listRes.json()) as {
+          usage?: UsageInfo;
+          queries?: TrackedQueryRow[];
+        };
+        if (listJson.usage) setUsage(listJson.usage);
+        if (listJson.queries?.length && !shareJson.trackedQueries?.length) {
+          setData({ ...shareJson, trackedQueries: listJson.queries });
+        }
+      }
     } catch {
       setError("Could not load citation tracking");
       setData(null);
@@ -122,6 +155,47 @@ export function CitationTrackingCard({
     }
   }
 
+  async function patchQuery(
+    id: string,
+    patch: { active?: boolean; promptText?: string }
+  ) {
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/tracked-queries", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...patch }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to update query");
+        return;
+      }
+      setEditingId(null);
+      await loadDashboard();
+    } catch {
+      setError("Failed to update query");
+    }
+  }
+
+  async function deleteQuery(id: string) {
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/geo/tracked-queries?id=${encodeURIComponent(id)}`,
+        { method: "DELETE" }
+      );
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to delete query");
+        return;
+      }
+      await loadDashboard();
+    } catch {
+      setError("Failed to delete query");
+    }
+  }
+
   const featured =
     data?.rows.reduce<DashboardRow | null>(
       (best, row) =>
@@ -134,6 +208,9 @@ export function CitationTrackingCard({
   );
   const showDemo = Boolean(data?.demo);
   const showEmptyLive = Boolean(data && !data.demo && !hasLiveRows);
+  const tracked = data?.trackedQueries ?? [];
+  const atCap =
+    usage != null && usage.trackedQueryCount >= usage.trackedQueryLimit;
 
   return (
     <Card className="bg-background" id="ai-citation-tracking">
@@ -145,8 +222,8 @@ export function CitationTrackingCard({
               AI Citation Tracking
             </CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
-              Track whether ChatGPT, Perplexity, Claude, and Gemini mention your
-              brand for queries you care about.
+              Track whether ChatGPT, Perplexity, Claude, Gemini, and Grok
+              mention your brand for queries you care about.
             </p>
           </div>
           {showDemo ? (
@@ -159,7 +236,7 @@ export function CitationTrackingCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-6 px-5 pb-5 pt-3">
-        <form onSubmit={handleSave} className="space-y-4">
+        <form onSubmit={(e) => void handleSave(e)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="citation-brand">Brand name</Label>
             <Input
@@ -171,7 +248,7 @@ export function CitationTrackingCard({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="citation-queries">Tracked queries / topics</Label>
+            <Label htmlFor="citation-queries">Add tracked queries</Label>
             <textarea
               id="citation-queries"
               value={queriesText}
@@ -179,17 +256,35 @@ export function CitationTrackingCard({
               placeholder={"best CRM for indie founders\nGEO tools for SaaS"}
               rows={3}
               className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              disabled={atCap}
             />
             <p className="text-xs text-muted-foreground">
-              One query per line. Saves as TrackedQuery rows
+              One query per line.
+              {usage
+                ? ` ${usage.trackedQueryCount}/${usage.trackedQueryLimit} prompts on ${usage.planTier}.`
+                : null}
               {demoMode
-                ? " (demo mode will not call paid model APIs)."
-                : " and queues a live 4-model sweep."}
+                ? " Demo mode will not call paid model APIs."
+                : " Saving queues a live 5-model sweep."}{" "}
+              <Link
+                href="/onboard/citations"
+                className="text-primary underline-offset-2 hover:underline"
+              >
+                Regenerate starter set
+              </Link>
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" size="sm" disabled={saving || !brandName.trim()}>
-              {saving ? "Saving…" : "Save tracked queries"}
+            <Button
+              type="submit"
+              size="sm"
+              disabled={saving || !brandName.trim() || atCap}
+            >
+              {saving
+                ? "Saving…"
+                : atCap
+                  ? "Prompt limit reached"
+                  : "Add queries"}
             </Button>
             <Button
               type="button"
@@ -209,68 +304,63 @@ export function CitationTrackingCard({
           </p>
         ) : null}
 
-        {data?.trackedQueries?.length ? (
-          <div>
-            <p className="mb-2 text-xs font-medium text-muted-foreground">
-              Saved queries
-            </p>
-            <ul className="space-y-1.5">
-              {data.trackedQueries.slice(0, 6).map((q) => (
-                <li key={q.id} className="truncate text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{q.brandName}</span>
-                  {" — "}
-                  {q.promptText}
-                  {!q.active ? " (paused)" : ""}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
         {showEmptyLive ? (
           <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6">
             <p className="text-sm font-medium text-foreground">
-              No live citation runs yet
+              Waiting on the first citation sweep
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">{data?.note}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {firstResultsMessage} Sweeps run Monday and Thursday at 06:00 UTC.
+              Charts appear after the first successful runs — nothing is invented
+              here.
+            </p>
           </div>
         ) : null}
 
-        {(showDemo || hasLiveRows) && data ? (
+        {(showDemo || hasLiveRows || tracked.length > 0) && data ? (
           <div className="space-y-5">
-            <p className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground">
-              {data.note}
-            </p>
+            {(showDemo || hasLiveRows) && data.note ? (
+              <p className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground">
+                {data.note}
+              </p>
+            ) : null}
 
             <SegmentedTabs
               options={[
                 { value: "share", label: "Share" },
                 { value: "trend", label: "Trend" },
                 { value: "urls", label: "URLs" },
+                { value: "prompts", label: "Prompts" },
               ]}
               value={view}
               onChange={(v) => setView(v as ViewMode)}
             />
 
             {view === "share" ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {data.rows.map((row) => (
-                  <StatCard
-                    key={row.model}
-                    label={row.label}
-                    hint={
-                      row.total > 0
-                        ? `${row.mentioned}/${row.total} runs mentioned`
-                        : "No runs yet"
-                    }
-                    value={`${row.mentionRate}%`}
-                  />
-                ))}
-              </div>
+              hasLiveRows || showDemo ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {data.rows.map((row) => (
+                    <StatCard
+                      key={row.model}
+                      label={row.label}
+                      hint={
+                        row.total > 0
+                          ? `${row.mentioned}/${row.total} runs mentioned`
+                          : "No runs yet"
+                      }
+                      value={`${row.mentionRate}%`}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Per-model share appears after the first live sweep.
+                </p>
+              )
             ) : null}
 
             {view === "trend" ? (
-              data.trend.length >= 2 ? (
+              hasLiveRows && data.trend.length >= 2 ? (
                 <TrendChart
                   data={data.trend}
                   series={[
@@ -304,7 +394,8 @@ export function CitationTrackingCard({
                 />
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Trend needs at least two weekly buckets of live runs.
+                  {firstResultsMessage} Trend charts need at least two weekly
+                  buckets of live runs — no empty chart is shown until then.
                 </p>
               )
             ) : null}
@@ -329,6 +420,104 @@ export function CitationTrackingCard({
                 <p className="text-sm text-muted-foreground">
                   No cited URLs captured yet
                   {showDemo ? " (demo stub has none)." : "."}
+                </p>
+              )
+            ) : null}
+
+            {view === "prompts" ? (
+              tracked.length > 0 ? (
+                <ul className="space-y-3">
+                  {tracked.map((q) => (
+                    <li
+                      key={q.id}
+                      className="rounded-md border border-border px-3 py-3"
+                    >
+                      <div className="mb-1 text-xs text-muted-foreground">
+                        {q.brandName}
+                        {!q.active ? " · paused" : ""}
+                      </div>
+                      {editingId === q.id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                            rows={2}
+                            className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          />
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() =>
+                                void patchQuery(q.id, {
+                                  promptText: editingText.trim(),
+                                })
+                              }
+                              disabled={editingText.trim().length < 3}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => setEditingId(null)}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-sm text-foreground">
+                            {q.promptText}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => {
+                                setEditingId(q.id);
+                                setEditingText(q.promptText);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() =>
+                                void patchQuery(q.id, { active: !q.active })
+                              }
+                            >
+                              {q.active ? "Pause" : "Resume"}
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => void deleteQuery(q.id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No tracked prompts yet.{" "}
+                  <Link
+                    href="/onboard/citations"
+                    className="text-primary underline-offset-2 hover:underline"
+                  >
+                    Run citation onboarding
+                  </Link>
+                  .
                 </p>
               )
             ) : null}
