@@ -28,6 +28,13 @@ type TrackedQueryRow = {
   active: boolean;
 };
 
+type SentimentCounts = {
+  positive: number;
+  neutral: number;
+  negative: number;
+  unclassified: number;
+};
+
 type DashboardPayload = {
   demo: boolean;
   brandName: string | null;
@@ -43,6 +50,12 @@ type DashboardPayload = {
   }>;
   mentionTrend: Array<{ date: string; mentionRate: number }>;
   recentUrls: string[];
+  sentiment?: SentimentCounts;
+  sentimentByModel?: Array<{
+    model: string;
+    label: string;
+    counts: SentimentCounts;
+  }>;
   note: string;
 };
 
@@ -79,6 +92,12 @@ type ComparisonPayload = {
   overall: ShareRow[];
   byModel: Array<{ model: string; label: string; brands: ShareRow[] }>;
   trend: Array<Record<string, string | number>>;
+  sentimentByBrand?: Array<{
+    key: string;
+    label: string;
+    isYou: boolean;
+    counts: SentimentCounts;
+  }>;
   runsAnalyzed: number;
   runsSkipped: number;
   note: string;
@@ -118,6 +137,34 @@ type ViewMode =
   | "competitors"
   | "compare"
   | "fixes";
+
+
+function SentimentSplit({
+  counts,
+  emptyLabel = "No classified mentions yet",
+}: {
+  counts?: SentimentCounts | null;
+  emptyLabel?: string;
+}) {
+  if (!counts) {
+    return <p className="text-sm text-muted-foreground">{emptyLabel}</p>;
+  }
+  const total =
+    counts.positive + counts.neutral + counts.negative + counts.unclassified;
+  if (total === 0) {
+    return <p className="text-sm text-muted-foreground">{emptyLabel}</p>;
+  }
+  return (
+    <div className="flex flex-wrap gap-2">
+      <DataPill tone="soft">Positive {counts.positive}</DataPill>
+      <DataPill tone="outline">Neutral {counts.neutral}</DataPill>
+      <DataPill tone="outline">Negative {counts.negative}</DataPill>
+      {counts.unclassified > 0 ? (
+        <DataPill tone="outline">Unclassified {counts.unclassified}</DataPill>
+      ) : null}
+    </div>
+  );
+}
 
 export function CitationTrackingCard({
   demoMode,
@@ -617,19 +664,56 @@ export function CitationTrackingCard({
 
             {view === "share" ? (
               hasLiveRows || showDemo ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {data.rows.map((row) => (
-                    <StatCard
-                      key={row.model}
-                      label={row.label}
-                      hint={
-                        row.total > 0
-                          ? `${row.mentioned}/${row.total} runs mentioned`
-                          : "No runs yet"
+                <div className="space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {data.rows.map((row) => (
+                      <StatCard
+                        key={row.model}
+                        label={row.label}
+                        hint={
+                          row.total > 0
+                            ? `${row.mentioned}/${row.total} runs mentioned`
+                            : "No runs yet"
+                        }
+                        value={`${row.mentionRate}%`}
+                      />
+                    ))}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Brand mention sentiment
+                      {data.brandName ? ` · ${data.brandName}` : ""}
+                    </p>
+                    <SentimentSplit
+                      counts={data.sentiment}
+                      emptyLabel={
+                        showDemo
+                          ? "Demo stub has no live sentiment."
+                          : "No classified brand mentions yet — null until the classifier succeeds."
                       }
-                      value={`${row.mentionRate}%`}
                     />
-                  ))}
+                    {data.sentimentByModel &&
+                    data.sentimentByModel.some(
+                      (m) =>
+                        m.counts.positive +
+                          m.counts.neutral +
+                          m.counts.negative +
+                          m.counts.unclassified >
+                        0
+                    ) ? (
+                      <div className="space-y-2 pt-1">
+                        {data.sentimentByModel.map((m) => (
+                          <div
+                            key={m.model}
+                            className="flex flex-wrap items-center gap-2"
+                          >
+                            <DataPill tone="outline">{m.label}</DataPill>
+                            <SentimentSplit counts={m.counts} />
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">
@@ -955,6 +1039,25 @@ export function CitationTrackingCard({
                       />
                     ))}
                   </div>
+                  {comparison.sentimentByBrand &&
+                  comparison.sentimentByBrand.length > 0 ? (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Mention sentiment by brand
+                      </p>
+                      {comparison.sentimentByBrand.map((row) => (
+                        <div
+                          key={row.key}
+                          className="flex flex-wrap items-center gap-2"
+                        >
+                          <DataPill tone={row.isYou ? "soft" : "outline"}>
+                            {row.isYou ? `${row.label} (you)` : row.label}
+                          </DataPill>
+                          <SentimentSplit counts={row.counts} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                   {comparison.trend.length >= 2 ? (
                     <TrendChart
                       data={comparison.trend}

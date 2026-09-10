@@ -72,6 +72,13 @@ export async function GET() {
         ),
       })),
       recentUrls: [] as string[],
+      sentiment: {
+        positive: 0,
+        neutral: 0,
+        negative: 0,
+        unclassified: 0,
+      },
+      sentimentByModel: [],
       note: `${demo.note} Live pipeline is ready — save tracked queries and run a sweep to replace this stub.`,
     });
   }

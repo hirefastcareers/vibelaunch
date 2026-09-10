@@ -7,6 +7,7 @@ import {
   runCitationModel,
   type CitationProvider,
 } from "@/lib/geo/model-runners";
+import { attachSentimentsForRun } from "@/lib/geo/attach-sentiments";
 
 export type CitationRunOutcome = {
   model: CitationProvider;
@@ -27,7 +28,7 @@ const PROVIDER_TO_MODEL: Record<CitationProvider, CitationModel> = {
  * Failures are logged and stored with error + brandMentioned=false (never faked).
  */
 export async function executeCitationRun(
-  trackedQuery: Pick<TrackedQuery, "id" | "brandName" | "promptText">,
+  trackedQuery: Pick<TrackedQuery, "id" | "userId" | "brandName" | "promptText">,
   provider: CitationProvider
 ): Promise<CitationRunOutcome> {
   const model = PROVIDER_TO_MODEL[provider];
@@ -50,6 +51,15 @@ export async function executeCitationRun(
         error: null,
       },
     });
+
+    // Phase 5: classify brand + competitor mention sentiment (null on failure).
+    const { brandSentiment } = await attachSentimentsForRun(run, {
+      userId: trackedQuery.userId,
+      brandName: trackedQuery.brandName,
+    });
+    if (brandSentiment) {
+      run.sentiment = brandSentiment;
+    }
 
     return { model: provider, run, ok: true };
   } catch (err) {

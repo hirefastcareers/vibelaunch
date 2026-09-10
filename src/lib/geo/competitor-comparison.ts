@@ -1,4 +1,4 @@
-import type { CitationModel } from "@prisma/client";
+import type { CitationModel, CitationSentiment } from "@prisma/client";
 import { detectBrandMention } from "@/lib/geo/brand-mention";
 import {
   CITATION_MODEL_LABELS,
@@ -21,6 +21,13 @@ export type ShareOfVoiceRow = {
   total: number;
 };
 
+export type SentimentBreakdown = {
+  positive: number;
+  neutral: number;
+  negative: number;
+  unclassified: number;
+};
+
 export type CompetitorComparisonData = {
   yourBrand: string | null;
   competitors: CompetitorBrandRow[];
@@ -32,17 +39,30 @@ export type CompetitorComparisonData = {
   }>;
   /** Weekly aggregate mention rates; keys are `you` plus competitor ids. */
   trend: Array<Record<string, string | number>>;
+  /** Sentiment among detected mentions — your brand + competitors. */
+  sentimentByBrand: Array<{
+    key: string;
+    label: string;
+    isYou: boolean;
+    counts: SentimentBreakdown;
+  }>;
   runsAnalyzed: number;
   runsSkipped: number;
   note: string;
 };
 
 type AnalyzableRun = {
+  id: string;
   runAt: Date;
   model: CitationModel;
   rawResponse: string;
   brandMentioned: boolean;
+  sentiment: CitationSentiment | null;
   error: string | null;
+  competitorMentions: Array<{
+    competitorBrandId: string;
+    sentiment: CitationSentiment | null;
+  }>;
 };
 
 /**
@@ -64,6 +84,9 @@ export async function buildCompetitorComparison(
         runs: {
           orderBy: { runAt: "desc" },
           take: 400,
+          include: {
+            competitorMentions: true,
+          },
         },
       },
     }),
@@ -83,6 +106,7 @@ export async function buildCompetitorComparison(
       overall: [],
       byModel: [],
       trend: [],
+      sentimentByBrand: [],
       runsAnalyzed: 0,
       runsSkipped: 0,
       note: "Add a competitor brand to compare share of voice against your existing citation runs.",
@@ -195,7 +219,42 @@ export async function buildCompetitorComparison(
       ? "No successful citation runs yet. Competitor comparison uses existing raw responses — wait for a sweep, then refresh."
       : `Compared ${successful.length} successful run(s)${
           skipped > 0 ? ` (${skipped} failed run(s) excluded)` : ""
-        }. Competitor mentions re-detected from stored responses — never invented.`;
+        }. Competitor mentions re-detected from stored responses — never invented. Sentiment uses stored classifier labels only (null when unclassified).`;
+
+  const youSentiments = successful
+    .filter((r) => r.brandMentioned)
+    .map((r) => r.sentiment);
+
+  const sentimentByBrand = [
+    {
+      key: "you",
+      label: yourBrand ?? "Your brand",
+      isYou: true,
+      counts: tallySentiment(youSentiments),
+    },
+    ...competitors.map((c) => {
+      const labels: Array<CitationSentiment | null> = [];
+      for (const run of successful) {
+        const stored = run.competitorMentions.find(
+          (m) => m.competitorBrandId === c.id
+        );
+        if (stored) {
+          labels.push(stored.sentiment);
+          continue;
+        }
+        // Fall back to detection-only without inventing sentiment.
+        if (detectBrandMention(run.rawResponse, c.brandName)) {
+          labels.push(null);
+        }
+      }
+      return {
+        key: c.id,
+        label: c.brandName,
+        isYou: false,
+        counts: tallySentiment(labels),
+      };
+    }),
+  ];
 
   return {
     yourBrand,
@@ -203,10 +262,29 @@ export async function buildCompetitorComparison(
     overall,
     byModel,
     trend,
+    sentimentByBrand,
     runsAnalyzed: successful.length,
     runsSkipped: skipped,
     note,
   };
+}
+
+function tallySentiment(
+  values: Array<CitationSentiment | null>
+): SentimentBreakdown {
+  const counts: SentimentBreakdown = {
+    positive: 0,
+    neutral: 0,
+    negative: 0,
+    unclassified: 0,
+  };
+  for (const value of values) {
+    if (value === "positive") counts.positive += 1;
+    else if (value === "neutral") counts.neutral += 1;
+    else if (value === "negative") counts.negative += 1;
+    else counts.unclassified += 1;
+  }
+  return counts;
 }
 
 function toShareRow(

@@ -247,15 +247,17 @@ model CitationRun {
   rawResponse    String             @db.Text
   brandMentioned Boolean            @default(false)
   citedUrls      String[]           @default([])
-  /// Phase 3 — always null in Phase 2 (classifier not implemented).
+  /// Phase 5 — set only when brandMentioned=true and classifier succeeds; else null.
   sentiment      CitationSentiment?
   /// Non-null when the provider call failed; rawResponse may still hold error context.
   error          String?
   trackedQuery   TrackedQuery       @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+  competitorMentions CitationCompetitorMention[]
 
   @@index([trackedQueryId])
   @@index([model])
   @@index([runAt])
+  @@index([brandMentioned, sentiment])
 }
 
 // ─── Phase 4 GEO: competitor brands (user-scoped; detection reuses CitationRun.rawResponse)
@@ -266,9 +268,30 @@ model CompetitorBrand {
   brandName String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mentions  CitationCompetitorMention[]
 
   @@unique([userId, brandName])
   @@index([userId])
+}
+
+// ─── Phase 5 GEO: competitor mention + sentiment on a citation run ──────────
+
+model CitationCompetitorMention {
+  id                String             @id @default(cuid())
+  citationRunId     String
+  competitorBrandId String
+  /// Only written when the competitor was detected in rawResponse.
+  mentioned         Boolean            @default(true)
+  /// Null when classification failed — never invent a label.
+  sentiment         CitationSentiment?
+  createdAt         DateTime           @default(now())
+  citationRun       CitationRun        @relation(fields: [citationRunId], references: [id], onDelete: Cascade)
+  competitorBrand   CompetitorBrand    @relation(fields: [competitorBrandId], references: [id], onDelete: Cascade)
+
+  @@unique([citationRunId, competitorBrandId])
+  @@index([competitorBrandId])
+  @@index([citationRunId])
+  @@index([sentiment])
 }
 
 // ─── Phase 6 GEO: citation-gap → content suggestions (“fix it” loop) ─────

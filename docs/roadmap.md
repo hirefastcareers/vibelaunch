@@ -2,7 +2,7 @@
 
 Product direction: GEO / AI-citation tracking — whether a brand is mentioned across major AI models, tied to a content-fix workflow.
 
-Status reflects what has shipped on the active GEO PR lineage (Phases 2–4 + 6). Older “precursor only” notes on `main` are superseded once those PRs land.
+Status reflects what has shipped on the active GEO PR lineage (Phases 2–6). Older “precursor only” notes on `main` are superseded once those PRs land.
 
 | Phase | Name | Status |
 | ----- | ---- | ------ |
@@ -10,19 +10,21 @@ Status reflects what has shipped on the active GEO PR lineage (Phases 2–4 + 6)
 | 2 | Live citation tracking (5 models) | Complete |
 | 3 | Query library & onboarding | Complete |
 | 4 | Competitor comparison | Complete |
-| **5** | **Sentiment classification** on `CitationRun.sentiment` | **NOT STARTED — next** |
+| **5** | **Sentiment classification** on `CitationRun.sentiment` | **Complete** |
 | **6** | **“Fix it” content loop** (gap → content suggestion) | **Complete** (this phase) |
 | 7 | Real per-tier commercial limits + polish | Not started |
 | 8 | Public marketing site | Not started |
 
-## Phase 5 (next) — Sentiment classification
+## Phase 5 — Sentiment classification (complete)
 
-**Status: NOT STARTED.** Do not skip or silently drop this phase.
+**Status: Complete.**
 
-- Extra model call per successful citation run to tag mention as positive / neutral / negative.
-- Store on `CitationRun.sentiment` (column already exists; always null today).
-- Surface sentiment in dashboard analytics without inventing values when classification fails.
-- Remains explicitly next after Phase 6.
+- Lightweight OpenAI classifier (`gpt-4o-mini` via `OPENAI_SENTIMENT_MODEL`) runs only when `brandMentioned=true`; failures leave `sentiment` null (never invents neutral).
+- Competitor mentions stored on `CitationCompetitorMention` with the same classifier + honesty rules.
+- Dashboard Share + Compare tabs show positive / neutral / negative `DataPill` splits (per brand and per model).
+- Historical backfill runs automatically via `/api/cron/backfill-sentiment` (hourly) and on citation-sweep cron — not a manual Tom step. SQL migrations cannot call OpenAI, so the cron is the ship-time backfill path.
+- TrendChart sentiment filter deferred (see `docs/deferred-work.md`).
+
 
 ## Phase 6 — “Fix it” content loop (complete)
 
