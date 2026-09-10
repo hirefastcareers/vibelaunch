@@ -8,6 +8,11 @@ import {
   type CitationProvider,
 } from "@/lib/geo/model-runners";
 import { attachSentimentsForRun } from "@/lib/geo/attach-sentiments";
+import {
+  citationModelsForPlan,
+  planRunsOnUtcWeekday,
+} from "@/lib/billing/plans";
+import { resolvePlanTier } from "@/lib/billing/limits";
 
 export type CitationRunOutcome = {
   model: CitationProvider;
@@ -91,7 +96,10 @@ export async function executeCitationRun(
   }
 }
 
-/** Run all five providers for a single tracked query. */
+/**
+ * Run plan-allowed providers for a single tracked query.
+ * Free tier never calls anthropic/grok — enforced here, not only in the UI.
+ */
 export async function executeCitationSweepForQuery(
   trackedQueryId: string
 ): Promise<CitationRunOutcome[]> {
@@ -106,21 +114,52 @@ export async function executeCitationSweepForQuery(
     return [];
   }
 
+  const planTier = await resolvePlanTier(trackedQuery.userId);
+  const allowed = new Set<string>(citationModelsForPlan(planTier));
+  const providers = CITATION_PROVIDERS.filter((p) => allowed.has(p));
+
+  if (providers.length === 0) {
+    console.warn(
+      `[citation-run] no providers allowed for plan=${planTier} query=${trackedQueryId}`
+    );
+    return [];
+  }
+
+  console.info(
+    `[citation-run] query=${trackedQueryId} plan=${planTier} models=${providers.join(",")}`
+  );
+
   const outcomes: CitationRunOutcome[] = [];
-  for (const provider of CITATION_PROVIDERS) {
+  for (const provider of providers) {
     outcomes.push(await executeCitationRun(trackedQuery, provider));
   }
   return outcomes;
 }
 
 /**
- * Fan-out entry used by cron: return active query ids for enqueue / inline run.
+ * Active queries whose owner plan is due to run on this UTC weekday.
+ * Free/Starter: Mondays only. Pro: Mondays + Thursdays.
  */
-export async function listActiveTrackedQueryIds(): Promise<string[]> {
+export async function listActiveTrackedQueryIdsDueToday(
+  now = new Date()
+): Promise<string[]> {
   const rows = await prisma.trackedQuery.findMany({
     where: { active: true },
-    select: { id: true },
+    select: {
+      id: true,
+      user: { select: { planTier: true } },
+    },
     orderBy: { createdAt: "asc" },
   });
-  return rows.map((row) => row.id);
+
+  return rows
+    .filter((row) =>
+      planRunsOnUtcWeekday(row.user.planTier ?? "FREE", now.getUTCDay())
+    )
+    .map((row) => row.id);
+}
+
+/** @deprecated Prefer listActiveTrackedQueryIdsDueToday for cron fan-out. */
+export async function listActiveTrackedQueryIds(): Promise<string[]> {
+  return listActiveTrackedQueryIdsDueToday();
 }

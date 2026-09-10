@@ -11,8 +11,10 @@ import {
 import {
   UsageLimitError,
   assertCanRegenerateSuggestion,
+  gateSuggestionGeneration,
   getUsage,
 } from "@/lib/billing/limits";
+import { BILLING_UPGRADE_PATH } from "@/lib/billing/plans";
 import { CITATION_MODELS } from "@/lib/geo/citation-analytics";
 
 export const dynamic = "force-dynamic";
@@ -58,7 +60,10 @@ export async function GET() {
     })),
     usage: {
       planTier: usage.planTier,
-      suggestionRegensPerDay: usage.suggestionRegensPerDay,
+      suggestionGenerationsPerMonth: usage.suggestionGenerationsPerMonth,
+      suggestionGenerationCount: usage.suggestionGenerationCount,
+      suggestionSoftCap: usage.suggestionSoftCap,
+      upgradePath: BILLING_UPGRADE_PATH,
     },
   });
 }
@@ -87,6 +92,24 @@ export async function POST(req: NextRequest) {
   });
   if (!trackedQuery) {
     return NextResponse.json({ error: "Tracked query not found" }, { status: 404 });
+  }
+
+  let softWarned = false;
+  try {
+    const gate = await gateSuggestionGeneration(session.user.id);
+    softWarned = gate.softWarned;
+  } catch (err) {
+    if (err instanceof UsageLimitError) {
+      return NextResponse.json(
+        {
+          error: err.message,
+          code: err.code,
+          upgradePath: err.upgradePath,
+        },
+        { status: 403 }
+      );
+    }
+    throw err;
   }
 
   const gaps = await listCitationGaps(session.user.id);
@@ -147,6 +170,9 @@ export async function POST(req: NextRequest) {
         brandName: gap.brandName,
         promptText: gap.promptText,
       },
+      fairUseWarning: softWarned
+        ? "Fair-use notice: you are over the Pro soft cap of 75 content suggestions this month."
+        : null,
     },
     { status: 201 }
   );
@@ -199,7 +225,11 @@ export async function PATCH(req: NextRequest) {
     } catch (err) {
       if (err instanceof UsageLimitError) {
         return NextResponse.json(
-          { error: err.message, code: err.code },
+          {
+            error: err.message,
+            code: err.code,
+            upgradePath: err.upgradePath,
+          },
           { status: 403 }
         );
       }
@@ -268,6 +298,9 @@ export async function PATCH(req: NextRequest) {
         brandName: existing.trackedQuery.brandName,
         promptText: existing.trackedQuery.promptText,
       },
+      fairUseWarning: regenMeta.softWarned
+        ? "Fair-use notice: you are over the Pro soft cap of 75 content suggestions this month."
+        : null,
     });
   }
 

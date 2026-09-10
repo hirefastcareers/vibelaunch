@@ -89,9 +89,9 @@ const cadence = [
 ];
 
 const pricing = [
-  { tier: "Free", price: "$0", period: "", limits: "1 project · 8 posts/month", features: ["AI post generation", "Basic analytics", "1 citation sweep/week"], featured: false },
-  { tier: "Starter", price: "$19", period: "/mo", limits: "3 projects · 40 posts/month", features: ["Everything in Free", "SEO articles", "Full citation tracking", "Priority queue"], featured: true },
-  { tier: "Pro", price: "$49", period: "/mo", limits: "10 projects · 200 posts/month", features: ["Everything in Starter", "Competitor analysis", "API access", "White-label reports"], featured: false },
+  { tier: "Free", price: "£0", period: "", limits: "5 prompts · 3 models · 1×/week", features: ["OpenAI + Perplexity + Gemini", "1 competitor", "5 content suggestions/mo", "1 project · 8 posts/mo"], featured: false },
+  { tier: "Starter", price: "£15", period: "/mo", limits: "15 prompts · 5 models · 1×/week", features: ["All 5 citation models", "3 competitors", "20 content suggestions/mo", "3 projects · 40 posts/mo"], featured: true },
+  { tier: "Pro", price: "£39", period: "/mo", limits: "25 prompts · 5 models · 2×/week", features: ["Everything in Starter", "10 competitors", "75 suggestions/mo (fair use)", "10 projects · 200 posts/mo"], featured: false },
 ];
 
 const faqs = [

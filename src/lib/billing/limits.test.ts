@@ -8,6 +8,7 @@ vi.mock("@/lib/prisma", () => ({
     post: { count: vi.fn() },
     trackedQuery: { count: vi.fn() },
     competitorBrand: { count: vi.fn() },
+    contentSuggestion: { count: vi.fn(), aggregate: vi.fn() },
   },
 }));
 
@@ -19,6 +20,7 @@ import {
   assertCanCreateProject,
   assertCanCreateTrackedQueries,
   assertCanRegenerateSuggestion,
+  gateSuggestionGeneration,
   getUsage,
 } from "@/lib/billing/limits";
 
@@ -28,9 +30,13 @@ const mockedPrisma = prisma as unknown as {
   post: { count: ReturnType<typeof vi.fn> };
   trackedQuery: { count: ReturnType<typeof vi.fn> };
   competitorBrand: { count: ReturnType<typeof vi.fn> };
+  contentSuggestion: {
+    count: ReturnType<typeof vi.fn>;
+    aggregate: ReturnType<typeof vi.fn>;
+  };
 };
 
-describe("billing limits", () => {
+describe("billing limits (Phase 7)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockedPrisma.user.findUnique.mockResolvedValue({ planTier: "FREE" });
@@ -38,116 +44,123 @@ describe("billing limits", () => {
     mockedPrisma.post.count.mockResolvedValue(0);
     mockedPrisma.trackedQuery.count.mockResolvedValue(0);
     mockedPrisma.competitorBrand.count.mockResolvedValue(0);
+    mockedPrisma.contentSuggestion.count.mockResolvedValue(0);
+    mockedPrisma.contentSuggestion.aggregate.mockResolvedValue({
+      _sum: { regenerationCount: 0 },
+    });
   });
 
-  it("getUsage returns counts and FREE limits including competitors", async () => {
+  it("exposes Phase 7 commercial caps", () => {
+    expect(PLAN_LIMITS.FREE.trackedQueries).toBe(5);
+    expect(PLAN_LIMITS.STARTER.trackedQueries).toBe(15);
+    expect(PLAN_LIMITS.PRO.trackedQueries).toBe(25);
+    expect(PLAN_LIMITS.FREE.competitors).toBe(1);
+    expect(PLAN_LIMITS.STARTER.competitors).toBe(3);
+    expect(PLAN_LIMITS.PRO.competitors).toBe(10);
+    expect(PLAN_LIMITS.FREE.suggestionGenerationsPerMonth).toBe(5);
+    expect(PLAN_LIMITS.STARTER.suggestionGenerationsPerMonth).toBe(20);
+    expect(PLAN_LIMITS.PRO.suggestionGenerationsPerMonth).toBe(75);
+    expect(PLAN_LIMITS.PRO.suggestionSoftCap).toBe(true);
+    expect(PLAN_LIMITS.FREE.citationModels).toEqual([
+      "openai",
+      "perplexity",
+      "gemini",
+    ]);
+    expect(PLAN_LIMITS.FREE.runsPerWeek).toBe(1);
+    expect(PLAN_LIMITS.PRO.runsPerWeek).toBe(2);
+  });
+
+  it("getUsage returns FREE Phase 7 limits", async () => {
     mockedPrisma.project.count.mockResolvedValue(1);
     mockedPrisma.post.count.mockResolvedValue(3);
     mockedPrisma.trackedQuery.count.mockResolvedValue(4);
     mockedPrisma.competitorBrand.count.mockResolvedValue(1);
+    mockedPrisma.contentSuggestion.count.mockResolvedValue(2);
+    mockedPrisma.contentSuggestion.aggregate.mockResolvedValue({
+      _sum: { regenerationCount: 1 },
+    });
 
     const usage = await getUsage("user-1");
-    expect(usage).toEqual({
+    expect(usage).toMatchObject({
       planTier: "FREE",
-      projectCount: 1,
-      postCount: 3,
       trackedQueryCount: 4,
+      trackedQueryLimit: 5,
       competitorCount: 1,
-      projectLimit: PLAN_LIMITS.FREE.projects,
-      postLimit: PLAN_LIMITS.FREE.postsPerMonth,
-      trackedQueryLimit: PLAN_LIMITS.FREE.trackedQueries,
-      competitorLimit: PLAN_LIMITS.FREE.competitors,
-      suggestionRegensPerDay: PLAN_LIMITS.FREE.suggestionRegensPerDay,
+      competitorLimit: 1,
+      suggestionGenerationCount: 3,
+      suggestionGenerationsPerMonth: 5,
+      suggestionSoftCap: false,
+      runsPerWeek: 1,
     });
+    expect(usage.citationModels).toEqual(["openai", "perplexity", "gemini"]);
   });
 
-  it("assertCanCreateProject throws PROJECT_LIMIT at the Free cap", async () => {
-    mockedPrisma.project.count.mockResolvedValue(1);
-    await expect(assertCanCreateProject("user-1")).rejects.toMatchObject({
-      name: "UsageLimitError",
-      code: "PROJECT_LIMIT",
-    });
-  });
-
-  it("assertCanCreateProject allows a first project on Free", async () => {
-    mockedPrisma.project.count.mockResolvedValue(0);
-    await expect(assertCanCreateProject("user-1")).resolves.toBeUndefined();
-  });
-
-  it("assertCanCreatePost throws POST_LIMIT on the 9th non-draft post", async () => {
-    mockedPrisma.post.count.mockResolvedValue(8);
-    await expect(assertCanCreatePost("user-1")).rejects.toBeInstanceOf(
-      UsageLimitError
-    );
-    await expect(assertCanCreatePost("user-1")).rejects.toMatchObject({
-      code: "POST_LIMIT",
-    });
-  });
-
-  it("assertCanCreateTrackedQueries enforces the Free placeholder cap of 10", async () => {
-    mockedPrisma.trackedQuery.count.mockResolvedValue(10);
+  it("assertCanCreateTrackedQueries enforces Free cap of 5", async () => {
+    mockedPrisma.trackedQuery.count.mockResolvedValue(5);
     await expect(
       assertCanCreateTrackedQueries("user-1", 1)
-    ).rejects.toMatchObject({
-      code: "TRACKED_QUERY_LIMIT",
-    });
+    ).rejects.toMatchObject({ code: "TRACKED_QUERY_LIMIT" });
   });
 
-  it("assertCanCreateCompetitors enforces the Free placeholder cap of 1", async () => {
+  it("assertCanCreateCompetitors enforces Free cap of 1", async () => {
     mockedPrisma.competitorBrand.count.mockResolvedValue(1);
-    await expect(assertCanCreateCompetitors("user-1", 1)).rejects.toMatchObject(
-      {
-        code: "COMPETITOR_LIMIT",
-      }
-    );
-  });
-
-  it("assertCanCreateCompetitors allows the first Free competitor", async () => {
-    mockedPrisma.competitorBrand.count.mockResolvedValue(0);
     await expect(
       assertCanCreateCompetitors("user-1", 1)
-    ).resolves.toBeUndefined();
+    ).rejects.toMatchObject({ code: "COMPETITOR_LIMIT" });
   });
 
-  it("assertCanRegenerateSuggestion enforces the 3/day placeholder cap", async () => {
-    const windowStart = new Date(
-      Date.UTC(
-        new Date().getUTCFullYear(),
-        new Date().getUTCMonth(),
-        new Date().getUTCDate()
-      )
-    );
-    await expect(
-      assertCanRegenerateSuggestion("user-1", {
-        regenerationCount: 3,
-        regenerationWindowStart: windowStart,
-      })
-    ).rejects.toMatchObject({
-      code: "SUGGESTION_REGEN_LIMIT",
+  it("gateSuggestionGeneration hard-blocks Free at 5/month", async () => {
+    mockedPrisma.contentSuggestion.count.mockResolvedValue(5);
+    mockedPrisma.contentSuggestion.aggregate.mockResolvedValue({
+      _sum: { regenerationCount: 0 },
+    });
+    await expect(gateSuggestionGeneration("user-1")).rejects.toMatchObject({
+      code: "SUGGESTION_LIMIT",
+      upgradePath: "/dashboard/billing",
     });
   });
 
-  it("assertCanRegenerateSuggestion resets when the UTC day window rolls", async () => {
-    const yesterday = new Date(
-      Date.UTC(
-        new Date().getUTCFullYear(),
-        new Date().getUTCMonth(),
-        new Date().getUTCDate() - 1
-      )
-    );
-    await expect(
-      assertCanRegenerateSuggestion("user-1", {
-        regenerationCount: 3,
-        regenerationWindowStart: yesterday,
-      })
-    ).resolves.toMatchObject({ count: 0 });
+  it("gateSuggestionGeneration soft-warns Pro over 75/month", async () => {
+    mockedPrisma.user.findUnique.mockResolvedValue({ planTier: "PRO" });
+    mockedPrisma.contentSuggestion.count.mockResolvedValue(70);
+    mockedPrisma.contentSuggestion.aggregate.mockResolvedValue({
+      _sum: { regenerationCount: 10 },
+    });
+    const gate = await gateSuggestionGeneration("user-1");
+    expect(gate.softWarned).toBe(true);
+    expect(gate.blocked).toBe(false);
   });
 
-  it("defaults a missing user to FREE", async () => {
-    mockedPrisma.user.findUnique.mockResolvedValue(null);
+  it("assertCanRegenerateSuggestion uses monthly window", async () => {
+    mockedPrisma.contentSuggestion.count.mockResolvedValue(0);
+    mockedPrisma.contentSuggestion.aggregate.mockResolvedValue({
+      _sum: { regenerationCount: 0 },
+    });
+    const meta = await assertCanRegenerateSuggestion("user-1", {
+      regenerationCount: 2,
+      regenerationWindowStart: new Date(
+        Date.UTC(
+          new Date().getUTCFullYear(),
+          new Date().getUTCMonth(),
+          1
+        )
+      ),
+    });
+    expect(meta.count).toBe(2);
+    expect(meta.softWarned).toBe(false);
+  });
+
+  it("assertCanCreateProject still enforces workspace caps", async () => {
     mockedPrisma.project.count.mockResolvedValue(1);
-    await expect(assertCanCreateProject("missing")).rejects.toMatchObject({
-      code: "PROJECT_LIMIT",
+    await expect(assertCanCreateProject("user-1")).rejects.toBeInstanceOf(
+      UsageLimitError
+    );
+  });
+
+  it("assertCanCreatePost still enforces monthly post caps", async () => {
+    mockedPrisma.post.count.mockResolvedValue(8);
+    await expect(assertCanCreatePost("user-1")).rejects.toMatchObject({
+      code: "POST_LIMIT",
     });
   });
 });

@@ -58,7 +58,7 @@ export default function BillingContent({
     <DashboardPage>
       <PageHeader
         title="Billing"
-        description="Project and monthly post limits. Everything else stays available on every plan."
+        description="Plan limits for projects, posts, citation tracking, competitors, and content suggestions."
         actions={
           <StatusPill tone={subscriptionStatus === "active" || !subscriptionStatus ? "ok" : "warn"}>
             {subscriptionStatus
@@ -83,7 +83,7 @@ export default function BillingContent({
           </div>
         </div>
         <div className="rounded-xl border border-border bg-card px-5 py-5 shadow-sm">
-          <p className="text-sm text-muted-foreground">Projects</p>
+          <p className="text-sm text-muted-foreground">Workspace</p>
           <div className="mt-2 flex items-end justify-between gap-4">
             <p className="text-[32px] font-medium tracking-tight">
               {usage.projectCount}
@@ -181,10 +181,10 @@ export default function BillingContent({
                   )}
                 </div>
                 <div className="px-5 py-[18px] text-sm text-muted-foreground lg:border-r border-border">
-                  {limits.projects}
+                  {limits.projects} projects · {limits.postsPerMonth} posts/mo
                 </div>
                 <div className="px-5 py-[18px] text-sm text-muted-foreground lg:border-r border-border">
-                  {limits.postsPerMonth}
+                  {limits.trackedQueries} prompts · {limits.citationModels.length} models · {limits.runsPerWeek}×/week · {limits.competitors} competitors · {limits.suggestionGenerationsPerMonth} suggestions/mo{limits.suggestionSoftCap ? " (fair use)" : ""}
                 </div>
                 <div className="px-5 py-[18px] text-sm">
                   {display.price}

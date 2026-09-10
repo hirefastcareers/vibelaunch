@@ -166,6 +166,23 @@ function SentimentSplit({
   );
 }
 
+
+function formatLimitError(json: {
+  error?: string;
+  code?: string;
+  upgradePath?: string;
+}): string {
+  const base = json.error ?? "Request failed";
+  if (
+    json.code === "TRACKED_QUERY_LIMIT" ||
+    json.code === "COMPETITOR_LIMIT" ||
+    json.code === "SUGGESTION_LIMIT"
+  ) {
+    return `${base} Open Billing to upgrade.`;
+  }
+  return base;
+}
+
 export function CitationTrackingCard({
   demoMode,
   defaultBrand = "",
@@ -192,7 +209,7 @@ export function CitationTrackingCard({
   const [editingCompetitorName, setEditingCompetitorName] = useState("");
   const [gaps, setGaps] = useState<CitationGapRow[]>([]);
   const [suggestions, setSuggestions] = useState<ContentSuggestionRow[]>([]);
-  const [suggestionRegenLimit, setSuggestionRegenLimit] = useState(3);
+  const [suggestionMonthLimit, setSuggestionMonthLimit] = useState(3);
   const [fixesLoading, setFixesLoading] = useState(false);
   const [busyGapKey, setBusyGapKey] = useState<string | null>(null);
   const [busySuggestionId, setBusySuggestionId] = useState<string | null>(null);
@@ -284,7 +301,7 @@ export function CitationTrackingCard({
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Failed to save tracked queries");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to save tracked queries" }));
         return;
       }
       setQueriesText("");
@@ -309,7 +326,7 @@ export function CitationTrackingCard({
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Failed to update query");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to update query" }));
         return;
       }
       setEditingId(null);
@@ -328,7 +345,7 @@ export function CitationTrackingCard({
       );
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Failed to delete query");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to delete query" }));
         return;
       }
       await loadDashboard();
@@ -355,7 +372,7 @@ export function CitationTrackingCard({
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Failed to add competitor");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to add competitor" }));
         return;
       }
       setCompetitorInput("");
@@ -379,7 +396,7 @@ export function CitationTrackingCard({
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Failed to update competitor");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to update competitor" }));
         return;
       }
       setEditingCompetitorId(null);
@@ -398,7 +415,7 @@ export function CitationTrackingCard({
       );
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? "Failed to delete competitor");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to delete competitor" }));
         return;
       }
       await loadDashboard();
@@ -416,16 +433,16 @@ export function CitationTrackingCard({
         error?: string;
         gaps?: CitationGapRow[];
         suggestions?: ContentSuggestionRow[];
-        usage?: { suggestionRegensPerDay?: number };
+        usage?: { suggestionGenerationsPerMonth?: number };
       };
       if (!res.ok) {
-        setError(json.error ?? "Failed to load citation gaps");
+        setError(formatLimitError({ ...json, error: json.error ?? "Failed to load citation gaps" }));
         return;
       }
       setGaps(json.gaps ?? []);
       setSuggestions(json.suggestions ?? []);
-      if (typeof json.usage?.suggestionRegensPerDay === "number") {
-        setSuggestionRegenLimit(json.usage.suggestionRegensPerDay);
+      if (typeof json.usage?.suggestionGenerationsPerMonth === "number") {
+        setSuggestionMonthLimit(json.usage.suggestionGenerationsPerMonth);
       }
     } catch {
       setError("Failed to load citation gaps");
@@ -465,13 +482,19 @@ export function CitationTrackingCard({
       });
       const json = (await res.json()) as {
         error?: string;
+        code?: string;
+        upgradePath?: string;
+        fairUseWarning?: string | null;
         suggestion?: ContentSuggestionRow;
       };
       if (!res.ok || !json.suggestion) {
-        setError(json.error ?? "Could not generate suggestion");
+        setError(formatLimitError({ ...json, error: json.error ?? "Could not generate suggestion" }));
         return;
       }
       setSuggestions((prev) => [json.suggestion!, ...prev]);
+      if (typeof json.fairUseWarning === "string" && json.fairUseWarning) {
+        setError(json.fairUseWarning);
+      }
     } catch {
       setError("Could not generate suggestion");
     } finally {
@@ -493,10 +516,13 @@ export function CitationTrackingCard({
       });
       const json = (await res.json()) as {
         error?: string;
+        code?: string;
+        upgradePath?: string;
+        fairUseWarning?: string | null;
         suggestion?: ContentSuggestionRow;
       };
       if (!res.ok || !json.suggestion) {
-        setError(json.error ?? "Could not update suggestion");
+        setError(formatLimitError({ ...json, error: json.error ?? "Could not update suggestion" }));
         return;
       }
       setSuggestions((prev) =>
@@ -1123,7 +1149,7 @@ export function CitationTrackingCard({
                     Gaps = latest successful run missed your brand, or mention
                     rate under 50% across the last 5 successful runs per model.
                     Suggestions are generated live — failures show as errors, not
-                    placeholders. Regen cap: {suggestionRegenLimit}/suggestion/UTC
+                    placeholders. Suggestion cap: {suggestionMonthLimit}/month
                     day.
                   </p>
                   <Button
