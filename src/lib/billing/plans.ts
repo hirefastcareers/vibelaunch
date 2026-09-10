@@ -11,11 +11,31 @@ export const PLAN_LIMITS: Record<
     postsPerMonth: number;
     trackedQueries: number;
     competitors: number;
+    /** Max regenerations per ContentSuggestion per UTC day (placeholder). */
+    suggestionRegensPerDay: number;
   }
 > = {
-  FREE: { projects: 1, postsPerMonth: 8, trackedQueries: 10, competitors: 1 },
-  STARTER: { projects: 3, postsPerMonth: 40, trackedQueries: 25, competitors: 3 },
-  PRO: { projects: 10, postsPerMonth: 200, trackedQueries: 50, competitors: 10 },
+  FREE: {
+    projects: 1,
+    postsPerMonth: 8,
+    trackedQueries: 10,
+    competitors: 1,
+    suggestionRegensPerDay: 3,
+  },
+  STARTER: {
+    projects: 3,
+    postsPerMonth: 40,
+    trackedQueries: 25,
+    competitors: 3,
+    suggestionRegensPerDay: 3,
+  },
+  PRO: {
+    projects: 10,
+    postsPerMonth: 200,
+    trackedQueries: 50,
+    competitors: 10,
+    suggestionRegensPerDay: 3,
+  },
 };
 
 export const PLAN_DISPLAY: Record<

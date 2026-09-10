@@ -31,6 +31,7 @@ model User {
   projects            Project[]
   trackedQueries      TrackedQuery[]
   competitorBrands    CompetitorBrand[]
+  contentSuggestions  ContentSuggestion[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -209,15 +210,16 @@ model ChangelogEntry {
 // ─── Phase 2 GEO: AI citation tracking (TrackedQuery + CitationRun) ────────
 
 model TrackedQuery {
-  id         String        @id @default(cuid())
-  userId     String
-  brandName  String
-  promptText String
+  id          String              @id @default(cuid())
+  userId      String
+  brandName   String
+  promptText  String
   /// When false, cron / QStash sweeps skip this row.
-  active     Boolean       @default(true)
-  createdAt  DateTime      @default(now())
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  runs       CitationRun[]
+  active      Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runs        CitationRun[]
+  suggestions ContentSuggestion[]
 
   @@index([userId])
   @@index([active])
@@ -269,7 +271,36 @@ model CompetitorBrand {
   @@index([userId])
 }
 
-// ─── Phase 6: GEO (Generative Engine Optimization) ─────────────────────────
+// ─── Phase 6 GEO: citation-gap → content suggestions (“fix it” loop) ─────
+
+enum SuggestionStatus {
+  NEW
+  DISMISSED
+  ACTIONED
+}
+
+model ContentSuggestion {
+  id                      String            @id @default(cuid())
+  userId                  String
+  trackedQueryId          String
+  model                   CitationModel
+  suggestionText          String            @db.Text
+  status                  SuggestionStatus  @default(NEW)
+  /// Regenerations within the current UTC day window (resets via regenerationWindowStart).
+  regenerationCount       Int               @default(0)
+  regenerationWindowStart DateTime?
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+  user                    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery            TrackedQuery      @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([trackedQueryId])
+  @@index([status])
+  @@index([userId, trackedQueryId, model])
+}
+
+// ─── Legacy GEO metrics (project-scoped) ───────────────────────────────────
 
 model GeoMetric {
   id          String   @id @default(cuid())

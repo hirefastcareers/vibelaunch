@@ -84,7 +84,40 @@ type ComparisonPayload = {
   note: string;
 };
 
-type ViewMode = "share" | "trend" | "urls" | "prompts" | "competitors" | "compare";
+type CitationGapRow = {
+  trackedQueryId: string;
+  brandName: string;
+  promptText: string;
+  model: string;
+  modelLabel: string;
+  runsConsidered: number;
+  mentioned: number;
+  mentionRate: number;
+  latestMissed: boolean;
+  latestRunAt: string;
+  reason: "latest_miss" | "low_rate" | "both";
+};
+
+type ContentSuggestionRow = {
+  id: string;
+  trackedQueryId: string;
+  model: string;
+  suggestionText: string;
+  status: "NEW" | "DISMISSED" | "ACTIONED";
+  regenerationCount: number;
+  createdAt: string;
+  brandName: string;
+  promptText: string;
+};
+
+type ViewMode =
+  | "share"
+  | "trend"
+  | "urls"
+  | "prompts"
+  | "competitors"
+  | "compare"
+  | "fixes";
 
 export function CitationTrackingCard({
   demoMode,
@@ -110,6 +143,12 @@ export function CitationTrackingCard({
   const [competitorSaving, setCompetitorSaving] = useState(false);
   const [editingCompetitorId, setEditingCompetitorId] = useState<string | null>(null);
   const [editingCompetitorName, setEditingCompetitorName] = useState("");
+  const [gaps, setGaps] = useState<CitationGapRow[]>([]);
+  const [suggestions, setSuggestions] = useState<ContentSuggestionRow[]>([]);
+  const [suggestionRegenLimit, setSuggestionRegenLimit] = useState(3);
+  const [fixesLoading, setFixesLoading] = useState(false);
+  const [busyGapKey, setBusyGapKey] = useState<string | null>(null);
+  const [busySuggestionId, setBusySuggestionId] = useState<string | null>(null);
 
   const firstResultsMessage = useMemo(() => formatFirstResultsMessage(), []);
 
@@ -321,6 +360,114 @@ export function CitationTrackingCard({
     }
   }
 
+  const loadFixes = useCallback(async () => {
+    setFixesLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/suggestions");
+      const json = (await res.json()) as {
+        error?: string;
+        gaps?: CitationGapRow[];
+        suggestions?: ContentSuggestionRow[];
+        usage?: { suggestionRegensPerDay?: number };
+      };
+      if (!res.ok) {
+        setError(json.error ?? "Failed to load citation gaps");
+        return;
+      }
+      setGaps(json.gaps ?? []);
+      setSuggestions(json.suggestions ?? []);
+      if (typeof json.usage?.suggestionRegensPerDay === "number") {
+        setSuggestionRegenLimit(json.usage.suggestionRegensPerDay);
+      }
+    } catch {
+      setError("Failed to load citation gaps");
+    } finally {
+      setFixesLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (view === "fixes") {
+      void loadFixes();
+    }
+  }, [view, loadFixes]);
+
+  function suggestionForGap(gap: CitationGapRow): ContentSuggestionRow | null {
+    const matches = suggestions.filter(
+      (s) =>
+        s.trackedQueryId === gap.trackedQueryId &&
+        s.model === gap.model &&
+        s.status === "NEW"
+    );
+    return matches[0] ?? null;
+  }
+
+  async function generateSuggestion(gap: CitationGapRow) {
+    const key = `${gap.trackedQueryId}:${gap.model}`;
+    setBusyGapKey(key);
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/suggestions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackedQueryId: gap.trackedQueryId,
+          model: gap.model,
+        }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        suggestion?: ContentSuggestionRow;
+      };
+      if (!res.ok || !json.suggestion) {
+        setError(json.error ?? "Could not generate suggestion");
+        return;
+      }
+      setSuggestions((prev) => [json.suggestion!, ...prev]);
+    } catch {
+      setError("Could not generate suggestion");
+    } finally {
+      setBusyGapKey(null);
+    }
+  }
+
+  async function patchSuggestion(
+    id: string,
+    patch: { status?: "DISMISSED" | "ACTIONED"; regenerate?: boolean }
+  ) {
+    setBusySuggestionId(id);
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/suggestions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...patch }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        suggestion?: ContentSuggestionRow;
+      };
+      if (!res.ok || !json.suggestion) {
+        setError(json.error ?? "Could not update suggestion");
+        return;
+      }
+      setSuggestions((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, ...json.suggestion! } : s))
+      );
+    } catch {
+      setError("Could not update suggestion");
+    } finally {
+      setBusySuggestionId(null);
+    }
+  }
+
+  function gapReasonLabel(reason: CitationGapRow["reason"]): string {
+    if (reason === "both") return "Latest miss · low mention rate";
+    if (reason === "latest_miss") return "Latest run missed brand";
+    return "Mention rate below 50%";
+  }
+
   const competitorAtCap =
     competitorUsage != null &&
     competitorUsage.competitorCount >= competitorUsage.competitorLimit;
@@ -462,6 +609,7 @@ export function CitationTrackingCard({
                 { value: "prompts", label: "Prompts" },
                 { value: "competitors", label: "Competitors" },
                 { value: "compare", label: "Compare" },
+                { value: "fixes", label: "Fixes" },
               ]}
               value={view}
               onChange={(v) => setView(v as ViewMode)}
@@ -863,6 +1011,147 @@ export function CitationTrackingCard({
                   Comparison data is loading…
                 </p>
               )
+            ) : null}
+
+            {view === "fixes" ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-xs text-muted-foreground">
+                    Gaps = latest successful run missed your brand, or mention
+                    rate under 50% across the last 5 successful runs per model.
+                    Suggestions are generated live — failures show as errors, not
+                    placeholders. Regen cap: {suggestionRegenLimit}/suggestion/UTC
+                    day.
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    disabled={fixesLoading}
+                    onClick={() => void loadFixes()}
+                  >
+                    {fixesLoading ? "Loading…" : "Refresh gaps"}
+                  </Button>
+                </div>
+
+                {showEmptyLive || (!hasLiveRows && !showDemo) ? (
+                  <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6">
+                    <p className="text-sm font-medium text-foreground">
+                      No citation runs to find gaps yet
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {firstResultsMessage} Fixes appear after successful model
+                      runs show a miss or low mention rate — we never invent gaps.
+                    </p>
+                  </div>
+                ) : gaps.length === 0 ? (
+                  <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6">
+                    <p className="text-sm font-medium text-foreground">
+                      No citation gaps right now
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Every active prompt with successful runs is currently above
+                      the 50% mention threshold and the latest run mentioned your
+                      brand. Check back after the next Mon/Thu sweep.
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="space-y-3">
+                    {gaps.map((gap) => {
+                      const key = `${gap.trackedQueryId}:${gap.model}`;
+                      const suggestion = suggestionForGap(gap);
+                      const generating = busyGapKey === key;
+                      return (
+                        <li
+                          key={key}
+                          className="rounded-md border border-border px-3 py-3"
+                        >
+                          <div className="flex flex-wrap items-center gap-2">
+                            <DataPill tone="outline">{gap.modelLabel}</DataPill>
+                            <DataPill tone="soft">
+                              {gap.mentionRate}% · {gap.mentioned}/
+                              {gap.runsConsidered}
+                            </DataPill>
+                            <span className="text-xs text-muted-foreground">
+                              {gapReasonLabel(gap.reason)}
+                            </span>
+                          </div>
+                          <p className="mt-2 text-sm text-foreground">
+                            {gap.promptText}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Brand: {gap.brandName}
+                          </p>
+
+                          {suggestion ? (
+                            <div className="mt-3 space-y-3">
+                              <pre className="whitespace-pre-wrap rounded-md bg-muted/40 px-3 py-2 font-sans text-sm text-foreground">
+                                {suggestion.suggestionText}
+                              </pre>
+                              <div className="flex flex-wrap gap-2">
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="secondary"
+                                  disabled={busySuggestionId === suggestion.id}
+                                  onClick={() =>
+                                    void patchSuggestion(suggestion.id, {
+                                      regenerate: true,
+                                    })
+                                  }
+                                >
+                                  {busySuggestionId === suggestion.id
+                                    ? "Working…"
+                                    : "Regenerate"}
+                                </Button>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="secondary"
+                                  disabled={busySuggestionId === suggestion.id}
+                                  onClick={() =>
+                                    void patchSuggestion(suggestion.id, {
+                                      status: "ACTIONED",
+                                    })
+                                  }
+                                >
+                                  Mark actioned
+                                </Button>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="secondary"
+                                  disabled={busySuggestionId === suggestion.id}
+                                  onClick={() =>
+                                    void patchSuggestion(suggestion.id, {
+                                      status: "DISMISSED",
+                                    })
+                                  }
+                                >
+                                  Dismiss
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mt-3">
+                              <Button
+                                type="button"
+                                size="sm"
+                                disabled={generating}
+                                onClick={() => void generateSuggestion(gap)}
+                              >
+                                {generating
+                                  ? "Generating…"
+                                  : "Generate content brief"}
+                              </Button>
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             ) : null}
           </div>
         ) : null}

@@ -8,7 +8,8 @@ export class UsageLimitError extends Error {
       | "PROJECT_LIMIT"
       | "POST_LIMIT"
       | "TRACKED_QUERY_LIMIT"
-      | "COMPETITOR_LIMIT",
+      | "COMPETITOR_LIMIT"
+      | "SUGGESTION_REGEN_LIMIT",
   ) {
     super(message);
     this.name = "UsageLimitError";
@@ -25,6 +26,7 @@ export interface UsageSnapshot {
   postLimit: number;
   trackedQueryLimit: number;
   competitorLimit: number;
+  suggestionRegensPerDay: number;
 }
 
 function startOfUtcMonth(now = new Date()): Date {
@@ -68,6 +70,7 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
     postLimit: limits.postsPerMonth,
     trackedQueryLimit: limits.trackedQueries,
     competitorLimit: limits.competitors,
+    suggestionRegensPerDay: limits.suggestionRegensPerDay,
   };
 }
 
@@ -125,4 +128,39 @@ export async function assertCanCreateCompetitors(
       "COMPETITOR_LIMIT",
     );
   }
+}
+
+/**
+ * Ensure a ContentSuggestion can be regenerated under the daily placeholder cap.
+ * Window is UTC day; count lives on the suggestion row.
+ */
+export async function assertCanRegenerateSuggestion(
+  userId: string,
+  suggestion: {
+    regenerationCount: number;
+    regenerationWindowStart: Date | null;
+  },
+  now = new Date(),
+): Promise<{ count: number; windowStart: Date }> {
+  const usage = await getUsage(userId);
+  const windowStart = startOfUtcDay(now);
+  const inWindow =
+    suggestion.regenerationWindowStart != null &&
+    suggestion.regenerationWindowStart.getTime() >= windowStart.getTime();
+  const count = inWindow ? suggestion.regenerationCount : 0;
+
+  if (count >= usage.suggestionRegensPerDay) {
+    throw new UsageLimitError(
+      `Suggestion regeneration limit reached (${usage.suggestionRegensPerDay}/day on ${usage.planTier}). Try again tomorrow.`,
+      "SUGGESTION_REGEN_LIMIT",
+    );
+  }
+
+  return { count, windowStart };
+}
+
+function startOfUtcDay(now = new Date()): Date {
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  );
 }

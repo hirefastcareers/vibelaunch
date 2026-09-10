@@ -18,6 +18,7 @@ import {
   assertCanCreatePost,
   assertCanCreateProject,
   assertCanCreateTrackedQueries,
+  assertCanRegenerateSuggestion,
   getUsage,
 } from "@/lib/billing/limits";
 
@@ -56,6 +57,7 @@ describe("billing limits", () => {
       postLimit: PLAN_LIMITS.FREE.postsPerMonth,
       trackedQueryLimit: PLAN_LIMITS.FREE.trackedQueries,
       competitorLimit: PLAN_LIMITS.FREE.competitors,
+      suggestionRegensPerDay: PLAN_LIMITS.FREE.suggestionRegensPerDay,
     });
   });
 
@@ -105,6 +107,40 @@ describe("billing limits", () => {
     await expect(
       assertCanCreateCompetitors("user-1", 1)
     ).resolves.toBeUndefined();
+  });
+
+  it("assertCanRegenerateSuggestion enforces the 3/day placeholder cap", async () => {
+    const windowStart = new Date(
+      Date.UTC(
+        new Date().getUTCFullYear(),
+        new Date().getUTCMonth(),
+        new Date().getUTCDate()
+      )
+    );
+    await expect(
+      assertCanRegenerateSuggestion("user-1", {
+        regenerationCount: 3,
+        regenerationWindowStart: windowStart,
+      })
+    ).rejects.toMatchObject({
+      code: "SUGGESTION_REGEN_LIMIT",
+    });
+  });
+
+  it("assertCanRegenerateSuggestion resets when the UTC day window rolls", async () => {
+    const yesterday = new Date(
+      Date.UTC(
+        new Date().getUTCFullYear(),
+        new Date().getUTCMonth(),
+        new Date().getUTCDate() - 1
+      )
+    );
+    await expect(
+      assertCanRegenerateSuggestion("user-1", {
+        regenerationCount: 3,
+        regenerationWindowStart: yesterday,
+      })
+    ).resolves.toMatchObject({ count: 0 });
   });
 
   it("defaults a missing user to FREE", async () => {
