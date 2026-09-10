@@ -30,6 +30,7 @@ model User {
   sessions            Session[]
   projects            Project[]
   trackedQueries      TrackedQuery[]
+  competitorBrands    CompetitorBrand[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -253,6 +254,19 @@ model CitationRun {
   @@index([trackedQueryId])
   @@index([model])
   @@index([runAt])
+}
+
+// ─── Phase 4 GEO: competitor brands (user-scoped; detection reuses CitationRun.rawResponse)
+
+model CompetitorBrand {
+  id        String   @id @default(cuid())
+  userId    String
+  brandName String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, brandName])
+  @@index([userId])
 }
 
 // ─── Phase 6: GEO (Generative Engine Optimization) ─────────────────────────

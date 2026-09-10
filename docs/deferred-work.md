@@ -4,13 +4,15 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
+- [2026-09-10] **Phase 7 — real per-tier competitor limits.** Phase 4 ships placeholder caps (FREE 1 / STARTER 3 / PRO 10) in `PLAN_LIMITS.competitors`. Revisit with pricing before enforcing commercially.
+- [2026-09-10] **Phase 4 competitor UX polish deferred:** dedicated Competitors page (currently tabs on the citation card); persist competitor-mention results on CitationRun instead of re-detecting on read; per-prompt competitor subsets (competitors are user-scoped today); export/CSV of share-of-voice.
+
 - [2026-09-10] **Phase 7 — real per-tier tracked-prompt limits.** Phase 3 ships placeholder caps (FREE 10 / STARTER 25 / PRO 50) in `PLAN_LIMITS.trackedQueries`. Revisit with pricing before enforcing commercially.
 - [2026-09-10] **Phase 3 onboarding UX polish deferred:** optional “run sweep now” after confirming prompts; billing access while citation onboarding incomplete; richer prompt-library page separate from the Home citation card; multi-brand / project-scoped TrackedQuery (schema remains user-scoped).
 - [2026-09-10] **Phase 3 — OpenAI prompt generation dependency.** Starter prompts require `OPENAI_API_KEY`. Failures surface as errors (no invented prompts). No Anthropic/Gemini fallback for this generator yet.
 
 - [2026-09-10] **Phase 2 citation tracking — estimated API cost (review before raising frequency).** Per TrackedQuery sweep = **5** model calls. Rough list prices (USD, subject to change): OpenAI `gpt-4o-mini` + `web_search_preview` ≈ $0.01–0.05/call (search tool surcharge dominates); Anthropic `claude-3-5-haiku` ≈ $0.001–0.01/call (no web tool); Gemini Flash + Google Search grounding ≈ $0.01–0.035/call; Perplexity `sonar` ≈ $0.005–0.02/call; Grok `grok-4-fast` ≈ $0.001–0.01/call (chat completions, no native citations). **Blended estimate ~$0.04–0.12 per query per sweep.** At 2×/week: ~$0.08–0.24/query/week. Log actual invoices after first production week before increasing cadence.
 - [2026-09-10] **Phase 3 — sentiment classification** on `CitationRun.sentiment` (schema column exists, always null in Phase 2).
-- [2026-09-10] **Phase 3 — competitor comparison view** (share-of-voice vs named rivals).
 - [2026-09-10] **Microsoft Copilot support** — no clean public API to query Copilot-as-end-users-see-it as of Sept 2026; revisit if Microsoft exposes one.
 - [2026-09-10] **Meta Muse support** — launched Sept 8 2026 as a closed consumer action-agent with no public developer API; not currently queryable for citation tracking, revisit if/when an API surfaces.
 - [2026-09-10] **OpenAI web_search ambiguity:** Official docs recommend Responses API `tools: [{ type: "web_search" }]`, but `openai@4.104` TypeScript types only expose `web_search_preview`. Implementation tries `web_search_preview` first, then falls back to untyped `web_search`. Prefer SDK bump when types catch up.
@@ -32,6 +34,9 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 - [2026-09-08] Wiring checklist refreshed against morning env + afternoon Replies/Ship work. See `docs/plan-2026-09-08.md` for the remaining P0 order.
 
 ## Resolved
+
+- [2026-09-10] Phase 4 competitor comparison: user-scoped `CompetitorBrand`, re-detect mentions from existing `CitationRun.rawResponse` (no extra model calls), Competitors + Compare tabs, placeholder plan caps, empty states without blank charts.
+
 
 - [2026-09-10] Phase 3 query library & onboarding UX: `/onboard/citations` brand+descriptors → AI prompt draft → review/confirm → TrackedQuery rows; dashboard gate when zero TrackedQueries; prompt list edit/pause/delete; placeholder plan caps; first-results empty state tied to Mon/Thu 06:00 UTC cron (no empty charts).
 
