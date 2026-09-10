@@ -23,7 +23,7 @@ describe("toServerlessDatabaseUrl", () => {
   });
 
   it("leaves localhost URLs unchanged", () => {
-    const local = "postgresql://user:password@localhost:5432/vibelaunch";
+    const local = "postgresql://user:password@localhost:5432/xoopa";
     expect(toServerlessDatabaseUrl(local)).toBe(local);
   });
 });

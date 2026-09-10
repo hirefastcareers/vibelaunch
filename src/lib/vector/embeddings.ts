@@ -60,6 +60,7 @@ export async function storePostEmbedding(
 
 /**
  * Reinforce high-performing post embeddings (ERI > threshold).
+ * Flagged OFF for Xoopa GEO pivot (see FEATURES.ERI_REINFORCEMENT).
  */
 export async function reinforceHighPerformingEmbeddings(
   eriThreshold = 2.0

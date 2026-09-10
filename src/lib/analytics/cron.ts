@@ -4,6 +4,7 @@ import { fetchTweetMetrics } from "@/lib/x/publish";
 
 /**
  * Run ERI analytics cron: fetch metrics for all published posts and snapshot project ERI.
+ * Flagged OFF for Xoopa GEO pivot (see FEATURES.ERI_ANALYTICS). Kept for possible restore.
  */
 export async function runEriAnalyticsCron(): Promise<{
   processed: number;

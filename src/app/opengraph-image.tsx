@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getLogoMarkGeometry } from "@/components/logo";
 
 export const runtime = "nodejs";
-export const alt = "Xoopa - Autonomous Growth for Indie Builders";
+export const alt = "Xoopa - GEO and AI Citation Tracking";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -93,7 +93,7 @@ export default async function Image() {
               maxWidth: 900,
             }}
           >
-            Autonomous growth for indie builders.
+            Get cited by AI search.
           </div>
           <div
             style={{
@@ -105,7 +105,7 @@ export default async function Image() {
               color: MUTED,
             }}
           >
-            SEO · GEO · X
+            GEO · CITATIONS · X
           </div>
         </div>
       </div>

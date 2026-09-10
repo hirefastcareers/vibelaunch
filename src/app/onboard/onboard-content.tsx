@@ -82,7 +82,7 @@ export default function OnboardPage() {
     <DashboardPage>
       <PageHeader
         title="Create a project"
-        description="Give Xoopa a product URL and a writing tone. It will pull context and set up the rest of the growth loop."
+        description="Give Xoopa a product URL and a writing tone. It will pull context and set up citation tracking."
       />
 
       <div className="grid items-start gap-6 lg:grid-cols-[0.9fr_1.1fr]">

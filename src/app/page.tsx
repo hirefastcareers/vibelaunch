@@ -161,8 +161,8 @@ export default async function HomePage() {
               everywhere.
             </h1>
             <p className="mx-auto mb-10 max-w-[52ch] text-lg leading-relaxed text-muted-foreground md:text-xl">
-              Xoopa turns your product updates into viral social posts, Google-ranked articles,
-              and AI search citations - automatically.
+              Xoopa tracks whether AI search cites your brand, and turns product updates into
+              citeable posts and articles you can distribute on X.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href={ctaHref} className="ds-btn px-8 py-4 text-sm">

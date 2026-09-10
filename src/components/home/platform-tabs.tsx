@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 
 const REINFORCE_PHASES = [
   { sub: "PUBLISHED 09:41", state: "SHIPPED", tint: "muted" as const },
-  { sub: "ERI 1.4", state: "SHIPPED", tint: "muted" as const },
-  { sub: "ERI 2.3", state: "SHIPPED", tint: "muted" as const },
-  { sub: "ERI 2.3", state: "REINFORCED", tint: "accent" as const },
+  { sub: "CITED 1/4", state: "SHIPPED", tint: "muted" as const },
+  { sub: "CITED 3/4", state: "SHIPPED", tint: "muted" as const },
+  { sub: "SHARE 42%", state: "TRACKED", tint: "accent" as const },
 ];
 
 const PHASE_MS = [3500, 3500, 3500, 2000];
@@ -18,11 +18,11 @@ const modules = [
   {
     n: "01",
     short: "POSTS & HOOKS",
-    title: "AI Post Generator & Hooks",
-    desc: "Turn product updates into viral social posts that learn from what already worked.",
+    title: "Citeable Post Generator",
+    desc: "Turn product updates into posts AI search can quote, then distribute them on X.",
     bullets: [
-      "Hooks drafted from your own best-performing posts, not a generic prompt",
-      "Every draft scored before it queues, so weak posts never ship",
+      "Drafts oriented toward tracked queries and citeable facts",
+      "X publishing kept as one distribution channel, not a growth engine",
       "Reply threads and follow-ups planned with the original post",
     ],
     meta: "QSTASH QUEUE · APPROVE OR AUTOPILOT",
@@ -409,7 +409,7 @@ export function PlatformTabs() {
       <div className="flex flex-col gap-2 border-t border-border bg-background px-5 py-4 text-[12px] tracking-[0.02em] text-muted-foreground md:flex-row md:items-center md:justify-between">
         <span className="inline-flex items-center gap-2">
           <span className="text-primary">↺</span>
-          Engagement data feeds back into generation. Week four writes better hooks than week one.
+          Citation share is the north star. Week four drafts better citeable facts than week one.
         </span>
         <span className="text-primary">Designed for operators, not just readers.</span>
       </div>

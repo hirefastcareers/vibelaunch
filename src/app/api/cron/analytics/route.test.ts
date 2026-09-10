@@ -35,4 +35,17 @@ describe("/api/cron/analytics", () => {
     expect(res.status).toBe(401);
     await expect(res.json()).resolves.toEqual({ error: "Unauthorized" });
   });
+
+  it("skips ERI work when the GEO pivot flag is off", async () => {
+    const { GET } = await import("./route");
+    const { runEriAnalyticsCron } = await import("@/lib/analytics/cron");
+    const res = await GET(request("Bearer test-cron-secret"));
+
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({
+      skipped: true,
+      reason: "ERI_ANALYTICS feature flag is off",
+    });
+    expect(runEriAnalyticsCron).not.toHaveBeenCalled();
+  });
 });

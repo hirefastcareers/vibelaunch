@@ -25,7 +25,9 @@ describe("llm-schema", () => {
     expect(schema.publisher).toMatchObject({ name: "Xoopa" });
     expect(schema.offers).toMatchObject({ price: "0", priceCurrency: "USD" });
     expect(schema.audience.audienceType).toContain("Indie hackers");
-    expect(schema.featureList).toContain("Cited in ChatGPT, Perplexity, and Claude");
+    expect(schema.featureList).toContain(
+      "AI citation tracking across ChatGPT, Perplexity, Claude, and Gemini"
+    );
   });
 
   it("builds FAQPage with comparison question", () => {

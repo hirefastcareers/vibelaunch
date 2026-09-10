@@ -25,7 +25,7 @@ export function getNextAction(input: NextActionInput): NextAction {
   if (input.projectCount === 0) {
     return {
       title: "Create your first project",
-      description: "Add a product URL and tone so Xoopa can draft posts, articles, and replies.",
+      description: "Add a product URL and tone so Xoopa can track citations and draft citeable posts.",
       href: "/onboard",
       cta: "Set up a project",
     };

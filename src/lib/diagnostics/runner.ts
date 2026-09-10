@@ -84,8 +84,8 @@ export async function runFeedbackLoopTest(projectId: string): Promise<TestSuiteR
         embeddingsCount: vectors.length,
         vectorSearchReady: hasVectors,
         message: hasVectors
-          ? "The system is learning from your viral posts."
-          : "No viral posts to learn from yet.",
+          ? "The system is learning from your published posts."
+          : "No published posts to learn from yet.",
       },
     };
   } catch (error: unknown) {

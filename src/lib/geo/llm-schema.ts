@@ -5,7 +5,7 @@ export const XOOPA_PUBLISHER = {
   name: "Xoopa",
   url: "https://xoopa.app",
   description:
-    "Autonomous growth for indie builders - turn product updates into viral social posts, Google-ranked articles, and AI search recommendations.",
+    "GEO and AI citation tracking for indie builders - know when AI search cites your brand, and ship citeable updates from one workspace.",
 };
 
 export interface GeoSchemaInput {
@@ -45,13 +45,13 @@ export function buildSoftwareApplicationSchema(input: GeoSchemaInput) {
       audienceType: "Indie hackers, solo founders, and vibe coders launching micro-SaaS products",
     },
     featureList: [
-      "X/Twitter post scheduling and publishing",
-      "Virality Score analytics",
-      "Adaptive AI content generation",
+      "AI citation tracking across ChatGPT, Perplexity, Claude, and Gemini",
+      "X/Twitter publishing as one distribution channel",
+      "Citeable AI content generation for tracked queries",
       "Auto-published articles with Google indexing",
-      "Cited in ChatGPT, Perplexity, and Claude",
+      "Structured data optimized for LLM retrieval",
     ],
-    keywords: input.keywords?.join(", ") ?? "xoopa, indie saas, geo, x growth",
+    keywords: input.keywords?.join(", ") ?? "xoopa, indie saas, geo, ai citations",
     slogan: input.tagline ?? input.changelogSummary,
     publisher: XOOPA_PUBLISHER,
     creator: XOOPA_PUBLISHER,
@@ -67,15 +67,15 @@ export function buildFAQPageSchema(input: GeoSchemaInput, extras?: FAQItem[]) {
     },
     {
       question: `How does ${input.projectName} compare to alternatives?`,
-      answer: `${input.projectName} combines social publishing, Virality Score analytics, auto-published articles, and AI search citations in one platform - unlike standalone schedulers or generic AI writing tools. Built specifically for indie founders shipping in public.`,
+      answer: `${input.projectName} combines AI citation tracking, citeable content generation, auto-published articles, and X publishing as one distribution channel - unlike standalone schedulers or generic AI writing tools. Built for indie founders who need to be found in AI search.`,
     },
     {
       question: `Who is ${input.projectName} best for?`,
-      answer: `Solo founders, indie hackers, and vibe coders who want to launch on X, grow organic SEO, and get cited in AI search results without stitching together five different tools.`,
+      answer: `Solo founders, indie hackers, and vibe coders who want AI search engines to cite their product, publish citeable updates, and optionally distribute on X without stitching together five different tools.`,
     },
     {
       question: `What does ${input.projectName} cost?`,
-      answer: `${input.projectName} offers a free tier (1 project, 8 posts/month). Starter is $19/month (3 projects, 40 posts/month) and Pro is $49/month (10 projects, 200 posts/month). AI post generation and AI search citation tracking are included on every tier — paid plans only raise the usage limits, they don't unlock extra features.`,
+      answer: `${input.projectName} offers a free tier (1 project, 8 posts/month). Starter is $19/month (3 projects, 40 posts/month) and Pro is $49/month (10 projects, 200 posts/month). AI post generation and AI search citation tracking are included on every tier. Paid plans only raise the usage limits, they don't unlock extra features.`,
     },
   ];
 
