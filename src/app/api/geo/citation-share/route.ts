@@ -58,11 +58,17 @@ export async function GET() {
         anthropic: point.claude,
         gemini: point.gemini,
         perplexity: point.perplexity,
+        grok: point.grok,
       })),
       mentionTrend: demo.trend.map((point) => ({
         date: point.date,
         mentionRate: Math.round(
-          (point.chatgpt + point.perplexity + point.claude + point.gemini) / 4
+          (point.chatgpt +
+            point.perplexity +
+            point.claude +
+            point.gemini +
+            point.grok) /
+            5
         ),
       })),
       recentUrls: [] as string[],
@@ -75,8 +81,8 @@ export async function GET() {
 }
 
 function mapDemoProvider(
-  provider: "chatgpt" | "perplexity" | "claude" | "gemini"
-): "openai" | "anthropic" | "gemini" | "perplexity" {
+  provider: "chatgpt" | "perplexity" | "claude" | "gemini" | "grok"
+): "openai" | "anthropic" | "gemini" | "perplexity" | "grok" {
   switch (provider) {
     case "chatgpt":
       return "openai";
@@ -86,5 +92,7 @@ function mapDemoProvider(
       return "gemini";
     case "perplexity":
       return "perplexity";
+    case "grok":
+      return "grok";
   }
 }

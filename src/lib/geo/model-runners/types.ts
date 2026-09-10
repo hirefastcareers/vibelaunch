@@ -1,4 +1,9 @@
-export type CitationProvider = "openai" | "anthropic" | "gemini" | "perplexity";
+export type CitationProvider =
+  | "openai"
+  | "anthropic"
+  | "gemini"
+  | "perplexity"
+  | "grok";
 
 export type ModelRunResult = {
   rawResponse: string;

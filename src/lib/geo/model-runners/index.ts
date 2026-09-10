@@ -3,12 +3,14 @@ import { runOpenAI } from "./openai";
 import { runAnthropic } from "./anthropic";
 import { runGemini } from "./gemini";
 import { runPerplexity } from "./perplexity";
+import { runGrok } from "./grok";
 
 export const CITATION_PROVIDERS: CitationProvider[] = [
   "openai",
   "anthropic",
   "gemini",
   "perplexity",
+  "grok",
 ];
 
 export async function runCitationModel(
@@ -24,6 +26,8 @@ export async function runCitationModel(
       return runGemini(prompt);
     case "perplexity":
       return runPerplexity(prompt);
+    case "grok":
+      return runGrok(prompt);
   }
 }
 

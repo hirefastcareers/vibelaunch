@@ -19,12 +19,13 @@ describe("citation-share demo stub", () => {
   it("returns labeled mock rows for a brand and queries", () => {
     const result = buildCitationShareDemo("Acme", ["best CRM", "indie tools"]);
     expect(result.demo).toBe(true);
-    expect(result.rows).toHaveLength(4);
+    expect(result.rows).toHaveLength(5);
     expect(result.rows.map((r) => r.provider)).toEqual([
       "chatgpt",
       "perplexity",
       "claude",
       "gemini",
+      "grok",
     ]);
     expect(result.note.toLowerCase()).toContain("demo");
   });

@@ -97,7 +97,7 @@ export interface QueueCitationSweepPayload {
 }
 
 /**
- * Enqueue a single TrackedQuery citation sweep (all 4 models) via QStash.
+ * Enqueue a single TrackedQuery citation sweep (all 5 models) via QStash.
  */
 export async function enqueueCitationSweep(
   payload: QueueCitationSweepPayload

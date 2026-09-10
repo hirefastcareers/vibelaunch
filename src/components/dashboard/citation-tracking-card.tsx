@@ -35,6 +35,7 @@ type DashboardPayload = {
     anthropic: number;
     gemini: number;
     perplexity: number;
+    grok: number;
   }>;
   mentionTrend: Array<{ date: string; mentionRate: number }>;
   recentUrls: string[];
@@ -292,6 +293,11 @@ export function CitationTrackingCard({
                       key: "gemini",
                       label: "Gemini",
                       featured: featured?.model === "gemini",
+                    },
+                    {
+                      key: "grok",
+                      label: "Grok",
+                      featured: featured?.model === "grok",
                     },
                   ]}
                   xKey="date"

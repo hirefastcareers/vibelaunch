@@ -227,6 +227,7 @@ enum CitationModel {
   anthropic
   gemini
   perplexity
+  grok
 }
 
 enum CitationSentiment {

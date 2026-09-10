@@ -19,6 +19,7 @@ const PROVIDER_TO_MODEL: Record<CitationProvider, CitationModel> = {
   anthropic: "anthropic",
   gemini: "gemini",
   perplexity: "perplexity",
+  grok: "grok",
 };
 
 /**
@@ -80,7 +81,7 @@ export async function executeCitationRun(
   }
 }
 
-/** Run all four providers for a single tracked query. */
+/** Run all five providers for a single tracked query. */
 export async function executeCitationSweepForQuery(
   trackedQueryId: string
 ): Promise<CitationRunOutcome[]> {

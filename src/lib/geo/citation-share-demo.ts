@@ -1,13 +1,14 @@
 import type { LLMProvider } from "./llm-schema";
 
-/** Providers shown in the Phase 1 citation-share stub (includes Gemini). */
-export type CitationShareProvider = LLMProvider | "gemini";
+/** Providers shown in the demo citation-share stub (5 models including Grok). */
+export type CitationShareProvider = LLMProvider | "gemini" | "grok";
 
 export const CITATION_SHARE_PROVIDERS: CitationShareProvider[] = [
   "chatgpt",
   "perplexity",
   "claude",
   "gemini",
+  "grok",
 ];
 
 export const CITATION_SHARE_LABELS: Record<CitationShareProvider, string> = {
@@ -15,6 +16,7 @@ export const CITATION_SHARE_LABELS: Record<CitationShareProvider, string> = {
   perplexity: "Perplexity",
   claude: "Claude",
   gemini: "Gemini",
+  grok: "Grok",
 };
 
 export type CitationShareRow = {
@@ -33,7 +35,14 @@ export type CitationShareDemoResult = {
   trackedQueries: string[];
   generatedAt: string;
   rows: CitationShareRow[];
-  trend: Array<{ date: string; chatgpt: number; perplexity: number; claude: number; gemini: number }>;
+  trend: Array<{
+    date: string;
+    chatgpt: number;
+    perplexity: number;
+    claude: number;
+    gemini: number;
+    grok: number;
+  }>;
   note: string;
 };
 
@@ -46,12 +55,16 @@ export function buildCitationShareDemo(
   trackedQueries: string[]
 ): CitationShareDemoResult {
   const seed = hashSeed(`${brandName}|${trackedQueries.join("|")}`);
-  const queries = trackedQueries.length > 0 ? trackedQueries : ["best tools like this"];
+  const queries =
+    trackedQueries.length > 0 ? trackedQueries : ["best tools like this"];
   const total = queries.length;
 
   const shares = CITATION_SHARE_PROVIDERS.map((provider, i) => {
     const citationShare = 18 + ((seed + i * 17) % 55);
-    const citedQueries = Math.min(total, 1 + ((seed + i * 3) % Math.max(total, 1)));
+    const citedQueries = Math.min(
+      total,
+      1 + ((seed + i * 3) % Math.max(total, 1))
+    );
     const trendRoll = (seed + i) % 3;
     return {
       provider,
@@ -59,7 +72,11 @@ export function buildCitationShareDemo(
       citationShare,
       citedQueries,
       totalQueries: total,
-      trend: (trendRoll === 0 ? "up" : trendRoll === 1 ? "down" : "flat") as CitationShareRow["trend"],
+      trend: (trendRoll === 0
+        ? "up"
+        : trendRoll === 1
+          ? "down"
+          : "flat") as CitationShareRow["trend"],
     };
   });
 
@@ -71,6 +88,7 @@ export function buildCitationShareDemo(
       perplexity: clamp(base + 15 + week * 2 + ((seed + 2) % 7)),
       claude: clamp(base + 12 + week * 2 + ((seed + 4) % 6)),
       gemini: clamp(base + 10 + week * 1 + ((seed + 6) % 8)),
+      grok: clamp(base + 14 + week * 2 + ((seed + 8) % 5)),
     };
   });
 
@@ -81,7 +99,7 @@ export function buildCitationShareDemo(
     generatedAt: new Date().toISOString(),
     rows: shares,
     trend,
-    note: "Demo stub — not live citation data. Real wiring needs Perplexity API plus a ChatGPT/Gemini citation strategy.",
+    note: "Demo stub — not live citation data. Live pipeline queries ChatGPT, Claude, Gemini, Perplexity, and Grok.",
   };
 }
 
@@ -100,5 +118,5 @@ function clamp(n: number): number {
 function isoWeekAgo(weeksAgo: number): string {
   const d = new Date();
   d.setUTCDate(d.getUTCDate() - weeksAgo * 7);
-  return d.toISOString().split("T")[0];
+  return d.toISOString().slice(0, 10);
 }

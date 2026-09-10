@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 /**
- * QStash worker: run all 4 model providers for one TrackedQuery.
+ * QStash worker: run all 5 model providers for one TrackedQuery.
  */
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("upstash-signature") ?? "";
