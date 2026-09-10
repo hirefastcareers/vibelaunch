@@ -4,6 +4,10 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
+- [2026-09-10] **Phase 7 — real per-tier tracked-prompt limits.** Phase 3 ships placeholder caps (FREE 10 / STARTER 25 / PRO 50) in `PLAN_LIMITS.trackedQueries`. Revisit with pricing before enforcing commercially.
+- [2026-09-10] **Phase 3 onboarding UX polish deferred:** optional “run sweep now” after confirming prompts; billing access while citation onboarding incomplete; richer prompt-library page separate from the Home citation card; multi-brand / project-scoped TrackedQuery (schema remains user-scoped).
+- [2026-09-10] **Phase 3 — OpenAI prompt generation dependency.** Starter prompts require `OPENAI_API_KEY`. Failures surface as errors (no invented prompts). No Anthropic/Gemini fallback for this generator yet.
+
 - [2026-09-10] **Phase 2 citation tracking — estimated API cost (review before raising frequency).** Per TrackedQuery sweep = **5** model calls. Rough list prices (USD, subject to change): OpenAI `gpt-4o-mini` + `web_search_preview` ≈ $0.01–0.05/call (search tool surcharge dominates); Anthropic `claude-3-5-haiku` ≈ $0.001–0.01/call (no web tool); Gemini Flash + Google Search grounding ≈ $0.01–0.035/call; Perplexity `sonar` ≈ $0.005–0.02/call; Grok `grok-4-fast` ≈ $0.001–0.01/call (chat completions, no native citations). **Blended estimate ~$0.04–0.12 per query per sweep.** At 2×/week: ~$0.08–0.24/query/week. Log actual invoices after first production week before increasing cadence.
 - [2026-09-10] **Phase 3 — sentiment classification** on `CitationRun.sentiment` (schema column exists, always null in Phase 2).
 - [2026-09-10] **Phase 3 — competitor comparison view** (share-of-voice vs named rivals).
@@ -28,6 +32,9 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 - [2026-09-08] Wiring checklist refreshed against morning env + afternoon Replies/Ship work. See `docs/plan-2026-09-08.md` for the remaining P0 order.
 
 ## Resolved
+
+- [2026-09-10] Phase 3 query library & onboarding UX: `/onboard/citations` brand+descriptors → AI prompt draft → review/confirm → TrackedQuery rows; dashboard gate when zero TrackedQueries; prompt list edit/pause/delete; placeholder plan caps; first-results empty state tied to Mon/Thu 06:00 UTC cron (no empty charts).
+
 
 - [2026-09-10] Phase 2 AI citation tracking pipeline landed: `TrackedQuery` + `CitationRun` schema, **5** model runners (OpenAI Responses + `web_search_preview` with `web_search` fallback, Anthropic messages, Gemini Google Search grounding, Perplexity citations, Grok/xAI chat completions), brand-mention detection, QStash fan-out + Vercel cron Mon/Thu 06:00 UTC, dashboard live wiring with `isDemoMode()` stub fallback only when no live runs exist.
 

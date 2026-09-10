@@ -7,25 +7,40 @@ import {
   enqueueCitationSweep,
   isQStashConfigured,
 } from "@/lib/queue/qstash";
+import {
+  UsageLimitError,
+  assertCanCreateTrackedQueries,
+  getUsage,
+} from "@/lib/billing/limits";
 
 export const dynamic = "force-dynamic";
 
-/** List the current user's tracked queries. */
+/** List the current user's tracked queries (+ plan usage for the UI). */
 export async function GET() {
   const session = await getSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const queries = await prisma.trackedQuery.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      _count: { select: { runs: true } },
+  const [queries, usage] = await Promise.all([
+    prisma.trackedQuery.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: { select: { runs: true } },
+      },
+    }),
+    getUsage(session.user.id),
+  ]);
+
+  return NextResponse.json({
+    queries,
+    usage: {
+      planTier: usage.planTier,
+      trackedQueryCount: usage.trackedQueryCount,
+      trackedQueryLimit: usage.trackedQueryLimit,
     },
   });
-
-  return NextResponse.json({ queries });
 }
 
 /** Create one or more tracked queries (brand + prompt). */
@@ -68,6 +83,19 @@ export async function POST(req: NextRequest) {
   }
 
   const userId = session.user.id;
+
+  try {
+    await assertCanCreateTrackedQueries(userId, prompts.length);
+  } catch (err) {
+    if (err instanceof UsageLimitError) {
+      return NextResponse.json(
+        { error: err.message, code: err.code },
+        { status: 403 }
+      );
+    }
+    throw err;
+  }
+
   const created = await prisma.$transaction(
     prompts.map((promptText) =>
       prisma.trackedQuery.create({
@@ -123,7 +151,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ queries: created, runs }, { status: 201 });
 }
 
-/** Patch active flag. */
+/** Patch active flag and/or prompt text. */
 export async function PATCH(req: NextRequest) {
   const session = await getSession();
   if (!session?.user?.id) {
@@ -134,12 +162,25 @@ export async function PATCH(req: NextRequest) {
   const parsed = z
     .object({
       id: z.string().min(1),
-      active: z.boolean(),
+      active: z.boolean().optional(),
+      promptText: z.string().trim().min(3).max(1000).optional(),
+      brandName: z.string().trim().min(1).max(120).optional(),
     })
     .safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+  }
+
+  if (
+    parsed.data.active === undefined &&
+    parsed.data.promptText === undefined &&
+    parsed.data.brandName === undefined
+  ) {
+    return NextResponse.json(
+      { error: "Provide active, promptText, and/or brandName" },
+      { status: 400 }
+    );
   }
 
   const existing = await prisma.trackedQuery.findFirst({
@@ -151,7 +192,17 @@ export async function PATCH(req: NextRequest) {
 
   const updated = await prisma.trackedQuery.update({
     where: { id: existing.id },
-    data: { active: parsed.data.active },
+    data: {
+      ...(parsed.data.active !== undefined
+        ? { active: parsed.data.active }
+        : {}),
+      ...(parsed.data.promptText !== undefined
+        ? { promptText: parsed.data.promptText }
+        : {}),
+      ...(parsed.data.brandName !== undefined
+        ? { brandName: parsed.data.brandName }
+        : {}),
+    },
   });
 
   return NextResponse.json({ query: updated });
