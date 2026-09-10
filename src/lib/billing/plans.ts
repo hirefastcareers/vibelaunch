@@ -1,16 +1,21 @@
 export type PlanTier = "FREE" | "STARTER" | "PRO";
 
 /**
- * Placeholder tracked-query caps pending Phase 7 pricing decisions.
+ * Placeholder tracked-query + competitor caps pending Phase 7 pricing decisions.
  * Logged in docs/deferred-work.md — do not treat as final commercial limits.
  */
 export const PLAN_LIMITS: Record<
   PlanTier,
-  { projects: number; postsPerMonth: number; trackedQueries: number }
+  {
+    projects: number;
+    postsPerMonth: number;
+    trackedQueries: number;
+    competitors: number;
+  }
 > = {
-  FREE: { projects: 1, postsPerMonth: 8, trackedQueries: 10 },
-  STARTER: { projects: 3, postsPerMonth: 40, trackedQueries: 25 },
-  PRO: { projects: 10, postsPerMonth: 200, trackedQueries: 50 },
+  FREE: { projects: 1, postsPerMonth: 8, trackedQueries: 10, competitors: 1 },
+  STARTER: { projects: 3, postsPerMonth: 40, trackedQueries: 25, competitors: 3 },
+  PRO: { projects: 10, postsPerMonth: 200, trackedQueries: 50, competitors: 10 },
 };
 
 export const PLAN_DISPLAY: Record<

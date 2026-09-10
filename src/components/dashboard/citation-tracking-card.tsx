@@ -52,7 +52,39 @@ type UsageInfo = {
   trackedQueryLimit: number;
 };
 
-type ViewMode = "share" | "trend" | "urls" | "prompts";
+type CompetitorRow = {
+  id: string;
+  brandName: string;
+  createdAt: string;
+};
+
+type CompetitorUsage = {
+  planTier: string;
+  competitorCount: number;
+  competitorLimit: number;
+};
+
+type ShareRow = {
+  key: string;
+  label: string;
+  isYou: boolean;
+  mentionRate: number;
+  mentioned: number;
+  total: number;
+};
+
+type ComparisonPayload = {
+  yourBrand: string | null;
+  competitors: CompetitorRow[];
+  overall: ShareRow[];
+  byModel: Array<{ model: string; label: string; brands: ShareRow[] }>;
+  trend: Array<Record<string, string | number>>;
+  runsAnalyzed: number;
+  runsSkipped: number;
+  note: string;
+};
+
+type ViewMode = "share" | "trend" | "urls" | "prompts" | "competitors" | "compare";
 
 export function CitationTrackingCard({
   demoMode,
@@ -71,6 +103,13 @@ export function CitationTrackingCard({
   const [view, setView] = useState<ViewMode>("share");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
+  const [competitors, setCompetitors] = useState<CompetitorRow[]>([]);
+  const [competitorUsage, setCompetitorUsage] = useState<CompetitorUsage | null>(null);
+  const [comparison, setComparison] = useState<ComparisonPayload | null>(null);
+  const [competitorInput, setCompetitorInput] = useState("");
+  const [competitorSaving, setCompetitorSaving] = useState(false);
+  const [editingCompetitorId, setEditingCompetitorId] = useState<string | null>(null);
+  const [editingCompetitorName, setEditingCompetitorName] = useState("");
 
   const firstResultsMessage = useMemo(() => formatFirstResultsMessage(), []);
 
@@ -78,9 +117,11 @@ export function CitationTrackingCard({
     setLoading(true);
     setError(null);
     try {
-      const [shareRes, listRes] = await Promise.all([
+      const [shareRes, listRes, competitorRes, comparisonRes] = await Promise.all([
         fetch("/api/geo/citation-share"),
         fetch("/api/geo/tracked-queries"),
+        fetch("/api/geo/competitors"),
+        fetch("/api/geo/competitor-comparison"),
       ]);
       const shareJson = (await shareRes.json()) as DashboardPayload & {
         error?: string;
@@ -105,6 +146,20 @@ export function CitationTrackingCard({
           setData({ ...shareJson, trackedQueries: listJson.queries });
         }
       }
+      if (competitorRes.ok) {
+        const competitorJson = (await competitorRes.json()) as {
+          competitors?: CompetitorRow[];
+          usage?: CompetitorUsage;
+        };
+        setCompetitors(competitorJson.competitors ?? []);
+        if (competitorJson.usage) setCompetitorUsage(competitorJson.usage);
+      }
+
+      if (comparisonRes.ok) {
+        const comparisonJson = (await comparisonRes.json()) as ComparisonPayload;
+        setComparison(comparisonJson);
+      }
+
     } catch {
       setError("Could not load citation tracking");
       setData(null);
@@ -195,6 +250,80 @@ export function CitationTrackingCard({
       setError("Failed to delete query");
     }
   }
+
+
+  async function addCompetitor(e: React.FormEvent) {
+    e.preventDefault();
+    const brand = competitorInput.trim();
+    if (!brand) {
+      setError("Competitor brand name is required");
+      return;
+    }
+    setCompetitorSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/competitors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brandName: brand }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to add competitor");
+        return;
+      }
+      setCompetitorInput("");
+      await loadDashboard();
+    } catch {
+      setError("Failed to add competitor");
+    } finally {
+      setCompetitorSaving(false);
+    }
+  }
+
+  async function saveCompetitorEdit(id: string) {
+    const brandName = editingCompetitorName.trim();
+    if (brandName.length < 1) return;
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/competitors", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, brandName }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to update competitor");
+        return;
+      }
+      setEditingCompetitorId(null);
+      await loadDashboard();
+    } catch {
+      setError("Failed to update competitor");
+    }
+  }
+
+  async function deleteCompetitor(id: string) {
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/geo/competitors?id=${encodeURIComponent(id)}`,
+        { method: "DELETE" }
+      );
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? "Failed to delete competitor");
+        return;
+      }
+      await loadDashboard();
+    } catch {
+      setError("Failed to delete competitor");
+    }
+  }
+
+  const competitorAtCap =
+    competitorUsage != null &&
+    competitorUsage.competitorCount >= competitorUsage.competitorLimit;
 
   const featured =
     data?.rows.reduce<DashboardRow | null>(
@@ -331,6 +460,8 @@ export function CitationTrackingCard({
                 { value: "trend", label: "Trend" },
                 { value: "urls", label: "URLs" },
                 { value: "prompts", label: "Prompts" },
+                { value: "competitors", label: "Competitors" },
+                { value: "compare", label: "Compare" },
               ]}
               value={view}
               onChange={(v) => setView(v as ViewMode)}
@@ -518,6 +649,218 @@ export function CitationTrackingCard({
                     Run citation onboarding
                   </Link>
                   .
+                </p>
+              )
+            ) : null}
+
+            {view === "competitors" ? (
+              <div className="space-y-4">
+                <form
+                  onSubmit={(e) => void addCompetitor(e)}
+                  className="flex flex-wrap gap-2"
+                >
+                  <Input
+                    value={competitorInput}
+                    onChange={(e) => setCompetitorInput(e.target.value)}
+                    placeholder="Competitor brand name"
+                    className="min-w-[200px] flex-1"
+                    disabled={competitorAtCap}
+                    maxLength={120}
+                  />
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={
+                      competitorSaving ||
+                      competitorAtCap ||
+                      !competitorInput.trim()
+                    }
+                  >
+                    {competitorSaving
+                      ? "Adding…"
+                      : competitorAtCap
+                        ? "Limit reached"
+                        : "Add competitor"}
+                  </Button>
+                </form>
+                <p className="text-xs text-muted-foreground">
+                  {competitorUsage
+                    ? `${competitorUsage.competitorCount}/${competitorUsage.competitorLimit} competitors on ${competitorUsage.planTier}. `
+                    : null}
+                  Mentions are re-detected from existing citation responses — no extra model calls.
+                </p>
+                {competitors.length > 0 ? (
+                  <ul className="space-y-3">
+                    {competitors.map((c) => (
+                      <li
+                        key={c.id}
+                        className="rounded-md border border-border px-3 py-3"
+                      >
+                        {editingCompetitorId === c.id ? (
+                          <div className="flex flex-wrap gap-2">
+                            <Input
+                              value={editingCompetitorName}
+                              onChange={(e) =>
+                                setEditingCompetitorName(e.target.value)
+                              }
+                              maxLength={120}
+                            />
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => void saveCompetitorEdit(c.id)}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => setEditingCompetitorId(null)}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-sm font-medium text-foreground">
+                              {c.brandName}
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => {
+                                  setEditingCompetitorId(c.id);
+                                  setEditingCompetitorName(c.brandName);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => void deleteCompetitor(c.id)}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No competitors yet. Add a rival brand to unlock the Compare
+                    view.
+                  </p>
+                )}
+              </div>
+            ) : null}
+
+            {view === "compare" ? (
+              competitors.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6">
+                  <p className="text-sm font-medium text-foreground">
+                    Set up competitors to compare share of voice
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Add rival brands on the Competitors tab. Comparison reuses
+                    your existing citation runs — we never invent competitor
+                    mentions.
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="mt-3"
+                    onClick={() => setView("competitors")}
+                  >
+                    Add competitors
+                  </Button>
+                </div>
+              ) : comparison && comparison.runsAnalyzed === 0 ? (
+                <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6">
+                  <p className="text-sm font-medium text-foreground">
+                    Waiting on citation runs to compare
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {comparison.note}
+                  </p>
+                </div>
+              ) : comparison ? (
+                <div className="space-y-5">
+                  <p className="text-xs text-muted-foreground">{comparison.note}</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {comparison.overall.map((row) => (
+                      <StatCard
+                        key={row.key}
+                        label={row.isYou ? `${row.label} (you)` : row.label}
+                        hint={
+                          row.total > 0
+                            ? `${row.mentioned}/${row.total} runs mentioned`
+                            : "No analyzable runs"
+                        }
+                        value={`${row.mentionRate}%`}
+                      />
+                    ))}
+                  </div>
+                  {comparison.trend.length >= 2 ? (
+                    <TrendChart
+                      data={comparison.trend}
+                      series={[
+                        {
+                          key: "you",
+                          label: comparison.yourBrand ?? "You",
+                          featured: true,
+                        },
+                        ...comparison.competitors.map((c) => ({
+                          key: c.id,
+                          label: c.brandName,
+                        })),
+                      ]}
+                      xKey="date"
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Trend needs at least two weekly buckets of successful
+                      runs. No empty chart is shown until then.
+                    </p>
+                  )}
+                  <div className="space-y-3">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Per-model breakdown
+                    </p>
+                    {comparison.byModel.map((modelRow) => (
+                      <div key={modelRow.model} className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <DataPill tone="outline">{modelRow.label}</DataPill>
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {modelRow.brands.map((row) => (
+                            <StatCard
+                              key={`${modelRow.model}-${row.key}`}
+                              label={
+                                row.isYou ? `${row.label} (you)` : row.label
+                              }
+                              hint={
+                                row.total > 0
+                                  ? `${row.mentioned}/${row.total}`
+                                  : "No runs"
+                              }
+                              value={`${row.mentionRate}%`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Comparison data is loading…
                 </p>
               )
             ) : null}

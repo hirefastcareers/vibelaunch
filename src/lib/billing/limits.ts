@@ -4,7 +4,11 @@ import { PLAN_LIMITS, type PlanTier } from "@/lib/billing/plans";
 export class UsageLimitError extends Error {
   constructor(
     message: string,
-    public code: "PROJECT_LIMIT" | "POST_LIMIT" | "TRACKED_QUERY_LIMIT",
+    public code:
+      | "PROJECT_LIMIT"
+      | "POST_LIMIT"
+      | "TRACKED_QUERY_LIMIT"
+      | "COMPETITOR_LIMIT",
   ) {
     super(message);
     this.name = "UsageLimitError";
@@ -16,9 +20,11 @@ export interface UsageSnapshot {
   projectCount: number;
   postCount: number;
   trackedQueryCount: number;
+  competitorCount: number;
   projectLimit: number;
   postLimit: number;
   trackedQueryLimit: number;
+  competitorLimit: number;
 }
 
 function startOfUtcMonth(now = new Date()): Date {
@@ -38,26 +44,30 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
   const limits = PLAN_LIMITS[planTier];
   const startOfMonth = startOfUtcMonth();
 
-  const [projectCount, postCount, trackedQueryCount] = await Promise.all([
-    prisma.project.count({ where: { userId } }),
-    prisma.post.count({
-      where: {
-        project: { userId },
-        status: { not: "DRAFT" },
-        createdAt: { gte: startOfMonth },
-      },
-    }),
-    prisma.trackedQuery.count({ where: { userId } }),
-  ]);
+  const [projectCount, postCount, trackedQueryCount, competitorCount] =
+    await Promise.all([
+      prisma.project.count({ where: { userId } }),
+      prisma.post.count({
+        where: {
+          project: { userId },
+          status: { not: "DRAFT" },
+          createdAt: { gte: startOfMonth },
+        },
+      }),
+      prisma.trackedQuery.count({ where: { userId } }),
+      prisma.competitorBrand.count({ where: { userId } }),
+    ]);
 
   return {
     planTier,
     projectCount,
     postCount,
     trackedQueryCount,
+    competitorCount,
     projectLimit: limits.projects,
     postLimit: limits.postsPerMonth,
     trackedQueryLimit: limits.trackedQueries,
+    competitorLimit: limits.competitors,
   };
 }
 
@@ -95,6 +105,24 @@ export async function assertCanCreateTrackedQueries(
     throw new UsageLimitError(
       `Tracked query limit reached for the ${usage.planTier} plan (${usage.trackedQueryLimit} max). Upgrade or delete unused prompts.`,
       "TRACKED_QUERY_LIMIT",
+    );
+  }
+}
+
+/**
+ * Ensure adding `additional` competitor brands would not exceed the plan cap.
+ * Placeholder caps — see docs/deferred-work.md (Phase 7).
+ */
+export async function assertCanCreateCompetitors(
+  userId: string,
+  additional = 1,
+): Promise<void> {
+  if (additional < 1) return;
+  const usage = await getUsage(userId);
+  if (usage.competitorCount + additional > usage.competitorLimit) {
+    throw new UsageLimitError(
+      `Competitor limit reached for the ${usage.planTier} plan (${usage.competitorLimit} max). Upgrade or remove a competitor.`,
+      "COMPETITOR_LIMIT",
     );
   }
 }
