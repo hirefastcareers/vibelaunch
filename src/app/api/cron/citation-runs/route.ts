@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   executeCitationSweepForQuery,
-  listActiveTrackedQueryIds,
+  listActiveTrackedQueryIdsDueToday,
 } from "@/lib/geo/citation-runner";
 import {
   enqueueCitationSweep,
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 /**
- * 2x/week citation sweep trigger (Vercel Cron Mon+Thu 06:00 UTC).
+ * Citation sweep trigger (Vercel Cron Mon+Thu 06:00 UTC). Free/Starter run Mondays only; Pro runs Mon+Thu.
  * Fans out one QStash job per active TrackedQuery when QStash is configured;
  * otherwise runs inline (dev / missing QStash).
  */
@@ -35,7 +35,7 @@ async function handleCron(req: NextRequest) {
     );
   }
 
-  const queryIds = await listActiveTrackedQueryIds();
+  const queryIds = await listActiveTrackedQueryIdsDueToday();
   if (queryIds.length === 0) {
     return NextResponse.json({
       enqueued: 0,

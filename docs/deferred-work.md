@@ -4,16 +4,18 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
+- [2026-09-10] **Phase 8 — real testimonials / social proof.** Landing page ships an honest empty placeholder marked for Tom. Do not invent quotes, logos, or user counts. Fill once early customers consent to be named.
+- [2026-09-10] **Phase 8 — additional marketing pages deferred.** Blog and competitor comparison pages (pattern SuperX uses heavily) not built in Phase 8. Sitemap already has an extensible `marketingPages` list — add routes there when those pages ship.
+- [2026-09-10] **Phase 7 / cost validation vs live invoices.** Tier caps shipped from Phase 2/5 *list-price estimates* (~$0.04–0.12 per 5-model query sweep; sentiment ~$0.00005–0.0002/call). No production invoice lines available yet. After the first paid week, compare actual OpenAI/Anthropic/Gemini/Perplexity/xAI spend to FREE/STARTER/PRO allowances and adjust caps if margins are wrong.
+- [2026-09-10] **Phase 7 — Dodo catalogue price sync.** UI now shows £15 / £39; `DODO_STARTER_PRODUCT_ID` / `DODO_PRO_PRODUCT_ID` still point at whatever products are configured in env. Update Dodo product prices (and currency) to match — code cannot change Dodo catalogue amounts.
+- [2026-09-10] **Phase 7 UX polish deferred:** in-app upgrade modal (currently inline error + Billing link); per-model “not on your plan” empty states on Share charts for Free; self-serve schedule preview (“next sweep Monday”); usage meters for suggestions/prompts on Billing.
 - [2026-09-10] **Phase 5 UX polish deferred:** sentiment filter / dimension on the citation TrendChart — TrendChart is multi-series rate-over-time and does not cleanly support a categorical sentiment filter without a new chart mode; kept as DataPill splits on Share + Compare instead.
 - [2026-09-10] **Phase 5 / Phase 7 — observed sentiment classification cost.** Classifier model: `gpt-4o-mini` (override `OPENAI_SENTIMENT_MODEL`). Rough list pricing ≈ $0.15/1M input + $0.60/1M output tokens. Typical call uses a ≤1.8k-char excerpt + ≤40 completion tokens → **about $0.00005–$0.0002 per classification** (orders of magnitude below search-grounded citation runs). Log exact OpenAI invoice lines after the first production week of Phase 5 for Phase 7 pricing.
 - [2026-09-10] **Phase 5 competitor mention persistence still partial:** mention *detection* for share-of-voice remains on-read (Phase 4); Phase 5 now persists competitor mention + sentiment rows when classified at run/backfill time, but share-of-voice rates still re-detect from `rawResponse`. Unifying detection into stored rows is still deferred.
 
-- [2026-09-10] **Phase 7 — real per-tier suggestion regeneration limits.** Phase 6 ships placeholder cap of **3 regenerations / suggestion / UTC day** via `PLAN_LIMITS.suggestionRegensPerDay` + `ContentSuggestion.regenerationCount` / `regenerationWindowStart`. Revisit with pricing before enforcing commercially differentiated caps.
 - [2026-09-10] **Phase 6 Fixes UX polish deferred:** dedicated Fixes page (currently a tab on the citation card); auto-generate briefs for new gaps without a click; show dismissed/actioned history filter; bulk dismiss; export briefs.
-- [2026-09-10] **Phase 7 — real per-tier competitor limits.** Phase 4 ships placeholder caps (FREE 1 / STARTER 3 / PRO 10) in `PLAN_LIMITS.competitors`. Revisit with pricing before enforcing commercially.
 - [2026-09-10] **Phase 4 competitor UX polish deferred:** dedicated Competitors page (currently tabs on the citation card); persist competitor-mention results on CitationRun instead of re-detecting on read; per-prompt competitor subsets (competitors are user-scoped today); export/CSV of share-of-voice.
 
-- [2026-09-10] **Phase 7 — real per-tier tracked-prompt limits.** Phase 3 ships placeholder caps (FREE 10 / STARTER 25 / PRO 50) in `PLAN_LIMITS.trackedQueries`. Revisit with pricing before enforcing commercially.
 - [2026-09-10] **Phase 3 onboarding UX polish deferred:** optional “run sweep now” after confirming prompts; billing access while citation onboarding incomplete; richer prompt-library page separate from the Home citation card; multi-brand / project-scoped TrackedQuery (schema remains user-scoped).
 - [2026-09-10] **Phase 3 — OpenAI prompt generation dependency.** Starter prompts require `OPENAI_API_KEY`. Failures surface as errors (no invented prompts). No Anthropic/Gemini fallback for this generator yet.
 - [2026-09-10] **Phase 6 — OpenAI fix-suggestion dependency.** Content briefs require `OPENAI_API_KEY` (same chat path as Phase 3). Failures surface as errors (no invented briefs).
@@ -40,6 +42,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 - [2026-09-08] Wiring checklist refreshed against morning env + afternoon Replies/Ship work. See `docs/plan-2026-09-08.md` for the remaining P0 order.
 
 ## Resolved
+
+- [2026-09-10] Phase 7 commercial tiers: FREE/STARTER/PRO caps (prompts, models, weekly cadence, competitors, monthly suggestions with Pro soft cap), server-side model+schedule enforcement, upgrade CTAs, £15/£39 display pricing.
 
 - [2026-09-10] Phase 5 sentiment classification: `gpt-4o-mini` classifier on brand mentions (`CitationRun.sentiment`), `CitationCompetitorMention` for competitor mention sentiment, automated hourly + sweep-triggered backfill, Share/Compare DataPill splits, honest nulls on failure.
 

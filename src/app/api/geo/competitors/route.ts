@@ -7,6 +7,7 @@ import {
   assertCanCreateCompetitors,
   getUsage,
 } from "@/lib/billing/limits";
+import { BILLING_UPGRADE_PATH } from "@/lib/billing/plans";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     if (err instanceof UsageLimitError) {
       return NextResponse.json(
-        { error: err.message, code: err.code },
+        { error: err.message, code: err.code, upgradePath: err.upgradePath ?? BILLING_UPGRADE_PATH },
         { status: 403 }
       );
     }

@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getLogoMarkGeometry } from "@/components/logo";
 
 export const runtime = "nodejs";
-export const alt = "Xoopa — AI citation tracking that closes the loop";
+export const alt = "Xoopa pricing — Free, Starter, and Pro";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -17,7 +17,7 @@ const MONO_FONT_URL =
 const SERIF_FONT_URL =
   "https://cdn.jsdelivr.net/fontsource/fonts/instrument-serif@5.2.5/latin-400-normal.ttf";
 
-function Mark({ size = 72 }: { size?: number }) {
+function Mark({ size = 64 }: { size?: number }) {
   const { strokeWidth, arms } = getLogoMarkGeometry(false);
   return (
     <svg
@@ -42,8 +42,12 @@ function Mark({ size = 72 }: { size?: number }) {
 
 export default async function Image() {
   const [mono, serif] = await Promise.all([
-    fetch(MONO_FONT_URL).then((res) => (res.ok ? res.arrayBuffer() : null)).catch(() => null),
-    fetch(SERIF_FONT_URL).then((res) => (res.ok ? res.arrayBuffer() : null)).catch(() => null),
+    fetch(MONO_FONT_URL)
+      .then((res) => (res.ok ? res.arrayBuffer() : null))
+      .catch(() => null),
+    fetch(SERIF_FONT_URL)
+      .then((res) => (res.ok ? res.arrayBuffer() : null))
+      .catch(() => null),
   ]);
 
   const fonts: { name: string; data: ArrayBuffer; style: "normal"; weight: 400 }[] = [];
@@ -68,12 +72,12 @@ export default async function Image() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <Mark size={72} />
+          <Mark size={64} />
           <div
             style={{
               display: "flex",
               fontFamily: serifFamily,
-              fontSize: 50,
+              fontSize: 44,
               letterSpacing: "-0.03em",
               color: INK,
             }}
@@ -81,35 +85,35 @@ export default async function Image() {
             Xoopa
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div
             style={{
               display: "flex",
               fontFamily: serifFamily,
-              fontSize: 52,
+              fontSize: 48,
               lineHeight: 1.1,
               letterSpacing: "-0.03em",
               color: INK,
-              maxWidth: 900,
+              maxWidth: 920,
             }}
           >
-            AI citation tracking that closes the loop.
+            Pricing for AI citation tracking
           </div>
           <div
             style={{
               display: "flex",
               fontFamily: monoFamily,
-              fontSize: 22,
+              fontSize: 20,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
               color: MUTED,
             }}
           >
-            CHATGPT · CLAUDE · GEMINI · PERPLEXITY · GROK
+            Free · Starter · Pro
           </div>
         </div>
       </div>
     ),
-    { ...size, fonts: fonts.length > 0 ? fonts : undefined },
+    { ...size, fonts: fonts.length > 0 ? fonts : undefined }
   );
 }
