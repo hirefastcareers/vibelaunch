@@ -36,6 +36,7 @@ model User {
   trackedQueries      TrackedQuery[]
   competitorBrands    CompetitorBrand[]
   contentSuggestions  ContentSuggestion[]
+  gapAnalyses         CitationGapAnalysis[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -222,8 +223,9 @@ model TrackedQuery {
   active      Boolean             @default(true)
   createdAt   DateTime            @default(now())
   user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  runs        CitationRun[]
-  suggestions ContentSuggestion[]
+  runs         CitationRun[]
+  suggestions  ContentSuggestion[]
+  gapAnalyses  CitationGapAnalysis[]
 
   @@index([userId])
   @@index([active])
@@ -356,6 +358,28 @@ model SuggestionOutcome {
   @@index([citationRunId])
   @@index([matchedAt])
   @@index([matchType])
+}
+
+// ─── Phase 11 GEO: why-wasn't-I-cited gap analysis (on-demand, cached) ─────
+
+model CitationGapAnalysis {
+  id                 String       @id @default(cuid())
+  userId             String
+  trackedQueryId     String       @unique
+  /// Aggregated dominating domains from missed-run citedUrls.
+  topDomains         Json
+  /// Fingerprint of top domain set — used to invalidate cache when citations shift.
+  domainsFingerprint String
+  analysisText       String       @db.Text
+  /// Per-URL fetch outcomes (ok / blocked_by_robots / failed) — honesty trail.
+  fetchNotes         Json?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery       TrackedQuery @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 // ─── Legacy GEO metrics (project-scoped) ───────────────────────────────────
