@@ -26,6 +26,10 @@ model User {
   // "on_hold", "cancelled", "expired", "failed") rather than a closed enum.
   subscriptionStatus  String?
   planRenewsAt        DateTime?
+  /// Phase 9 — public AI visibility scorecard (off by default).
+  scorecardPublic     Boolean   @default(false)
+  scorecardSlug       String?   @unique
+  scorecardPublishedAt DateTime?
   accounts            Account[]
   sessions            Session[]
   projects            Project[]
