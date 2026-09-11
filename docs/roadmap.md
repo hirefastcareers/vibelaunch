@@ -2,9 +2,9 @@
 
 Product direction: GEO / AI-citation tracking — whether a brand is mentioned across major AI models, tied to a content-fix workflow.
 
-Status reflects what has shipped on the active GEO PR lineage (Phases 1–12). Older “precursor only” notes on `main` are superseded once those PRs land.
+Status reflects what has shipped on the active GEO PR lineage (Phases 1–12).
 
-**Roadmap status:** Phases 1–12 of the original GEO plan are present on this review tip.
+**Roadmap status:** Phases 1–12 of the original GEO plan are present on this integration review tip.
 
 | Phase | Name | Status |
 | ----- | ---- | ------ |
@@ -19,26 +19,18 @@ Status reflects what has shipped on the active GEO PR lineage (Phases 1–12). O
 | **9** | **Public shareable AI visibility scorecard** | **Complete** |
 | **10** | **“Did the fix work” outcome loop** | **Complete** |
 | **11** | **“Why wasn’t I cited” analysis** | **Complete** |
-| **12** | **Change alerts** (email/webhook) | **In review** |
+| **12** | **Change alerts** (email/webhook) | **Complete** |
 
-## Phase 9 — Public scorecard (complete)
+## Phase 12 — Change alerts (complete)
 
-- Public `/score/[slug]` (no auth). Off by default; owner opts in.
-- Score 0–100 = equal-weight per-model mention rates; methodology on-page.
-- Numeric score withheld until ≥10 successful runs across ≥2 models.
-- Privacy: no prompts, raw responses, cited URL dumps, or billing fields.
-- Available on Free (`publicScorecards = 1` all tiers).
-
-## Phase 10 — “Did the fix work” (complete)
-
-- Published URL on content suggestions; match against later `citedUrls`.
-- EXACT vs DOMAIN outcomes; correlation ≠ causation caveat in UI.
-
-## Phase 11 — “Why wasn’t I cited” (complete)
-
-- Domain aggregation from missed-run `citedUrls`.
-- On-demand gap analysis with robots-aware fetches + cache.
-- Shares suggestion quota with Phase 6 generations.
+- After each successful citation run, compare to the previous successful same-model run.
+- Detect: citation lost / gained, competitor overtake, positive→negative sentiment flip.
+- **2-run confirmation** before creating an `Alert` (single-run flips are noise).
+- Storage: `Alert`, `AlertPreference` (default digest **WEEKLY**), `AlertPendingChange`.
+- Email: **no mail provider wired** — delivery records an explicit skip. Do not add a provider without Tom choosing one.
+- Webhooks: optional URL; SSRF-guarded; retry + circuit; **Starter/Pro only**.
+- In-app: Alerts bell + `/dashboard/alerts` feed + settings.
+- Weekly digest cron: `/api/cron/alert-digest` Mondays 07:00 UTC.
 
 ## Notes
 

@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/sidebar";
 import { CommandPalette } from "@/components/command-palette";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/logo";
+import { AlertsBell } from "@/components/dashboard/alerts-bell";
 import Link from "next/link";
 
 interface DashboardShellProps {
@@ -51,14 +52,17 @@ export function DashboardShell({ children, userLabel }: DashboardShellProps) {
           <Link href="/dashboard" className="flex items-center">
             <Logo size={26} />
           </Link>
-          <button
-            type="button"
-            aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMobileNavOpen((open) => !open)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-foreground hover:bg-muted"
-          >
-            {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <AlertsBell />
+            <button
+              type="button"
+              aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMobileNavOpen((open) => !open)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-background text-foreground hover:bg-muted"
+            >
+              {mobileNavOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          </div>
         </header>
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>

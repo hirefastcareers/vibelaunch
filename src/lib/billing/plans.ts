@@ -46,6 +46,11 @@ export const PLAN_LIMITS: Record<
      * Multi-brand scorecards would raise this later; today brand scope is one per user.
      */
     publicScorecards: number;
+     * Phase 12 — outbound alert webhooks.
+     * Decision (flagged): email alerts available on all tiers including Free;
+     * webhooks are Starter/Pro only (paid outbound HTTP surface).
+     */
+    alertWebhooks: boolean;
   }
 > = {
   FREE: {
@@ -58,6 +63,7 @@ export const PLAN_LIMITS: Record<
     citationModels: ["openai", "perplexity", "gemini"],
     runsPerWeek: 1,
     publicScorecards: 1,
+    alertWebhooks: false,
   },
   STARTER: {
     projects: 3,
@@ -69,6 +75,7 @@ export const PLAN_LIMITS: Record<
     citationModels: [...ALL_CITATION_MODELS],
     runsPerWeek: 1,
     publicScorecards: 1,
+    alertWebhooks: true,
   },
   PRO: {
     projects: 10,
@@ -80,6 +87,7 @@ export const PLAN_LIMITS: Record<
     citationModels: [...ALL_CITATION_MODELS],
     runsPerWeek: 2,
     publicScorecards: 1,
+    alertWebhooks: true,
   },
 };
 

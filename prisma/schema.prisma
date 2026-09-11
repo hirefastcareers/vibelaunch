@@ -37,6 +37,9 @@ model User {
   competitorBrands    CompetitorBrand[]
   contentSuggestions  ContentSuggestion[]
   gapAnalyses         CitationGapAnalysis[]
+  alerts              Alert[]
+  alertPreference     AlertPreference?
+  alertPendingChanges AlertPendingChange[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -226,6 +229,8 @@ model TrackedQuery {
   runs         CitationRun[]
   suggestions  ContentSuggestion[]
   gapAnalyses  CitationGapAnalysis[]
+  alerts       Alert[]
+  pendingAlertChanges AlertPendingChange[]
 
   @@index([userId])
   @@index([active])
@@ -380,6 +385,87 @@ model CitationGapAnalysis {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+// ─── Phase 12 GEO: change alerts (2-run confirmed, digest-first) ───────────
+
+enum AlertType {
+  CITATION_LOST
+  CITATION_GAINED
+  COMPETITOR_OVERTAKE
+  SENTIMENT_FLIP
+}
+
+enum AlertDigestFrequency {
+  OFF
+  WEEKLY
+  IMMEDIATE
+}
+
+/// Per-user alert preferences. Defaults favour weekly digest (less noisy).
+model AlertPreference {
+  id                        String               @id @default(cuid())
+  userId                    String               @unique
+  citationLostEnabled       Boolean              @default(true)
+  citationGainedEnabled     Boolean              @default(true)
+  competitorOvertakeEnabled Boolean              @default(true)
+  sentimentFlipEnabled      Boolean              @default(true)
+  digestFrequency           AlertDigestFrequency @default(WEEKLY)
+  /// Optional outbound webhook URL (Starter/Pro). Null = disabled.
+  webhookUrl                String?
+  webhookFailCount          Int                  @default(0)
+  webhookLastError          String?
+  webhookLastSuccessAt      DateTime?
+  /// Set when consecutive failures trip the circuit (UI shows dead endpoint).
+  webhookDisabledAt         DateTime?
+  unsubscribeToken          String               @unique @default(cuid())
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
+  user                      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Confirmed alerts (after 2 consecutive matching change observations).
+model Alert {
+  id                    String        @id @default(cuid())
+  userId                String
+  trackedQueryId        String?
+  type                  AlertType
+  detail                Json
+  createdAt             DateTime      @default(now())
+  readAt                DateTime?
+  /// When email/webhook delivery succeeded (or digest included it).
+  deliveredAt           DateTime?
+  /// Email skipped because no mail provider is configured.
+  deliverySkippedReason String?
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery          TrackedQuery? @relation(fields: [trackedQueryId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+  @@index([deliveredAt])
+  @@index([type])
+}
+
+/// In-flight change candidates awaiting a second confirming run (noise filter).
+model AlertPendingChange {
+  id               String        @id @default(cuid())
+  userId           String
+  trackedQueryId   String
+  model            CitationModel
+  type             AlertType
+  /// Stable key e.g. CITATION_LOST:openai or COMPETITOR_OVERTAKE:openai:competitorId
+  fingerprint      String
+  detail           Json
+  consecutiveCount Int           @default(1)
+  lastRunId        String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery     TrackedQuery  @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackedQueryId, fingerprint])
+  @@index([userId])
+  @@index([trackedQueryId])
 }
 
 // ─── Legacy GEO metrics (project-scoped) ───────────────────────────────────

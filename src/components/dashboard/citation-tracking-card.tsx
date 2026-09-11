@@ -280,6 +280,8 @@ export function CitationTrackingCard({
   const [busyGapKey, setBusyGapKey] = useState<string | null>(null);
   const [busySuggestionId, setBusySuggestionId] = useState<string | null>(null);
   const [publishDrafts, setPublishDrafts] = useState<Record<string, string>>(
+    {}
+  );
   const [whyByGap, setWhyByGap] = useState<Record<string, GapAnalysisState>>(
     {}
   );
