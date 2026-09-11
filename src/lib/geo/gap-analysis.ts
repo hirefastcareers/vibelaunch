@@ -1,4 +1,5 @@
 import type { CitationModel } from "@prisma/client";
+import { withDirectProseInstruction } from "@/lib/ai/prose-style";
 import { prisma } from "@/lib/prisma";
 import {
   aggregateCitedDomains,
@@ -169,7 +170,7 @@ export async function generateGapAnalysisText(
       temperature: 0.3,
       max_tokens: 650,
       messages: [
-        { role: "system", content: SYSTEM },
+        { role: "system", content: withDirectProseInstruction(SYSTEM) },
         { role: "user", content: user },
       ],
     }),

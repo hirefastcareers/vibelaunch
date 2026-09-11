@@ -4,6 +4,8 @@
  * Never invents prompts when the API call fails — callers must surface the error.
  */
 
+import { withDirectProseInstruction } from "@/lib/ai/prose-style";
+
 export type GenerateTrackedPromptsInput = {
   brandName: string;
   websiteUrl: string;
@@ -77,7 +79,7 @@ export async function generateTrackedPrompts(
     body: JSON.stringify({
       model,
       messages: [
-        { role: "system", content: SYSTEM },
+        { role: "system", content: withDirectProseInstruction(SYSTEM) },
         { role: "user", content: user },
       ],
       temperature: 0.5,

@@ -1,3 +1,5 @@
+import { withDirectProseInstruction } from "@/lib/ai/prose-style";
+
 export interface ReplyProjectContext {
   name: string;
   tagline?: string | null;
@@ -42,7 +44,7 @@ async function generateWithOpenAI(
       }${project.description ? `. ${project.description.slice(0, 240)}` : ""}`
     : "No product context provided.";
 
-  const prompt = `Write a helpful, non-spammy X/Twitter reply (max 260 characters) to this post:
+  const prompt = withDirectProseInstruction(`Write a helpful, non-spammy X/Twitter reply (max 260 characters) to this post:
 
 "${originalPost.slice(0, 500)}"
 
@@ -54,7 +56,7 @@ Rules:
 - Be genuine and add value. Ask a sharp question or share a concrete observation.
 - Do not hard-sell. Mention the product only if it fits naturally in one short clause.
 - No hashtags spam, no "check out my tool", no links.
-- Return ONLY the reply text.`;
+- Return ONLY the reply text.`);
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",

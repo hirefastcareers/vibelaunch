@@ -42,6 +42,7 @@ describe("buildPostPrompt", () => {
     expect(prompt).toContain("No emojis, hashtags, slogans");
     expect(prompt).toContain("X sign-in is live");
     expect(prompt).toContain("GEO");
+    expect(prompt).toContain("Mannered prose substitutes metaphor");
   });
 });
 
