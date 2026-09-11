@@ -155,7 +155,7 @@ export async function buildCitationDashboard(
       successful.length === 0
         ? `${formatFirstResultsMessage()} Sweeps run Mon & Thu at 06:00 UTC.`
         : mentionedRuns.length === 0
-          ? `Live results from ${successful.length} successful model run(s). No brand mentions yet — sentiment stays empty until a mention is classified.`
+          ? `Live results from ${successful.length} successful model run(s). No brand mentions yet. Sentiment stays empty until a mention is classified.`
           : classified === 0
             ? `Live results from ${successful.length} successful model run(s). ${mentionedRuns.length} mention(s) awaiting sentiment classification (null until the classifier succeeds).`
             : `Live results from ${successful.length} successful model run(s). Sentiment on ${classified}/${mentionedRuns.length} brand mention(s); unclassified stays null.`,

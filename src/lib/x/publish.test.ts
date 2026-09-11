@@ -73,7 +73,7 @@ describe("publishToX media upload", () => {
       name: "XApiError",
       status: 422,
       message:
-        "Video/non-image media upload isn't implemented yet — only JPEG/PNG/GIF/WEBP images are supported",
+        "Video/non-image media upload isn't implemented yet. Only JPEG/PNG/GIF/WEBP images are supported",
     });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);

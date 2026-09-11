@@ -54,7 +54,7 @@ export async function generateTrackedPrompts(
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
     throw new PromptGenerationError(
-      "OPENAI_API_KEY is not configured — cannot generate prompts"
+      "OPENAI_API_KEY is not configured, so prompts cannot be generated"
     );
   }
 

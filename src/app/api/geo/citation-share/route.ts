@@ -79,7 +79,7 @@ export async function GET() {
         unclassified: 0,
       },
       sentimentByModel: [],
-      note: `${demo.note} Live pipeline is ready — save tracked queries and run a sweep to replace this stub.`,
+      note: `${demo.note} Live pipeline is ready. Save tracked queries and run a sweep to replace this stub.`,
     });
   }
 

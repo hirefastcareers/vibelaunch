@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getLogoMarkGeometry } from "@/components/logo";
 
 export const runtime = "nodejs";
-export const alt = "Xoopa pricing — Free, Starter, and Pro";
+export const alt = "Xoopa pricing: Free, Starter, and Pro";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

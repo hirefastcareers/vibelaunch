@@ -106,7 +106,7 @@ async function uploadMedia(accessToken: string, mediaUrl: string): Promise<strin
   const mediaType = normalizeMediaType(imageResponse.headers.get("content-type"));
   if (!SUPPORTED_IMAGE_TYPES.has(mediaType)) {
     throw new XApiError(
-      "Video/non-image media upload isn't implemented yet — only JPEG/PNG/GIF/WEBP images are supported",
+      "Video/non-image media upload isn't implemented yet. Only JPEG/PNG/GIF/WEBP images are supported",
       422
     );
   }

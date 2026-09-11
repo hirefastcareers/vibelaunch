@@ -27,10 +27,10 @@ Given a brand that is missing from AI answers for a specific buyer-intent query,
 write a concrete content brief that would help the brand get cited.
 
 Return plain text (no markdown fences) with these labeled sections:
-1) Angle — one sentence framing
-2) Format — one of: comparison page, FAQ, case study, how-to guide, landing section
-3) Key points — 4–6 bullet lines the page/post must cover
-4) Why this helps — one short sentence tying the brief to the AI query gap
+1) Angle: one sentence framing
+2) Format: one of: comparison page, FAQ, case study, how-to guide, landing section
+3) Key points: 4–6 bullet lines the page/post must cover
+4) Why this helps: one short sentence tying the brief to the AI query gap
 
 Be specific to the query and brand. Do not invent citations or claim the brand
 is already mentioned. Keep the whole brief under 220 words.`;
@@ -51,7 +51,7 @@ export async function generateFixSuggestion(
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
     throw new FixSuggestionError(
-      "OPENAI_API_KEY is not configured — cannot generate a fix suggestion"
+      "OPENAI_API_KEY is not configured, so a fix suggestion cannot be generated"
     );
   }
 

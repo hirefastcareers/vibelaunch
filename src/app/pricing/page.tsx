@@ -40,7 +40,7 @@ const COMPARISON_ROWS: {
   values: (row: ReturnType<typeof marketingPlanRows>[number]) => string;
 }[] = [
   { label: "Tracked prompts", values: (r) => String(r.trackedQueries) },
-  { label: "Models", values: (r) => `${r.modelCount} — ${r.models}` },
+  { label: "Models", values: (r) => `${r.modelCount}: ${r.models}` },
   { label: "Run frequency", values: (r) => r.runsPerWeek },
   { label: "Competitors", values: (r) => String(r.competitors) },
   { label: "Content suggestions", values: (r) => r.suggestions },
@@ -75,7 +75,7 @@ export default async function PricingPage() {
             Plans that match the citation limits we actually enforce
           </h1>
           <p className="mt-5 max-w-[52ch] text-base text-muted-foreground md:text-lg">
-            Numbers below come from the product plan config — the same caps the dashboard and cron
+            Numbers below come from the product plan config: the same caps the dashboard and cron
             use.{" "}
             <Link href="/" className="text-foreground underline underline-offset-4">
               Back to home
@@ -217,11 +217,10 @@ export default async function PricingPage() {
       <section className="ds-section" aria-labelledby="pricing-cta-heading">
         <div className="ds-container text-center">
           <h2 id="pricing-cta-heading" className="text-2xl tracking-tight md:text-3xl">
-            Ready when you are
+            Start on Free
           </h2>
           <p className="mx-auto mt-3 max-w-[44ch] text-muted-foreground">
-            Start on Free, then upgrade from the dashboard when you need more prompts or all five
-            models.
+            Upgrade from the dashboard when you need more prompts or all five models.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href={ctaHref} className="ds-btn px-8 py-4 text-sm">
