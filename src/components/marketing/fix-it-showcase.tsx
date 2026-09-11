@@ -10,7 +10,7 @@ const STEPS = [
     label: "Detect",
     icon: Radar,
     title: "Find the gaps",
-    body: "When a prompt’s latest successful run misses your brand — or your mention rate dips below 50% over the last five successful runs — Xoopa surfaces a gap. Failed API runs don’t count as misses.",
+    body: "When a prompt’s latest successful run misses your brand, or your mention rate dips below 50% over the last five successful runs, Xoopa surfaces a gap. Failed API runs don’t count as misses.",
   },
   {
     value: "brief",
@@ -24,7 +24,7 @@ const STEPS = [
     label: "Ship",
     icon: FileText,
     title: "Close the loop",
-    body: "Mark the suggestion actioned when you’ve shipped. The next citation sweep tells you whether the fix moved the needle — measurement tied to content, not vanity scores.",
+    body: "Mark the suggestion actioned when you’ve shipped. The next citation sweep tells you whether the fix changed your mention rate. Measurement stays tied to content, not vanity scores.",
   },
 ] as const;
 

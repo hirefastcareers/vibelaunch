@@ -660,7 +660,7 @@ export function CitationTrackingCard({
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {firstResultsMessage} Sweeps run Monday and Thursday at 06:00 UTC.
-              Charts appear after the first successful runs — nothing is invented
+              Charts appear after the first successful runs. Nothing is invented
               here.
             </p>
           </div>
@@ -715,7 +715,7 @@ export function CitationTrackingCard({
                       emptyLabel={
                         showDemo
                           ? "Demo stub has no live sentiment."
-                          : "No classified brand mentions yet — null until the classifier succeeds."
+                          : "No classified brand mentions yet. Null until the classifier succeeds."
                       }
                     />
                     {data.sentimentByModel &&
@@ -784,7 +784,7 @@ export function CitationTrackingCard({
               ) : (
                 <p className="text-sm text-muted-foreground">
                   {firstResultsMessage} Trend charts need at least two weekly
-                  buckets of live runs — no empty chart is shown until then.
+                  buckets of live runs. No empty chart is shown until then.
                 </p>
               )
             ) : null}
@@ -945,7 +945,7 @@ export function CitationTrackingCard({
                   {competitorUsage
                     ? `${competitorUsage.competitorCount}/${competitorUsage.competitorLimit} competitors on ${competitorUsage.planTier}. `
                     : null}
-                  Mentions are re-detected from existing citation responses — no extra model calls.
+                  Mentions are re-detected from existing citation responses. No extra model calls.
                 </p>
                 {competitors.length > 0 ? (
                   <ul className="space-y-3">
@@ -1012,7 +1012,7 @@ export function CitationTrackingCard({
                   </ul>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    No competitors yet. Add a rival brand to unlock the Compare
+                    No competitors yet. Add a rival brand to open the Compare
                     view.
                   </p>
                 )}
@@ -1027,7 +1027,7 @@ export function CitationTrackingCard({
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Add rival brands on the Competitors tab. Comparison reuses
-                    your existing citation runs — we never invent competitor
+                    your existing citation runs. We never invent competitor
                     mentions.
                   </p>
                   <Button
@@ -1148,7 +1148,7 @@ export function CitationTrackingCard({
                   <p className="text-xs text-muted-foreground">
                     Gaps = latest successful run missed your brand, or mention
                     rate under 50% across the last 5 successful runs per model.
-                    Suggestions are generated live — failures show as errors, not
+                    Suggestions are generated live. Failures show as errors, not
                     placeholders. Suggestion cap: {suggestionMonthLimit}/month
                     day.
                   </p>
@@ -1170,7 +1170,7 @@ export function CitationTrackingCard({
                     </p>
                     <p className="mt-1 text-sm text-muted-foreground">
                       {firstResultsMessage} Fixes appear after successful model
-                      runs show a miss or low mention rate — we never invent gaps.
+                      runs show a miss or low mention rate. We never invent gaps.
                     </p>
                   </div>
                 ) : gaps.length === 0 ? (

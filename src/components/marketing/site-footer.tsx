@@ -28,7 +28,7 @@ export function MarketingSiteFooter() {
         <div>
           <Logo size={28} />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            AI citation tracking that closes the loop with content fixes — for indie hackers and
+            AI citation tracking that closes the loop with content fixes, for indie hackers and
             SaaS builders.
           </p>
         </div>

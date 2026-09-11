@@ -44,7 +44,7 @@ const FEATURES = [
     icon: Radar,
     label: "Citation tracking across 5 models",
     description:
-      "Sweep your prompts on ChatGPT, Claude, Gemini, Perplexity, and Grok. See who mentions you — and who doesn’t — with real run history, not simulated scores.",
+      "Sweep your prompts on ChatGPT, Claude, Gemini, Perplexity, and Grok. See who mentions you and who doesn’t, with real run history, not simulated scores.",
   },
   {
     icon: Scale,
@@ -56,7 +56,7 @@ const FEATURES = [
     icon: MessageSquareQuote,
     label: "Sentiment breakdown",
     description:
-      "When you’re mentioned, classify tone as positive, neutral, or negative. Failures stay null — we never invent a neutral sentiment.",
+      "When you’re mentioned, classify tone as positive, neutral, or negative. Failures stay null. We never invent a neutral sentiment.",
   },
 ] as const;
 
@@ -75,7 +75,7 @@ export default async function HomePage() {
       <JsonLd data={[organizationJsonLd(), softwareApplicationJsonLd()]} />
       <MarketingSiteNav signedIn={signedIn} ctaLabel={navCta} userLabel={userLabel} />
 
-      {/* Hero — one composition: brand, headline, support, CTA */}
+      {/* Hero: one composition (brand, headline, support, CTA) */}
       <section className="relative overflow-hidden border-b border-border">
         <div
           aria-hidden
@@ -87,11 +87,11 @@ export default async function HomePage() {
               Xoopa
             </p>
             <h1 className="text-[32px] leading-[1.12] tracking-[-0.03em] text-foreground md:text-[48px] md:leading-[1.08]">
-              AI citation tracking that closes the loop with content fixes — not just scorekeeping.
+              AI citation tracking that closes the loop with content fixes, not just scorekeeping.
             </h1>
             <p className="mx-auto mt-6 max-w-[52ch] text-base leading-relaxed text-muted-foreground md:text-lg">
               Built for indie hackers and SaaS builders who need to know if ChatGPT, Claude, Gemini,
-              Perplexity, or Grok recommend their product — and what to publish when they don’t.
+              Perplexity, or Grok recommend their product, and what to publish when they don’t.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link href={ctaHref} className="ds-btn px-8 py-4 text-sm">
@@ -113,7 +113,7 @@ export default async function HomePage() {
               Visibility across the assistants your buyers use
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Track mentions, compare competitors, and read sentiment — from live model responses.
+              Track mentions, compare competitors, and read sentiment from live model responses.
             </p>
           </div>
           <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -153,7 +153,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="ds-kicker">Social proof</p>
             <h2 id="social-proof-heading" className="mt-3 text-3xl tracking-tight md:text-4xl">
-              Real users, real quotes — when we have them
+              Real users and real quotes, when we have them
             </h2>
             <p className="mt-4 text-muted-foreground">
               We don’t invent testimonials or user counts. This section stays empty until founders
@@ -181,7 +181,7 @@ export default async function HomePage() {
             <Link href="/pricing" className="text-foreground underline underline-offset-4">
               pricing
             </Link>{" "}
-            for Starter and Pro limits — pulled from the same plan config the product enforces.
+            for Starter and Pro limits, pulled from the same plan config the product enforces.
           </p>
           <Link href={ctaHref} className="ds-btn mt-8 px-8 py-4 text-sm">
             {ctaLabel}

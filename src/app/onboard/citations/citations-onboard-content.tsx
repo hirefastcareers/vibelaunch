@@ -69,7 +69,7 @@ export default function CitationsOnboardPage() {
         return;
       }
       if (!json.prompts?.length) {
-        setError("No prompts returned — try again or adjust descriptors");
+        setError("No prompts returned. Try again or adjust descriptors.");
         return;
       }
       setPrompts(json.prompts);

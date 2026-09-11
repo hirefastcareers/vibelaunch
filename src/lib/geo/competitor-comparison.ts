@@ -216,10 +216,10 @@ export async function buildCompetitorComparison(
 
   const note =
     successful.length === 0
-      ? "No successful citation runs yet. Competitor comparison uses existing raw responses — wait for a sweep, then refresh."
+      ? "No successful citation runs yet. Competitor comparison uses existing raw responses. Wait for a sweep, then refresh."
       : `Compared ${successful.length} successful run(s)${
           skipped > 0 ? ` (${skipped} failed run(s) excluded)` : ""
-        }. Competitor mentions re-detected from stored responses — never invented. Sentiment uses stored classifier labels only (null when unclassified).`;
+        }. Competitor mentions re-detected from stored responses, never invented. Sentiment uses stored classifier labels only (null when unclassified).`;
 
   const youSentiments = successful
     .filter((r) => r.brandMentioned)

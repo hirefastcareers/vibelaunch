@@ -5,11 +5,11 @@ export const SITE_NAME = "Xoopa";
 
 export const HOME_TITLE = "AI Citation Tracking for SaaS & Indie Hackers | Xoopa";
 export const HOME_DESCRIPTION =
-  "See whether ChatGPT, Claude, Gemini, Perplexity, and Grok recommend your product — then close the loop with content fixes, not just scorekeeping.";
+  "See whether ChatGPT, Claude, Gemini, Perplexity, and Grok recommend your product, then close the loop with content fixes instead of just scorekeeping.";
 
-export const PRICING_TITLE = "Pricing — Free, Starter & Pro | Xoopa";
+export const PRICING_TITLE = "Pricing: Free, Starter & Pro | Xoopa";
 export const PRICING_DESCRIPTION =
-  "Straightforward GEO plans for indie hackers and SaaS builders. Free to start; Starter and Pro scale prompts, models, competitors, and content suggestions.";
+  "GEO plans for indie hackers and SaaS builders. Free to start. Starter and Pro raise prompts, models, competitors, and content suggestions.";
 
 export type FaqItem = { question: string; answer: string };
 
@@ -17,12 +17,12 @@ export const PRICING_FAQS: FaqItem[] = [
   {
     question: "How does citation detection work?",
     answer:
-      "Xoopa runs your tracked prompts against each model on your plan, stores the raw response, and records whether your brand was mentioned plus any cited URLs returned by the provider. Failed runs are stored as errors — we never invent a mention or citation.",
+      "Xoopa runs your tracked prompts against each model on your plan, stores the raw response, and records whether your brand was mentioned plus any cited URLs returned by the provider. Failed runs are stored as errors. We never invent a mention or citation.",
   },
   {
     question: "Why five models?",
     answer:
-      "Indie hackers get asked about in different engines. ChatGPT, Claude, Gemini, Perplexity, and Grok cover the assistants people actually use today. Free includes three of them; Starter and Pro unlock all five.",
+      "Indie hackers get asked about in different engines. ChatGPT, Claude, Gemini, Perplexity, and Grok cover the assistants people actually use today. Free includes three of them. Starter and Pro include all five.",
   },
   {
     question: "What happens when I hit a plan limit?",

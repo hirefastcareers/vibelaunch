@@ -99,7 +99,7 @@ export function buildCitationShareDemo(
     generatedAt: new Date().toISOString(),
     rows: shares,
     trend,
-    note: "Demo stub — not live citation data. Live pipeline queries ChatGPT, Claude, Gemini, Perplexity, and Grok.",
+    note: "Demo stub, not live citation data. Live pipeline queries ChatGPT, Claude, Gemini, Perplexity, and Grok.",
   };
 }
 

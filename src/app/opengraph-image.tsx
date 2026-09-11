@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { getLogoMarkGeometry } from "@/components/logo";
 
 export const runtime = "nodejs";
-export const alt = "Xoopa — AI citation tracking that closes the loop";
+export const alt = "Xoopa: AI citation tracking that closes the loop";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

@@ -45,7 +45,7 @@ Tagline: ${input.tagline ?? "none"}
 Product: ${input.description ?? "none"}
 Voice: ${input.tone}, but never marketing copy.
 
-Goal: one concrete, citeable product fact for AI search / GEO — X is a distribution channel, not an engagement farm.
+Goal: one concrete, citeable product fact for AI search / GEO. X is a distribution channel, not an engagement farm.
 
 ${queryBlock}
 

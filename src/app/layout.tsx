@@ -34,7 +34,7 @@ const satoshi = localFont({
 
 const title = "AI Citation Tracking for SaaS & Indie Hackers | Xoopa";
 const description =
-  "See whether ChatGPT, Claude, Gemini, Perplexity, and Grok recommend your product — then close the loop with content fixes, not just scorekeeping.";
+  "See whether ChatGPT, Claude, Gemini, Perplexity, and Grok recommend your product, then close the loop with content fixes instead of just scorekeeping.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
