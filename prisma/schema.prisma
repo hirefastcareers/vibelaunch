@@ -26,12 +26,20 @@ model User {
   // "on_hold", "cancelled", "expired", "failed") rather than a closed enum.
   subscriptionStatus  String?
   planRenewsAt        DateTime?
+  /// Phase 9 — public AI visibility scorecard (off by default).
+  scorecardPublic     Boolean   @default(false)
+  scorecardSlug       String?   @unique
+  scorecardPublishedAt DateTime?
   accounts            Account[]
   sessions            Session[]
   projects            Project[]
   trackedQueries      TrackedQuery[]
   competitorBrands    CompetitorBrand[]
   contentSuggestions  ContentSuggestion[]
+  gapAnalyses         CitationGapAnalysis[]
+  alerts              Alert[]
+  alertPreference     AlertPreference?
+  alertPendingChanges AlertPendingChange[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 }
@@ -218,8 +226,11 @@ model TrackedQuery {
   active      Boolean             @default(true)
   createdAt   DateTime            @default(now())
   user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  runs        CitationRun[]
-  suggestions ContentSuggestion[]
+  runs         CitationRun[]
+  suggestions  ContentSuggestion[]
+  gapAnalyses  CitationGapAnalysis[]
+  alerts       Alert[]
+  pendingAlertChanges AlertPendingChange[]
 
   @@index([userId])
   @@index([active])
@@ -249,6 +260,8 @@ model CitationRun {
   citedUrls      String[]           @default([])
   /// Phase 5 — set only when brandMentioned=true and classifier succeeds; else null.
   sentiment      CitationSentiment?
+  /// Set when classify was attempted and failed — stops infinite backfill retries.
+  sentimentClassifyFailed Boolean           @default(false)
   /// Non-null when the provider call failed; rawResponse may still hold error context.
   error          String?
   trackedQuery   TrackedQuery       @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
@@ -352,6 +365,112 @@ model SuggestionOutcome {
   @@index([citationRunId])
   @@index([matchedAt])
   @@index([matchType])
+}
+
+// ─── Phase 11 GEO: why-wasn't-I-cited gap analysis (on-demand, cached) ─────
+
+model CitationGapAnalysis {
+  id                 String       @id @default(cuid())
+  userId             String
+  trackedQueryId     String       @unique
+  /// Aggregated dominating domains from missed-run citedUrls.
+  topDomains         Json
+  /// Fingerprint of top domain set — used to invalidate cache when citations shift.
+  domainsFingerprint String
+  analysisText       String       @db.Text
+  /// Per-URL fetch outcomes (ok / blocked_by_robots / failed) — honesty trail.
+  fetchNotes         Json?
+  /// LLM generations in the current UTC-month window (shared suggestion quota).
+  generationCount       Int       @default(0)
+  generationWindowStart DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery       TrackedQuery @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── Phase 12 GEO: change alerts (2-run confirmed, digest-first) ───────────
+
+enum AlertType {
+  CITATION_LOST
+  CITATION_GAINED
+  COMPETITOR_OVERTAKE
+  SENTIMENT_FLIP
+}
+
+enum AlertDigestFrequency {
+  OFF
+  WEEKLY
+  IMMEDIATE
+}
+
+/// Per-user alert preferences. Defaults favour weekly digest (less noisy).
+model AlertPreference {
+  id                        String               @id @default(cuid())
+  userId                    String               @unique
+  citationLostEnabled       Boolean              @default(true)
+  citationGainedEnabled     Boolean              @default(true)
+  competitorOvertakeEnabled Boolean              @default(true)
+  sentimentFlipEnabled      Boolean              @default(true)
+  digestFrequency           AlertDigestFrequency @default(WEEKLY)
+  /// Optional outbound webhook URL (Starter/Pro). Null = disabled.
+  webhookUrl                String?
+  webhookFailCount          Int                  @default(0)
+  webhookLastError          String?
+  webhookLastSuccessAt      DateTime?
+  /// Set when consecutive failures trip the circuit (UI shows dead endpoint).
+  webhookDisabledAt         DateTime?
+  unsubscribeToken          String               @unique @default(cuid())
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
+  user                      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Confirmed alerts (after 2 consecutive matching change observations).
+model Alert {
+  id                    String        @id @default(cuid())
+  userId                String
+  trackedQueryId        String?
+  type                  AlertType
+  detail                Json
+  createdAt             DateTime      @default(now())
+  readAt                DateTime?
+  /// When email/webhook delivery succeeded (or digest included it).
+  deliveredAt           DateTime?
+  /// Email skipped because no mail provider is configured.
+  deliverySkippedReason String?
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery          TrackedQuery? @relation(fields: [trackedQueryId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+  @@index([deliveredAt])
+  @@index([type])
+}
+
+/// In-flight change candidates awaiting a second confirming run (noise filter).
+model AlertPendingChange {
+  id               String        @id @default(cuid())
+  userId           String
+  trackedQueryId   String
+  model            CitationModel
+  type             AlertType
+  /// Stable key e.g. CITATION_LOST:openai or COMPETITOR_OVERTAKE:openai:competitorId
+  fingerprint      String
+  detail           Json
+  consecutiveCount Int           @default(1)
+  lastRunId        String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackedQuery     TrackedQuery  @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackedQueryId, fingerprint])
+  @@index([userId])
+  @@index([trackedQueryId])
 }
 
 // ─── Legacy GEO metrics (project-scoped) ───────────────────────────────────
