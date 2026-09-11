@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
 
   const isValid = await verifyQStashSignature(signature, body);
-  if (!isValid && process.env.NODE_ENV === "production") {
+  if (!isValid) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 

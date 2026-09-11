@@ -4,7 +4,6 @@ import { ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EriBadge } from "@/components/eri-badge";
-import { GeoCard } from "@/components/dashboard/geo-card";
 import { CitationTrackingCard } from "@/components/dashboard/citation-tracking-card";
 import { ScorecardSharePanel } from "@/components/dashboard/scorecard-share-panel";
 import { DiagnosticCard } from "@/components/dashboard/diagnostic-card";
@@ -163,13 +162,8 @@ export default function DashboardHome({
 
       <BestPosts posts={data.topPosts} showEri={showEri} />
 
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-        <div id="ai-search" className="scroll-mt-8">
-          <GeoCard />
-        </div>
-        <div id="articles" className="scroll-mt-8">
-          <PublishArticleCard projects={data.projects} />
-        </div>
+      <div id="articles" className="scroll-mt-8">
+        <PublishArticleCard projects={data.projects} />
       </div>
     </DashboardPage>
   );

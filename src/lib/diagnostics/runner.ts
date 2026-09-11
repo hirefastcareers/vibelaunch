@@ -156,22 +156,43 @@ export async function runMediaValidation(projectId: string): Promise<TestSuiteRe
 
 export async function runGeoAudit(projectId: string): Promise<TestSuiteResult> {
   try {
-    const metrics = await db.geoMetric.findMany({
-      where: { projectId },
-      take: 10,
+    const project = await db.project.findUnique({
+      where: { id: projectId },
+      select: { userId: true },
+    });
+    if (!project) {
+      return {
+        suite: "geo_audit",
+        status: "failed",
+        score: 0,
+        details: { error: "Project not found" },
+      };
+    }
+
+    const runs = await db.citationRun.findMany({
+      where: {
+        trackedQuery: { userId: project.userId },
+        error: null,
+      },
+      orderBy: { runAt: "desc" },
+      take: 50,
+      select: { brandMentioned: true, model: true },
     });
 
-    const citedCount = metrics.filter((m) => m.cited).length;
-    const score = metrics.length > 0 ? (citedCount / metrics.length) * 100 : 0;
+    const mentionedCount = runs.filter((r) => r.brandMentioned).length;
+    const score = runs.length > 0 ? (mentionedCount / runs.length) * 100 : 0;
+    const models = [...new Set(runs.map((r) => r.model))];
 
     return {
       suite: "geo_audit",
       status: score >= 50 ? "passed" : score > 0 ? "warning" : "failed",
       score,
       details: {
-        totalQueriesChecked: metrics.length,
-        citationsFound: citedCount,
-        providers: ["perplexity", "chatgpt", "claude"],
+        source: "CitationRun",
+        totalSuccessfulRuns: runs.length,
+        brandMentions: mentionedCount,
+        models,
+        note: "Legacy GeoMetric audit retired — uses Phase 2 CitationRun rows.",
       },
     };
   } catch (error: unknown) {

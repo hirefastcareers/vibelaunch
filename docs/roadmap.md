@@ -36,3 +36,10 @@ Status reflects what has shipped on the active GEO PR lineage (Phases 1–12).
 
 - Honesty discipline: no phase is marked complete if it still relies on silent simulation for its core function.
 - Log deferred items in `docs/deferred-work.md`.
+
+## Review decisions (2026-09-11)
+
+- [x] Remove legacy Geo tracker (GeoCard / citation-tracker / geo check+metrics APIs)
+- [x] QStash workers fail-closed in all environments
+- [x] Webhook DNS re-validation at send time
+- [x] Public scorecard: anonymized competitor rank only

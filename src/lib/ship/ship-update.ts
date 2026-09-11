@@ -4,8 +4,6 @@ import { expandForSeo } from "@/lib/seo/expander";
 import { requestGoogleIndexing } from "@/lib/seo/google-indexing";
 import { captureSiteScreenshot } from "@/lib/media/site-capture";
 import { validateMediaUrls } from "@/lib/media/engine";
-import { checkLLMCitations } from "@/lib/geo/citation-tracker";
-import { buildGeoDashboardData } from "@/lib/geo/analytics";
 import { assertCanCreatePost, UsageLimitError } from "@/lib/billing/limits";
 import { getBaseUrl } from "@/lib/env";
 import { dispatchPostPublish } from "@/lib/queue/dispatch-post";
@@ -45,7 +43,7 @@ export type ShipUpdateResult = {
 
 /**
  * One founder update → X draft (+ optional publish), changelog article,
- * screenshot attach, and GEO citation check. Partial success is intentional:
+ * screenshot attach. Legacy project GEO check retired (Phase 2 citation tracking). Partial success is intentional:
  * later steps still run when earlier non-critical ones fail (e.g. media).
  */
 export async function shipUpdate(
@@ -271,25 +269,11 @@ export async function shipUpdate(
     };
   }
 
-  // 5. GEO citation check
-  try {
-    const geo = await checkLLMCitations(project.id);
-    const metrics = await prisma.geoMetric.findMany({
-      where: { projectId: project.id },
-      orderBy: { checkedAt: "desc" },
-      take: 90,
-    });
-    const dashboard = buildGeoDashboardData(metrics, project.name);
-    result.steps.geo = {
-      status: "ok",
-      citationScore: dashboard.citationScore,
-      checkedAt: geo.checkedAt,
-    };
-  } catch (error) {
-    result.steps.geo = {
-      status: "failed",
-      error: error instanceof Error ? error.message : "GEO check failed",
-    };
+  // 5. Legacy project GEO check retired — citation tracking is Phase 2 TrackedQuery sweeps.
+  result.steps.geo = {
+    status: "skipped",
+    error:
+      "Legacy GeoMetric check removed. Use dashboard citation tracking (CitationRun / tracked queries).",
   }
 
   return result;

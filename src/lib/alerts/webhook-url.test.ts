@@ -1,5 +1,9 @@
-import { describe, expect, it } from "vitest";
-import { validateAlertWebhookUrl } from "./webhook-url";
+import { describe, expect, it, vi } from "vitest";
+import {
+  assertWebhookDnsSafe,
+  isPrivateOrBlockedIp,
+  validateAlertWebhookUrl,
+} from "./webhook-url";
 
 describe("validateAlertWebhookUrl", () => {
   it("accepts https public URLs", () => {
@@ -27,5 +31,61 @@ describe("validateAlertWebhookUrl", () => {
 
   it("rejects non-http schemes", () => {
     expect(validateAlertWebhookUrl("ftp://example.com/x").ok).toBe(false);
+  });
+});
+
+describe("assertWebhookDnsSafe (send-time rebind guard)", () => {
+  it("rejects when a previously-public hostname resolves to a private IP", async () => {
+    const resolveDns = vi.fn(async () => [
+      { address: "127.0.0.1", family: 4 as const },
+    ]);
+
+    const result = await assertWebhookDnsSafe(
+      "https://hooks.example.com/xoopa",
+      resolveDns
+    );
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toMatch(/private or blocked address/i);
+    }
+    expect(resolveDns).toHaveBeenCalledWith("hooks.example.com");
+  });
+
+  it("allows when DNS resolves only to public addresses", async () => {
+    const resolveDns = vi.fn(async () => [
+      { address: "93.184.216.34", family: 4 as const },
+    ]);
+
+    const result = await assertWebhookDnsSafe(
+      "https://hooks.example.com/xoopa",
+      resolveDns
+    );
+
+    expect(result).toEqual({
+      ok: true,
+      url: "https://hooks.example.com/xoopa",
+    });
+  });
+
+  it("rejects if any resolved address is private (mixed A/AAAA)", async () => {
+    const resolveDns = vi.fn(async () => [
+      { address: "93.184.216.34", family: 4 as const },
+      { address: "::1", family: 6 as const },
+    ]);
+
+    const result = await assertWebhookDnsSafe(
+      "https://hooks.example.com/xoopa",
+      resolveDns
+    );
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe("isPrivateOrBlockedIp", () => {
+  it("flags loopback and RFC1918", () => {
+    expect(isPrivateOrBlockedIp("127.0.0.1")).toBe(true);
+    expect(isPrivateOrBlockedIp("10.1.2.3")).toBe(true);
+    expect(isPrivateOrBlockedIp("8.8.8.8")).toBe(false);
   });
 });

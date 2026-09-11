@@ -33,11 +33,11 @@ Branch: `cursor/xoopa-phases-review-1821` (integration tip of Phases 9 + 11 + 12
 ## Needs Tom’s judgement (not silently “fixed”)
 
 1. **Pro suggestion soft cap** — overage still runs LLM with a warning. Intentional fair-use, but unbounded cost if abused.
-2. **DNS rebinding on webhooks** — hostname validated at save time only; no resolve-at-fetch. Hardening would need allowlist or DNS check at delivery.
+2. ~~**DNS rebinding on webhooks**~~ — **Resolved** in `cursor/xoopa-review-decisions-1821`: DNS re-resolved + private-IP rejected at send time (`assertWebhookDnsSafe`).
 3. **First-run `runNow` UX** — schedule gate may frustrate Mon-only Free users who expect an immediate first sweep after signup. Alternative: one free onboarding sweep exception.
-4. **Legacy GeoCard / `citation-tracker` path** — still exists alongside Phase 2 `citation-runner`. Retire vs keep for old projects?
-5. **QStash signature fail-open outside production** — worker accepts unsigned payloads when `NODE_ENV !== "production"`.
-6. **Scorecard shows competitor brand names** — aggregate ranks only (no prompts/raw). Confirm public competitor naming is OK.
+4. ~~**Legacy GeoCard / `citation-tracker` path**~~ — **Resolved**: legacy path removed; Phase 2 `citation-runner` is the only production/cron citation path. `GeoMetric` table retained as archive (no writers).
+5. ~~**QStash signature fail-open outside production**~~ — **Resolved**: all QStash workers reject invalid signatures in every `NODE_ENV`.
+6. ~~**Scorecard shows competitor brand names**~~ — **Resolved**: public `/score/[slug]` shows anonymized rank only; private dashboard Compare still names competitors.
 7. **Email alerts** — still no mail provider wired (`NO_MAIL_PROVIDER`); Phase 12 ships unsubscribe + digest cron skip.
 
 ## Could not verify without real APIs / prod config
@@ -52,4 +52,15 @@ Branch: `cursor/xoopa-phases-review-1821` (integration tip of Phases 9 + 11 + 12
 ## Remaining known integration risks (flagged, not changed)
 
 - Multiple mention-rate helpers across analytics / scorecard / competitor compare — same formula, duplicated; consolidate later
-- Phase 2 + legacy GEO check both can spend LLM budget if both UIs are used
+- `GeoMetric` archive table still in schema (historical rows preserved; no product writers). Drop after Tom confirms no need for old diagnostics history.
+- `lib/geo/analytics.ts` still builds dashboards from `GeoMetric` records but has no live UI/API writers after legacy removal — consider deleting in a follow-up if unused.
+- Webhook DNS check uses Node `dns.lookup` (OS resolver); does not pin the TCP connection to the validated IP (TOCTOU remains if OS cache flips between lookup and connect). Further hardening would use a custom agent / pinned socket.
+
+## Review decisions follow-up (`cursor/xoopa-review-decisions-1821`)
+
+Tom confirmed four items; shipped:
+
+1. **Remove legacy Geo tracker** — deleted `citation-tracker`, GeoCard, `/api/geo/check`, `/api/geo/metrics`; ship-update skips legacy geo; diagnostics geo_audit reads `CitationRun`. Cron remains `citation-runs` → Phase 2 runner only.
+2. **QStash always fail-closed** — no `NODE_ENV === "production"` exception on queue workers.
+3. **Webhook DNS rebinding** — `assertWebhookDnsSafe` at deliver time (+ per retry).
+4. **Public scorecard anonymized ranks** — `anonymousRank` payload; methodology doc updated.

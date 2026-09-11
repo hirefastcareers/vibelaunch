@@ -2,9 +2,12 @@
  * SSRF guard for user-supplied alert webhook URLs.
  * Blocks localhost, private/link-local ranges, IPv4-mapped IPv6, and non-http(s).
  *
- * Note: hostname→IP resolution at fetch time is not done here (see deferred-work).
- * Callers should still prefer https and keep redirect: "error".
+ * Save-time validation checks the URL string; deliver-time also re-resolves DNS
+ * so a hostname that later points at a private IP is rejected (DNS rebinding).
  */
+
+import { lookup } from "node:dns/promises";
+import type { LookupAddress } from "node:dns";
 
 const BLOCKED_HOSTNAMES = new Set([
   "localhost",
@@ -12,7 +15,7 @@ const BLOCKED_HOSTNAMES = new Set([
   "metadata",
 ]);
 
-function isPrivateIpv4(host: string): boolean {
+export function isPrivateIpv4(host: string): boolean {
   const m = host.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
   if (!m) return false;
   const a = Number(m[1]);
@@ -27,7 +30,7 @@ function isPrivateIpv4(host: string): boolean {
   return false;
 }
 
-function isPrivateIpv6(host: string): boolean {
+export function isPrivateIpv6(host: string): boolean {
   const h = host.toLowerCase();
   if (h === "::1") return true;
   if (h.startsWith("fc") || h.startsWith("fd")) return true; // ULA
@@ -53,6 +56,11 @@ function isPrivateIpv6(host: string): boolean {
     }
   }
   return false;
+}
+
+export function isPrivateOrBlockedIp(address: string): boolean {
+  const host = address.replace(/^\[|\]$/g, "").toLowerCase();
+  return isPrivateIpv4(host) || isPrivateIpv6(host);
 }
 
 function normalizeHostname(hostname: string): string {
@@ -96,4 +104,62 @@ export function validateAlertWebhookUrl(raw: string): WebhookUrlValidation {
   }
 
   return { ok: true, url: parsed.toString() };
+}
+
+export type ResolveWebhookDns = (
+  hostname: string
+) => Promise<LookupAddress[]>;
+
+/**
+ * Re-resolve hostname and reject if any address is private/loopback/link-local.
+ * Call immediately before fetch to mitigate DNS rebinding after save-time checks.
+ */
+export async function assertWebhookDnsSafe(
+  urlString: string,
+  resolveDns: ResolveWebhookDns = defaultResolveDns
+): Promise<WebhookUrlValidation> {
+  const validated = validateAlertWebhookUrl(urlString);
+  if (!validated.ok) return validated;
+
+  const parsed = new URL(validated.url);
+  const host = normalizeHostname(parsed.hostname);
+
+  // Literal IPs already covered by validateAlertWebhookUrl — still re-check.
+  if (isPrivateIpv4(host) || isPrivateIpv6(host)) {
+    return {
+      ok: false,
+      error: "Webhook URL must not target a private network",
+    };
+  }
+
+  let addresses: LookupAddress[];
+  try {
+    addresses = await resolveDns(host);
+  } catch (err) {
+    return {
+      ok: false,
+      error: `Webhook DNS lookup failed (${err instanceof Error ? err.message : "error"})`,
+    };
+  }
+
+  if (!addresses.length) {
+    return { ok: false, error: "Webhook DNS lookup returned no addresses" };
+  }
+
+  for (const row of addresses) {
+    if (isPrivateOrBlockedIp(row.address)) {
+      return {
+        ok: false,
+        error: `Webhook resolved to a private or blocked address (${row.address})`,
+      };
+    }
+  }
+
+  return { ok: true, url: validated.url };
+}
+
+async function defaultResolveDns(hostname: string): Promise<LookupAddress[]> {
+  // family:0 → both A and AAAA when available
+  const result = await lookup(hostname, { all: true, verbatim: true });
+  return result;
 }

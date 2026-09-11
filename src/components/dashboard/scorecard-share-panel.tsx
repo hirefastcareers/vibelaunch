@@ -156,8 +156,8 @@ export function ScorecardSharePanel() {
           <p className="font-medium text-foreground">What stays private</p>
           <p className="mt-1">
             Public pages never include your prompt list, raw model responses, cited URL
-            dumps, or billing/account details. Competitor names appear only as aggregate
-            ranks.
+            dumps, billing/account details, or competitor brand names. Rank is anonymized
+            (e.g. “ranked #2 of 4 tracked brands”).
           </p>
         </div>
 
