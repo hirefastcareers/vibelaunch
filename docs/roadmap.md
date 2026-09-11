@@ -14,6 +14,10 @@ Status reflects what has shipped on the active GEO PR lineage (Phases 2–8). Ol
 | **6** | **“Fix it” content loop** (gap → content suggestion) | **Complete** |
 | **7** | **Real per-tier commercial limits + polish** | **Complete** |
 | **8** | **Public marketing site** (landing + pricing + SEO) | **Complete** |
+| **9** | **Public scorecard** | Not started on this lineage tip (may ship on parallel PR) |
+| **10** | **“Did the fix work” outcome loop** | Not started on this lineage tip (may ship on parallel PR) |
+| **11** | **“Why wasn’t I cited” gap analysis** | **Complete** |
+| 12 | — | Not started |
 
 ## Phase 5 — Sentiment classification (complete)
 
@@ -54,6 +58,16 @@ Shipped in this pass:
 - SEO: page meta / OG / Twitter / canonicals; Organization + SoftwareApplication offers from real plan config; dynamic `sitemap.ts` with extensible `marketingPages` list; production-aware `robots.ts`
 - Reuses design-system tokens + `IconFeatureCard` / `SegmentedTabs`
 - **Still pending Tom (not blocking):** env vars / Dodo catalogue sync from Phase 7; real testimonials once users exist
+
+## Phase 11 — “Why wasn’t I cited” gap analysis (complete)
+
+**Status: Complete.**
+
+- For each TrackedQuery with missed citation runs (`brandMentioned=false`), aggregate stored `citedUrls` into dominating domains (www-stripped hosts) with per-model counts — no new provider citation calls.
+- On-demand `CitationGapAnalysis` (cached per query via `domainsFingerprint`): fetch top sample pages with robots.txt respect; LLM analysis only describes pages that were actually readable; blocked/failed fetches are labeled honestly.
+- Fixes tab: “Why wasn’t I cited?” per gap — show domains first, then optional Explain gap; feeds into existing Phase 6 content brief (does not duplicate it).
+- Cost control: never auto-runs on cron; cache until top domain set changes or user forces refresh; **shares Phase 7 suggestion monthly quota** (recommended — Phase 7 had no separate gap-analysis cap).
+- Honesty: analysis never invents page content from URLs alone; correlation vs causation stays explicit in the prompt.
 
 ## Notes
 

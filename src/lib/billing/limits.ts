@@ -51,13 +51,18 @@ export async function resolvePlanTier(userId: string): Promise<PlanTier> {
   return user?.planTier ?? "FREE";
 }
 
-/** Count AI suggestion generations this UTC month (creates + regenerations). */
+/** Count AI suggestion + gap-analysis generations this UTC month.
+ *
+ * Phase 11 shares the Phase 7 suggestion monthly quota (recommended):
+ * each on-demand gap analysis that runs the LLM counts as one generation.
+ * Cache hits do not count.
+ */
 export async function countSuggestionGenerationsThisMonth(
   userId: string,
   now = new Date()
 ): Promise<number> {
   const start = startOfUtcMonth(now);
-  const [created, regenAgg] = await Promise.all([
+  const [created, regenAgg, gapAnalyses] = await Promise.all([
     prisma.contentSuggestion.count({
       where: { userId, createdAt: { gte: start } },
     }),
@@ -68,8 +73,14 @@ export async function countSuggestionGenerationsThisMonth(
       },
       _sum: { regenerationCount: true },
     }),
+    // updatedAt advances only when analysis is (re)generated, not on cache hits.
+    prisma.citationGapAnalysis.count({
+      where: { userId, updatedAt: { gte: start } },
+    }),
   ]);
-  return created + (regenAgg._sum.regenerationCount ?? 0);
+  return (
+    created + (regenAgg._sum.regenerationCount ?? 0) + gapAnalyses
+  );
 }
 
 export async function getUsage(userId: string): Promise<UsageSnapshot> {
