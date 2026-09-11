@@ -2,7 +2,7 @@
 
 Product direction: GEO / AI-citation tracking — whether a brand is mentioned across major AI models, tied to a content-fix workflow.
 
-Status reflects what has shipped on the active GEO PR lineage (Phases 2–8). Older “precursor only” notes on `main` are superseded once those PRs land.
+Status reflects what has shipped on the active GEO PR lineage (Phases 2–10). Older “precursor only” notes on `main` are superseded once those PRs land.
 
 | Phase | Name | Status |
 | ----- | ---- | ------ |
@@ -14,6 +14,10 @@ Status reflects what has shipped on the active GEO PR lineage (Phases 2–8). Ol
 | **6** | **“Fix it” content loop** (gap → content suggestion) | **Complete** |
 | **7** | **Real per-tier commercial limits + polish** | **Complete** |
 | **8** | **Public marketing site** (landing + pricing + SEO) | **Complete** |
+| **9** | **Public scorecard** | Not started on this lineage tip (may ship on parallel PR) |
+| **10** | **“Did the fix work” outcome loop** | **Complete** |
+| 11 | — | Not started |
+| 12 | — | Not started |
 
 ## Phase 5 — Sentiment classification (complete)
 
@@ -54,6 +58,17 @@ Shipped in this pass:
 - SEO: page meta / OG / Twitter / canonicals; Organization + SoftwareApplication offers from real plan config; dynamic `sitemap.ts` with extensible `marketingPages` list; production-aware `robots.ts`
 - Reuses design-system tokens + `IconFeatureCard` / `SegmentedTabs`
 - **Still pending Tom (not blocking):** env vars / Dodo catalogue sync from Phase 7; real testimonials once users exist
+
+## Phase 10 — “Did the fix work” outcome loop (complete)
+
+**Status: Complete.**
+
+- `ContentSuggestion.publishedUrl` / `publishedAt` — user pastes the URL after marking a suggestion actioned; saved URL is normalized (https, strip `www`, trailing slash, tracking params).
+- On each later successful `CitationRun` for that `TrackedQuery`, match normalized published URL against `citedUrls`.
+- `SuggestionOutcome` rows: one per detected citation (`contentSuggestionId`, `citationRunId`, `matchedAt`, `model`, `matchType` EXACT | DOMAIN). Exact (host+path) and domain-only are separate signals — never conflated.
+- Fixes tab **Published outcomes**: status per suggestion — needs URL / published awaiting data / cited (models + when) / not yet cited after 3 successful post-publish runs. Copy states that slow indexing means “not yet” is not failure.
+- Aggregate “published fixes that earned exact citations” only after ≥3 published fixes have cleared the 3-run observation window.
+- In-product caveat: correlation ≠ causation; not presented as ROI proof.
 
 ## Notes
 

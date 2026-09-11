@@ -127,7 +127,52 @@ type ContentSuggestionRow = {
   createdAt: string;
   brandName: string;
   promptText: string;
+  publishedUrl: string | null;
+  publishedAt: string | null;
+  outcomes: Array<{
+    id: string;
+    matchType: "EXACT" | "DOMAIN";
+    model: string;
+    matchedAt: string;
+    citationRunId: string;
+  }>;
+  runsAfterPublish: number;
+  outcomeStatus:
+    | "needs_url"
+    | "awaiting"
+    | "cited_exact"
+    | "cited_domain_only"
+    | "not_yet_cited";
+  awaitingRunThreshold: number;
 };
+
+type OutcomeSummary = {
+  publishedWithUrl: number;
+  observedEnoughRuns: number;
+  earnedExactCitation: number;
+  earnedDomainOnly: number;
+  showAggregate: boolean;
+};
+
+const FIX_MODEL_LABELS: Record<string, string> = {
+  openai: "ChatGPT",
+  anthropic: "Claude",
+  gemini: "Gemini",
+  perplexity: "Perplexity",
+  grok: "Grok",
+};
+
+function formatOutcomeWhen(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+}
 
 type ViewMode =
   | "share"
@@ -209,10 +254,16 @@ export function CitationTrackingCard({
   const [editingCompetitorName, setEditingCompetitorName] = useState("");
   const [gaps, setGaps] = useState<CitationGapRow[]>([]);
   const [suggestions, setSuggestions] = useState<ContentSuggestionRow[]>([]);
+  const [outcomeSummary, setOutcomeSummary] = useState<OutcomeSummary | null>(
+    null
+  );
   const [suggestionMonthLimit, setSuggestionMonthLimit] = useState(3);
   const [fixesLoading, setFixesLoading] = useState(false);
   const [busyGapKey, setBusyGapKey] = useState<string | null>(null);
   const [busySuggestionId, setBusySuggestionId] = useState<string | null>(null);
+  const [publishDrafts, setPublishDrafts] = useState<Record<string, string>>(
+    {}
+  );
 
   const firstResultsMessage = useMemo(() => formatFirstResultsMessage(), []);
 
@@ -433,6 +484,7 @@ export function CitationTrackingCard({
         error?: string;
         gaps?: CitationGapRow[];
         suggestions?: ContentSuggestionRow[];
+        outcomeSummary?: OutcomeSummary;
         usage?: { suggestionGenerationsPerMonth?: number };
       };
       if (!res.ok) {
@@ -441,6 +493,7 @@ export function CitationTrackingCard({
       }
       setGaps(json.gaps ?? []);
       setSuggestions(json.suggestions ?? []);
+      setOutcomeSummary(json.outcomeSummary ?? null);
       if (typeof json.usage?.suggestionGenerationsPerMonth === "number") {
         setSuggestionMonthLimit(json.usage.suggestionGenerationsPerMonth);
       }
@@ -504,7 +557,11 @@ export function CitationTrackingCard({
 
   async function patchSuggestion(
     id: string,
-    patch: { status?: "DISMISSED" | "ACTIONED"; regenerate?: boolean }
+    patch: {
+      status?: "DISMISSED" | "ACTIONED";
+      regenerate?: boolean;
+      publishedUrl?: string | null;
+    }
   ) {
     setBusySuggestionId(id);
     setError(null);
@@ -528,6 +585,17 @@ export function CitationTrackingCard({
       setSuggestions((prev) =>
         prev.map((s) => (s.id === id ? { ...s, ...json.suggestion! } : s))
       );
+      if (patch.publishedUrl !== undefined) {
+        setPublishDrafts((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }
+      // Refresh summary counts after publish / status changes.
+      if (patch.publishedUrl !== undefined || patch.status) {
+        void loadFixes();
+      }
     } catch {
       setError("Could not update suggestion");
     } finally {
@@ -1163,6 +1231,26 @@ export function CitationTrackingCard({
                   </Button>
                 </div>
 
+                <p className="rounded-md border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+                  Seeing a citation after you publish does not prove your content
+                  caused it. Models index slowly, and many other factors affect
+                  what they cite. Treat outcomes as correlation signals, not ROI
+                  proof.
+                </p>
+
+                {outcomeSummary?.showAggregate ? (
+                  <p className="text-sm text-foreground">
+                    Of {outcomeSummary.observedEnoughRuns} published fixes with
+                    enough later runs to observe:{" "}
+                    {outcomeSummary.earnedExactCitation} earned an exact-page
+                    citation
+                    {outcomeSummary.earnedDomainOnly > 0
+                      ? `; ${outcomeSummary.earnedDomainOnly} saw the same domain cited on a different page`
+                      : ""}
+                    . Exact and domain matches are counted separately.
+                  </p>
+                ) : null}
+
                 {showEmptyLive || (!hasLiveRows && !showDemo) ? (
                   <div className="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6">
                     <p className="text-sm font-medium text-foreground">
@@ -1280,6 +1368,153 @@ export function CitationTrackingCard({
                     })}
                   </ul>
                 )}
+
+                {(() => {
+                  const actioned = suggestions.filter(
+                    (s) => s.status === "ACTIONED"
+                  );
+                  if (actioned.length === 0) return null;
+                  return (
+                    <div className="space-y-3 border-t border-border pt-4">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          Published outcomes
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Paste the URL after you publish. We check later citation
+                          runs for that page (exact) or just your domain (weaker).
+                          AI models index slowly. “Not yet cited” after a few runs
+                          is normal, not failure.
+                        </p>
+                      </div>
+                      <ul className="space-y-3">
+                        {actioned.map((suggestion) => {
+                          const threshold =
+                            suggestion.awaitingRunThreshold ?? 3;
+                          const exactOutcomes = (suggestion.outcomes ?? []).filter(
+                            (o) => o.matchType === "EXACT"
+                          );
+                          const domainOutcomes = (
+                            suggestion.outcomes ?? []
+                          ).filter((o) => o.matchType === "DOMAIN");
+                          let statusLabel = "Paste published URL";
+                          let statusDetail =
+                            "Mark where you published so we can watch later runs.";
+                          if (suggestion.outcomeStatus === "awaiting") {
+                            statusLabel = "Published · awaiting data";
+                            statusDetail = `${suggestion.runsAfterPublish} successful run${suggestion.runsAfterPublish === 1 ? "" : "s"} since publish (need ${threshold} before we call it “not yet cited”). Models often take longer to index new pages.`;
+                          } else if (suggestion.outcomeStatus === "cited_exact") {
+                            statusLabel = "Cited (exact page)";
+                            statusDetail =
+                              "Your published URL appeared in cited URLs. That is a correlation signal, not proof the content caused it.";
+                          } else if (
+                            suggestion.outcomeStatus === "cited_domain_only"
+                          ) {
+                            statusLabel = "Domain cited (not this page)";
+                            statusDetail =
+                              "A URL on the same domain was cited, but not this exact path. Separate, weaker signal than an exact-page match.";
+                          } else if (
+                            suggestion.outcomeStatus === "not_yet_cited"
+                          ) {
+                            statusLabel = `Not yet cited after ${suggestion.runsAfterPublish} runs`;
+                            statusDetail =
+                              "Still not failure. Indexing can take weeks. Keep publishing and checking after future sweeps.";
+                          }
+
+                          return (
+                            <li
+                              key={suggestion.id}
+                              className="rounded-md border border-border px-3 py-3"
+                            >
+                              <div className="flex flex-wrap items-center gap-2">
+                                <DataPill tone="outline">
+                                  {FIX_MODEL_LABELS[suggestion.model] ??
+                                    suggestion.model}
+                                </DataPill>
+                                <DataPill tone="soft">{statusLabel}</DataPill>
+                              </div>
+                              <p className="mt-2 text-sm text-foreground">
+                                {suggestion.promptText}
+                              </p>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {statusDetail}
+                              </p>
+                              {suggestion.publishedUrl ? (
+                                <p className="mt-2 break-all text-xs text-muted-foreground">
+                                  Watching: {suggestion.publishedUrl}
+                                </p>
+                              ) : (
+                                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
+                                  <div className="min-w-0 flex-1 space-y-1">
+                                    <Label htmlFor={`pub-${suggestion.id}`}>
+                                      Published URL
+                                    </Label>
+                                    <Input
+                                      id={`pub-${suggestion.id}`}
+                                      type="url"
+                                      placeholder="https://yoursite.com/post"
+                                      value={
+                                        publishDrafts[suggestion.id] ?? ""
+                                      }
+                                      onChange={(e) =>
+                                        setPublishDrafts((prev) => ({
+                                          ...prev,
+                                          [suggestion.id]: e.target.value,
+                                        }))
+                                      }
+                                    />
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    disabled={
+                                      busySuggestionId === suggestion.id ||
+                                      !(
+                                        publishDrafts[suggestion.id] ?? ""
+                                      ).trim()
+                                    }
+                                    onClick={() =>
+                                      void patchSuggestion(suggestion.id, {
+                                        publishedUrl:
+                                          publishDrafts[suggestion.id] ?? "",
+                                      })
+                                    }
+                                  >
+                                    {busySuggestionId === suggestion.id
+                                      ? "Saving…"
+                                      : "Save URL"}
+                                  </Button>
+                                </div>
+                              )}
+                              {exactOutcomes.length > 0 ? (
+                                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                                  {exactOutcomes.map((o) => (
+                                    <li key={o.id}>
+                                      Exact ·{" "}
+                                      {FIX_MODEL_LABELS[o.model] ?? o.model} ·{" "}
+                                      {formatOutcomeWhen(o.matchedAt)}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                              {domainOutcomes.length > 0 ? (
+                                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                                  {domainOutcomes.map((o) => (
+                                    <li key={o.id}>
+                                      Domain only ·{" "}
+                                      {FIX_MODEL_LABELS[o.model] ?? o.model} ·{" "}
+                                      {formatOutcomeWhen(o.matchedAt)}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  );
+                })()}
               </div>
             ) : null}
           </div>

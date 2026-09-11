@@ -8,6 +8,7 @@ import {
   type CitationProvider,
 } from "@/lib/geo/model-runners";
 import { attachSentimentsForRun } from "@/lib/geo/attach-sentiments";
+import { detectSuggestionOutcomesForRun } from "@/lib/geo/suggestion-outcomes";
 import {
   citationModelsForPlan,
   planRunsOnUtcWeekday,
@@ -65,6 +66,9 @@ export async function executeCitationRun(
     if (brandSentiment) {
       run.sentiment = brandSentiment;
     }
+
+    // Phase 10: detect whether published fix URLs appear in citedUrls.
+    await detectSuggestionOutcomesForRun(run);
 
     return { model: provider, run, ok: true };
   } catch (err) {

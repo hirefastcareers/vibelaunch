@@ -4,6 +4,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
+- [2026-09-11] **Phase 10 — URL-matching edge cases.** Gemini grounding may return `vertexaisearch.cloud.google.com/...` redirectors rather than the publisher URL, so exact/domain match against a user’s published page can miss even when Gemini “used” that page. Optional resolve/follow step still deferred (same as Phase 2 Gemini note). Also deferred: fuzzy path matches (trailing index.html, locale prefixes), http→https already handled but mixed CDN hosts for the same site are not aliased.
+- [2026-09-11] **Phase 10 UX polish deferred:** edit/replace published URL after save; clear URL without regenerating; backfill outcomes for historical CitationRuns when a URL is saved late; per-model observation windows; chart of outcome rate over time; notify when a first exact citation lands.
 - [2026-09-10] **Phase 8 — real testimonials / social proof.** Landing page ships an honest empty placeholder marked for Tom. Do not invent quotes, logos, or user counts. Fill once early customers consent to be named.
 - [2026-09-10] **Phase 8 — additional marketing pages deferred.** Blog and competitor comparison pages (pattern SuperX uses heavily) not built in Phase 8. Sitemap already has an extensible `marketingPages` list — add routes there when those pages ship.
 - [2026-09-10] **Phase 7 / cost validation vs live invoices.** Tier caps shipped from Phase 2/5 *list-price estimates* (~$0.04–0.12 per 5-model query sweep; sentiment ~$0.00005–0.0002/call). No production invoice lines available yet. After the first paid week, compare actual OpenAI/Anthropic/Gemini/Perplexity/xAI spend to FREE/STARTER/PRO allowances and adjust caps if margins are wrong.
@@ -42,6 +44,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 - [2026-09-08] Wiring checklist refreshed against morning env + afternoon Replies/Ship work. See `docs/plan-2026-09-08.md` for the remaining P0 order.
 
 ## Resolved
+
+- [2026-09-11] Phase 10 “did the fix work”: `publishedUrl`/`publishedAt` on `ContentSuggestion`, `SuggestionOutcome` (EXACT vs DOMAIN), detection on successful CitationRuns, Fixes tab published-outcomes UI with honest timeframe + correlation caveat, aggregate only when observation window is meaningful.
 
 - [2026-09-10] Phase 7 commercial tiers: FREE/STARTER/PRO caps (prompts, models, weekly cadence, competitors, monthly suggestions with Pro soft cap), server-side model+schedule enforcement, upgrade CTAs, £15/£39 display pricing.
 
