@@ -37,6 +37,7 @@ export interface UsageSnapshot {
   suggestionSoftCap: boolean;
   citationModels: string[];
   runsPerWeek: 1 | 2;
+  publicScorecards: number;
 }
 
 function startOfUtcMonth(now = new Date()): Date {
@@ -51,13 +52,18 @@ export async function resolvePlanTier(userId: string): Promise<PlanTier> {
   return user?.planTier ?? "FREE";
 }
 
-/** Count AI suggestion generations this UTC month (creates + regenerations). */
+/** Count AI suggestion + gap-analysis generations this UTC month.
+ *
+ * Phase 11 shares the Phase 7 suggestion monthly quota (recommended):
+ * each on-demand gap analysis that runs the LLM counts as one generation.
+ * Cache hits do not count.
+ */
 export async function countSuggestionGenerationsThisMonth(
   userId: string,
   now = new Date()
 ): Promise<number> {
   const start = startOfUtcMonth(now);
-  const [created, regenAgg] = await Promise.all([
+  const [created, regenAgg, gapAnalyses] = await Promise.all([
     prisma.contentSuggestion.count({
       where: { userId, createdAt: { gte: start } },
     }),
@@ -68,8 +74,20 @@ export async function countSuggestionGenerationsThisMonth(
       },
       _sum: { regenerationCount: true },
     }),
+    // Sum generations in the current UTC-month window (includes regenerations).
+    prisma.citationGapAnalysis.aggregate({
+      where: {
+        userId,
+        generationWindowStart: { gte: start },
+      },
+      _sum: { generationCount: true },
+    }),
   ]);
-  return created + (regenAgg._sum.regenerationCount ?? 0);
+  return (
+    created +
+    (regenAgg._sum.regenerationCount ?? 0) +
+    (gapAnalyses._sum.generationCount ?? 0)
+  );
 }
 
 export async function getUsage(userId: string): Promise<UsageSnapshot> {
@@ -112,6 +130,7 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
     suggestionSoftCap: limits.suggestionSoftCap,
     citationModels: [...limits.citationModels],
     runsPerWeek: limits.runsPerWeek,
+    publicScorecards: limits.publicScorecards,
   };
 }
 

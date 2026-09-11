@@ -9,6 +9,7 @@ import {
 } from "@/lib/geo/model-runners";
 import { attachSentimentsForRun } from "@/lib/geo/attach-sentiments";
 import { detectSuggestionOutcomesForRun } from "@/lib/geo/suggestion-outcomes";
+import { processAlertsForRun } from "@/lib/alerts/process-alerts";
 import {
   citationModelsForPlan,
   planRunsOnUtcWeekday,
@@ -69,6 +70,20 @@ export async function executeCitationRun(
 
     // Phase 10: detect whether published fix URLs appear in citedUrls.
     await detectSuggestionOutcomesForRun(run);
+
+    // Phase 12: compare to previous successful run; alert only after 2-run confirm.
+    await processAlertsForRun({
+      userId: trackedQuery.userId,
+      trackedQueryId: trackedQuery.id,
+      brandName: trackedQuery.brandName,
+      promptText: trackedQuery.promptText,
+      run: {
+        id: run.id,
+        model: run.model,
+        runAt: run.runAt,
+        error: run.error,
+      },
+    });
 
     return { model: provider, run, ok: true };
   } catch (err) {

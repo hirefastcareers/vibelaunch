@@ -174,6 +174,24 @@ function formatOutcomeWhen(iso: string): string {
   }
 }
 
+type DomainTallyRow = {
+  domain: string;
+  count: number;
+  models: string[];
+  sampleUrls: string[];
+};
+
+type GapAnalysisState = {
+  loadingPreview?: boolean;
+  loadingGenerate?: boolean;
+  previewDomains?: DomainTallyRow[];
+  missedRunCount?: number;
+  analysisText?: string | null;
+  fetchNotes?: Array<{ url: string; status: string; detail?: string }>;
+  cached?: boolean;
+  error?: string | null;
+};
+
 type ViewMode =
   | "share"
   | "trend"
@@ -262,6 +280,9 @@ export function CitationTrackingCard({
   const [busyGapKey, setBusyGapKey] = useState<string | null>(null);
   const [busySuggestionId, setBusySuggestionId] = useState<string | null>(null);
   const [publishDrafts, setPublishDrafts] = useState<Record<string, string>>(
+    {}
+  );
+  const [whyByGap, setWhyByGap] = useState<Record<string, GapAnalysisState>>(
     {}
   );
 
@@ -607,6 +628,143 @@ export function CitationTrackingCard({
     if (reason === "both") return "Latest miss · low mention rate";
     if (reason === "latest_miss") return "Latest run missed brand";
     return "Mention rate below 50%";
+  }
+
+  async function loadWhyPreview(gap: CitationGapRow) {
+    const key = `${gap.trackedQueryId}:${gap.model}`;
+    setWhyByGap((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], loadingPreview: true, error: null },
+    }));
+    try {
+      const params = new URLSearchParams({
+        trackedQueryId: gap.trackedQueryId,
+        model: gap.model,
+      });
+      const res = await fetch(`/api/geo/gap-analysis?${params.toString()}`);
+      const json = (await res.json()) as {
+        error?: string;
+        preview?: {
+          topDomains?: DomainTallyRow[];
+          missedRunCount?: number;
+        };
+        analysis?: {
+          analysisText?: string;
+          fetchNotes?: Array<{ url: string; status: string; detail?: string }>;
+          cached?: boolean;
+        } | null;
+      };
+      if (!res.ok) {
+        setWhyByGap((prev) => ({
+          ...prev,
+          [key]: {
+            ...prev[key],
+            loadingPreview: false,
+            error: json.error ?? "Could not load why preview",
+          },
+        }));
+        return;
+      }
+      setWhyByGap((prev) => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          loadingPreview: false,
+          previewDomains: json.preview?.topDomains ?? [],
+          missedRunCount: json.preview?.missedRunCount ?? 0,
+          analysisText: json.analysis?.analysisText ?? prev[key]?.analysisText ?? null,
+          fetchNotes: json.analysis?.fetchNotes ?? prev[key]?.fetchNotes,
+          cached: json.analysis?.cached ?? prev[key]?.cached,
+          error: null,
+        },
+      }));
+    } catch {
+      setWhyByGap((prev) => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          loadingPreview: false,
+          error: "Could not load why preview",
+        },
+      }));
+    }
+  }
+
+  async function generateWhyAnalysis(gap: CitationGapRow, force = false) {
+    const key = `${gap.trackedQueryId}:${gap.model}`;
+    setWhyByGap((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], loadingGenerate: true, error: null },
+    }));
+    setError(null);
+    try {
+      const res = await fetch("/api/geo/gap-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackedQueryId: gap.trackedQueryId,
+          model: gap.model,
+          force,
+        }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        code?: string;
+        upgradePath?: string;
+        fairUseWarning?: string | null;
+        analysis?: {
+          analysisText?: string;
+          topDomains?: DomainTallyRow[];
+          fetchNotes?: Array<{ url: string; status: string; detail?: string }>;
+          cached?: boolean;
+          missedRunCount?: number;
+        };
+      };
+      if (!res.ok || !json.analysis) {
+        setWhyByGap((prev) => ({
+          ...prev,
+          [key]: {
+            ...prev[key],
+            loadingGenerate: false,
+            error: json.error ?? "Could not generate analysis",
+          },
+        }));
+        setError(
+          formatLimitError({
+            ...json,
+            error: json.error ?? "Could not generate analysis",
+          })
+        );
+        return;
+      }
+      setWhyByGap((prev) => ({
+        ...prev,
+        [key]: {
+          loadingGenerate: false,
+          loadingPreview: false,
+          previewDomains:
+            json.analysis!.topDomains ?? prev[key]?.previewDomains ?? [],
+          missedRunCount:
+            json.analysis!.missedRunCount ?? prev[key]?.missedRunCount,
+          analysisText: json.analysis!.analysisText ?? null,
+          fetchNotes: json.analysis!.fetchNotes,
+          cached: json.analysis!.cached,
+          error: null,
+        },
+      }));
+      if (typeof json.fairUseWarning === "string" && json.fairUseWarning) {
+        setError(json.fairUseWarning);
+      }
+    } catch {
+      setWhyByGap((prev) => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          loadingGenerate: false,
+          error: "Could not generate analysis",
+        },
+      }));
+    }
   }
 
   const competitorAtCap =
@@ -1363,6 +1521,114 @@ export function CitationTrackingCard({
                               </Button>
                             </div>
                           )}
+
+                          {(() => {
+                            const why = whyByGap[key];
+                            return (
+                              <div className="mt-4 space-y-2 border-t border-border pt-3">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                  <p className="text-xs font-medium text-foreground">
+                                    Why wasn’t I cited?
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="secondary"
+                                      disabled={why?.loadingPreview}
+                                      onClick={() => void loadWhyPreview(gap)}
+                                    >
+                                      {why?.loadingPreview
+                                        ? "Loading domains…"
+                                        : why?.previewDomains
+                                          ? "Refresh domains"
+                                          : "Show cited domains"}
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      disabled={
+                                        why?.loadingGenerate ||
+                                        !(
+                                          why?.previewDomains &&
+                                          why.previewDomains.length > 0
+                                        )
+                                      }
+                                      onClick={() =>
+                                        void generateWhyAnalysis(gap, false)
+                                      }
+                                    >
+                                      {why?.loadingGenerate
+                                        ? "Analysing…"
+                                        : why?.analysisText
+                                          ? "Refresh analysis"
+                                          : "Explain gap"}
+                                    </Button>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  Domains come from stored citation runs where
+                                  your brand was missed — no new model calls.
+                                  Analysis is on-demand (shares your monthly
+                                  suggestion quota) and only describes pages we
+                                  could actually fetch.
+                                </p>
+                                {why?.error ? (
+                                  <p className="text-xs text-destructive">
+                                    {why.error}
+                                  </p>
+                                ) : null}
+                                {why?.previewDomains &&
+                                why.previewDomains.length > 0 ? (
+                                  <ul className="space-y-1 text-xs text-muted-foreground">
+                                    {why.previewDomains.slice(0, 6).map((d) => (
+                                      <li key={d.domain}>
+                                        <span className="text-foreground">
+                                          {d.domain}
+                                        </span>{" "}
+                                        · {d.count}× ·{" "}
+                                        {d.models.join(", ") || "unknown model"}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : why?.previewDomains ? (
+                                  <p className="text-xs text-muted-foreground">
+                                    No cited URLs on missed runs for this query
+                                    yet.
+                                  </p>
+                                ) : null}
+                                {why?.analysisText ? (
+                                  <div className="space-y-2">
+                                    <pre className="whitespace-pre-wrap rounded-md bg-muted/30 px-3 py-2 font-sans text-sm text-foreground">
+                                      {why.analysisText}
+                                    </pre>
+                                    {why.cached ? (
+                                      <p className="text-xs text-muted-foreground">
+                                        Cached analysis — regenerate only if
+                                        cited domains change or you force a
+                                        refresh.
+                                      </p>
+                                    ) : null}
+                                    {why.fetchNotes &&
+                                    why.fetchNotes.length > 0 ? (
+                                      <ul className="space-y-1 text-xs text-muted-foreground">
+                                        {why.fetchNotes.map((n) => (
+                                          <li key={n.url} className="break-all">
+                                            {n.status}: {n.url}
+                                            {n.detail ? ` (${n.detail})` : ""}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    ) : null}
+                                    <p className="text-xs text-muted-foreground">
+                                      Next step: use Generate content brief above
+                                      to turn this gap into a fix suggestion.
+                                    </p>
+                                  </div>
+                                ) : null}
+                              </div>
+                            );
+                          })()}
                         </li>
                       );
                     })}

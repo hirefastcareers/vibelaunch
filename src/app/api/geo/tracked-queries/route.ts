@@ -11,8 +11,12 @@ import {
   UsageLimitError,
   assertCanCreateTrackedQueries,
   getUsage,
+  resolvePlanTier,
 } from "@/lib/billing/limits";
-import { BILLING_UPGRADE_PATH } from "@/lib/billing/plans";
+import {
+  BILLING_UPGRADE_PATH,
+  planRunsOnUtcWeekday,
+} from "@/lib/billing/plans";
 
 export const dynamic = "force-dynamic";
 
@@ -110,9 +114,25 @@ export async function POST(req: NextRequest) {
     )
   );
 
-  const runNow = parsed.data.runNow === true;
+  let runNow = parsed.data.runNow === true;
   const runs: Array<{ trackedQueryId: string; mode: string; detail?: unknown }> =
     [];
+
+  // Phase 7 schedule: Free/Starter Mon only; Pro Mon+Thu. runNow must not bypass.
+  if (runNow) {
+    const planTier = await resolvePlanTier(userId);
+    if (!planRunsOnUtcWeekday(planTier)) {
+      runNow = false;
+      runs.push({
+        trackedQueryId: created[0]?.id ?? "",
+        mode: "deferred",
+        detail: {
+          reason: "runNow skipped — plan schedule does not run on this UTC weekday",
+          planTier,
+        },
+      });
+    }
+  }
 
   if (runNow) {
     for (const query of created) {

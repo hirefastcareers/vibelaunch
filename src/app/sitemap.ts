@@ -23,13 +23,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
   const now = new Date();
 
-  const entries = await prisma.changelogEntry
-    .findMany({
-      where: { published: true },
-      select: { slug: true, publishedAt: true },
-      orderBy: { publishedAt: "desc" },
-    })
-    .catch(() => []);
+  const [entries, scorecards] = await Promise.all([
+    prisma.changelogEntry
+      .findMany({
+        where: { published: true },
+        select: { slug: true, publishedAt: true },
+        orderBy: { publishedAt: "desc" },
+      })
+      .catch(() => []),
+    prisma.user
+      .findMany({
+        where: { scorecardPublic: true, scorecardSlug: { not: null } },
+        select: { scorecardSlug: true, scorecardPublishedAt: true, updatedAt: true },
+      })
+      .catch(() => []),
+  ]);
 
   return [
     ...marketingPages.map((page) => ({
@@ -44,5 +52,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.6,
     })),
+    ...scorecards
+      .filter((s) => s.scorecardSlug)
+      .map((s) => ({
+        url: `${baseUrl}/score/${s.scorecardSlug}`,
+        lastModified: s.scorecardPublishedAt ?? s.updatedAt ?? now,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })),
   ];
 }

@@ -34,12 +34,12 @@ export async function attachSentimentsForRun(
       brandName: context.brandName,
       rawResponse: run.rawResponse,
     });
-    if (brandSentiment) {
-      await prisma.citationRun.update({
-        where: { id: run.id },
-        data: { sentiment: brandSentiment },
-      });
-    }
+    await prisma.citationRun.update({
+      where: { id: run.id },
+      data: brandSentiment
+        ? { sentiment: brandSentiment, sentimentClassifyFailed: false }
+        : { sentimentClassifyFailed: true },
+    });
   }
 
   const competitors = await prisma.competitorBrand.findMany({

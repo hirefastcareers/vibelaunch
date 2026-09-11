@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Bell,
   CreditCard,
   Folder,
   HeartPulse,
@@ -14,10 +15,12 @@ import {
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
 import { SignOutButton } from "@/components/sign-out-button";
+import { AlertsBell } from "@/components/dashboard/alerts-bell";
 
 const navItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/dashboard#ai-citation-tracking", label: "Citations", icon: Search },
+  { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
   { href: "/dashboard/queue", label: "Posts", icon: Send },
   { href: "/dashboard/replies", label: "Replies", icon: MessageCircle },
   { href: "/dashboard/diagnostics", label: "Health", icon: HeartPulse },
@@ -39,10 +42,11 @@ export function Sidebar({ userLabel, onOpenCommandPalette, onNavigate }: Sidebar
 
   return (
     <aside className="flex h-full w-60 flex-col border-r border-border bg-background">
-      <div className="flex h-14 items-center px-4">
+      <div className="flex h-14 items-center justify-between gap-2 px-4">
         <Link href="/dashboard" className="flex items-center" onClick={onNavigate}>
           <Logo size={26} />
         </Link>
+        <AlertsBell />
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
@@ -113,7 +117,9 @@ function NavGroup({
         const active =
           item.href === "/dashboard/projects"
             ? path === "/dashboard/projects" || path.startsWith("/dashboard/projects/")
-            : path === item.href;
+            : item.href === "/dashboard/alerts"
+              ? path === "/dashboard/alerts" || path.startsWith("/dashboard/alerts/")
+              : path === item.href;
         return (
           <Link
             key={item.href}

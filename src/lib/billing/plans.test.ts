@@ -32,6 +32,13 @@ describe("plan schedule and model gates", () => {
     expect(planRunsOnUtcWeekday("PRO", 2)).toBe(false); // Tue
   });
 
+
+  it("exposes one public scorecard on every tier (growth-loop decision)", () => {
+    expect(PLAN_LIMITS.FREE.publicScorecards).toBe(1);
+    expect(PLAN_LIMITS.STARTER.publicScorecards).toBe(1);
+    expect(PLAN_LIMITS.PRO.publicScorecards).toBe(1);
+  });
+
   it("keeps workspace project/post caps unchanged from billing Pass 2", () => {
     expect(PLAN_LIMITS.FREE.projects).toBe(1);
     expect(PLAN_LIMITS.STARTER.postsPerMonth).toBe(40);

@@ -9,6 +9,7 @@ vi.mock("@/lib/prisma", () => ({
     trackedQuery: { count: vi.fn() },
     competitorBrand: { count: vi.fn() },
     contentSuggestion: { count: vi.fn(), aggregate: vi.fn() },
+    citationGapAnalysis: { aggregate: vi.fn() },
   },
 }));
 
@@ -34,6 +35,9 @@ const mockedPrisma = prisma as unknown as {
     count: ReturnType<typeof vi.fn>;
     aggregate: ReturnType<typeof vi.fn>;
   };
+  citationGapAnalysis: {
+    aggregate: ReturnType<typeof vi.fn>;
+  };
 };
 
 describe("billing limits (Phase 7)", () => {
@@ -47,6 +51,9 @@ describe("billing limits (Phase 7)", () => {
     mockedPrisma.contentSuggestion.count.mockResolvedValue(0);
     mockedPrisma.contentSuggestion.aggregate.mockResolvedValue({
       _sum: { regenerationCount: 0 },
+    });
+    mockedPrisma.citationGapAnalysis.aggregate.mockResolvedValue({
+      _sum: { generationCount: 0 },
     });
   });
 
