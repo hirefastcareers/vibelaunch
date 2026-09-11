@@ -40,6 +40,12 @@ export const PLAN_LIMITS: Record<
     citationModels: PlanCitationModel[];
     /** Citation sweeps per week (Mon only = 1; Mon+Thu = 2). */
     runsPerWeek: 1 | 2;
+    /**
+     * Phase 12 — outbound alert webhooks.
+     * Decision (flagged): email alerts available on all tiers including Free;
+     * webhooks are Starter/Pro only (paid outbound HTTP surface).
+     */
+    alertWebhooks: boolean;
   }
 > = {
   FREE: {
@@ -51,6 +57,7 @@ export const PLAN_LIMITS: Record<
     suggestionSoftCap: false,
     citationModels: ["openai", "perplexity", "gemini"],
     runsPerWeek: 1,
+    alertWebhooks: false,
   },
   STARTER: {
     projects: 3,
@@ -61,6 +68,7 @@ export const PLAN_LIMITS: Record<
     suggestionSoftCap: false,
     citationModels: [...ALL_CITATION_MODELS],
     runsPerWeek: 1,
+    alertWebhooks: true,
   },
   PRO: {
     projects: 10,
@@ -71,6 +79,7 @@ export const PLAN_LIMITS: Record<
     suggestionSoftCap: true,
     citationModels: [...ALL_CITATION_MODELS],
     runsPerWeek: 2,
+    alertWebhooks: true,
   },
 };
 
