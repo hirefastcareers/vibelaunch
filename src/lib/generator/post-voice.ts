@@ -1,3 +1,5 @@
+import { withDirectProseInstruction } from "@/lib/ai/prose-style";
+
 const MAX_POST_CHARS = 280;
 
 const GOLDEN_EXAMPLE =
@@ -38,7 +40,7 @@ export function buildPostPrompt(input: {
           .join("\n")}`
       : "Write content likely to be cited by AI search when someone asks for tools or topics related to this product.";
 
-  return `Write one X post for ${input.name}. Max ${MAX_POST_CHARS} characters.
+  return withDirectProseInstruction(`Write one X post for ${input.name}. Max ${MAX_POST_CHARS} characters.
 
 Topic: ${input.topic}
 Tagline: ${input.tagline ?? "none"}
@@ -67,7 +69,7 @@ Rules:
 - Return only the post text
 
 Past posts:
-${input.examples || "None yet."}`;
+${input.examples || "None yet."}`);
 }
 
 export function cleanGeneratedPost(raw: string): string {

@@ -1,6 +1,8 @@
 /**
  * SEO content expander: turns a short summary into full SEO-optimized changelog content.
  */
+import { withDirectProseInstruction } from "@/lib/ai/prose-style";
+
 export interface SeoExpandedContent {
   title: string;
   seoTitle: string;
@@ -29,14 +31,14 @@ async function expandWithOpenAI(
   projectName: string,
   keywords?: string[]
 ): Promise<SeoExpandedContent> {
-  const prompt = `Expand this product changelog entry into SEO-optimized content.
+  const prompt = withDirectProseInstruction(`Expand this product changelog entry into SEO-optimized content.
 
 Product: ${projectName}
 Title: ${title}
 Summary: ${summary}
 Keywords: ${keywords?.join(", ") ?? "auto-detect"}
 
-Return JSON with: seoTitle (max 60 chars), seoDesc (max 160 chars), body (markdown, 300-800 words), keywords (array of 5-10 strings), slug (lowercase-hyphenated).`;
+Return JSON with: seoTitle (max 60 chars), seoDesc (max 160 chars), body (markdown, 300-800 words), keywords (array of 5-10 strings), slug (lowercase-hyphenated).`);
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",

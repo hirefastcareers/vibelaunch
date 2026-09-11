@@ -1,4 +1,5 @@
 import type { CitationModel } from "@prisma/client";
+import { withDirectProseInstruction } from "@/lib/ai/prose-style";
 
 export type GenerateFixSuggestionInput = {
   brandName: string;
@@ -79,7 +80,7 @@ export async function generateFixSuggestion(
       temperature: 0.4,
       max_tokens: 500,
       messages: [
-        { role: "system", content: SYSTEM },
+        { role: "system", content: withDirectProseInstruction(SYSTEM) },
         { role: "user", content: user },
       ],
     }),
