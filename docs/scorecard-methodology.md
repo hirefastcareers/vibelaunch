@@ -32,11 +32,18 @@ show a confident score on a thin sample.
 Sentiment pills count only runs where the brand was mentioned. Unclassified
 mentions stay unclassified (null classifier results are not relabeled as neutral).
 
-## Competitor ranking
+## Competitor ranking (public vs private)
 
 Ranks reuse stored raw responses (same approach as the dashboard Compare tab).
-The public page shows competitor **names** and aggregate mention rates only —
-never prompts, raw model text, cited URL lists, or account/billing fields.
+
+**Public `/score/[slug]` page:** shows only an **anonymized** rank for the
+scorecard brand (e.g. “ranked #2 of 4 tracked brands”). Other competitor brand
+names, per-competitor mention rates, and named ranking tables are **not**
+exposed. Prompts, raw model text, cited URL lists, and account/billing fields
+remain private.
+
+**Private dashboard (Phase 4 Compare):** still shows competitor names and
+aggregate mention rates for the signed-in user.
 
 ## Tuning
 

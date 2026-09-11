@@ -33,12 +33,26 @@ export type ScorecardSentiment = {
   unclassified: number;
 };
 
+/** Named competitor rows — private dashboard / Compare only. Not on public scorecards. */
 export type ScorecardCompetitorRow = {
   brandName: string;
   mentionRate: number;
   mentioned: number;
   total: number;
   rank: number;
+};
+
+/**
+ * Public anonymized rank among the user's brand + their tracked competitors.
+ * Never includes other brand names.
+ */
+export type ScorecardAnonymousRank = {
+  /** 1-based rank of the scorecard brand within the tracked set. */
+  yourRank: number | null;
+  /** Brands in the comparison (= 1 + tracked competitors). */
+  brandCount: number;
+  /** e.g. "ranked #2 of 4 tracked brands" */
+  label: string;
 };
 
 export type PublicScorecardPayload = {
@@ -52,10 +66,10 @@ export type PublicScorecardPayload = {
   models: ScorecardModelRow[];
   sentiment: ScorecardSentiment;
   /**
-   * You + tracked competitors by mention rate (aggregate metrics only).
-   * Competitor names are shown for ranking; prompt lists and raw responses are never included.
+   * Anonymized rank vs the user's tracked competitor set.
+   * Competitor names are never included on the public payload.
    */
-  ranking: ScorecardCompetitorRow[];
+  anonymousRank: ScorecardAnonymousRank;
   successfulRuns: number;
   modelsWithData: number;
   generatedAt: string;
@@ -201,16 +215,28 @@ export async function buildScorecardPayload(
     });
   }
 
-  const ranking: ScorecardCompetitorRow[] = rankingCandidates
+  const ranked = rankingCandidates
     .map((row) => ({
       brandName: row.brandName,
       mentioned: row.mentioned,
       total: row.total,
       mentionRate: rate(row.mentioned, row.total),
-      rank: 0,
     }))
-    .sort((a, b) => b.mentionRate - a.mentionRate || b.mentioned - a.mentioned)
-    .map((row, index) => ({ ...row, rank: index + 1 }));
+    .sort((a, b) => b.mentionRate - a.mentionRate || b.mentioned - a.mentioned);
+
+  const yourIndex = ranked.findIndex((row) => row.brandName === brandName);
+  const brandCount = ranked.length;
+  const yourRank = yourIndex >= 0 ? yourIndex + 1 : null;
+  const anonymousRank: ScorecardAnonymousRank = {
+    yourRank,
+    brandCount,
+    label:
+      yourRank == null
+        ? "Rank unavailable"
+        : brandCount <= 1
+          ? "Ranked #1 of 1 tracked brand (no competitors tracked)"
+          : `Ranked #${yourRank} of ${brandCount} tracked brands`,
+  };
 
   return {
     brandName,
@@ -224,11 +250,11 @@ export async function buildScorecardPayload(
       "Headline score = round(average of per-model rates for models with ≥1 successful run).",
       `Numeric score is withheld until ≥${SCORECARD_MIN_SUCCESSFUL_RUNS} successful runs across ≥${SCORECARD_MIN_MODELS_WITH_DATA} models.`,
       "Sentiment counts only runs where the brand was mentioned; unclassified stays unclassified.",
-      "Competitor ranks use the same stored responses; no extra model calls.",
+      "Public pages show only your anonymized rank among tracked brands — competitor names stay private (dashboard Compare still shows names).",
     ],
     models,
     sentiment,
-    ranking,
+    anonymousRank,
     successfulRuns: successful.length,
     modelsWithData,
     generatedAt: new Date().toISOString(),

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { PLAN_LIMITS, type PlanTier } from "@/lib/billing/plans";
-import { validateAlertWebhookUrl } from "@/lib/alerts/webhook-url";
+import { assertWebhookDnsSafe } from "@/lib/alerts/webhook-url";
 
 const WEBHOOK_FAILURE_CIRCUIT = 5;
 const WEBHOOK_TIMEOUT_MS = 8_000;
@@ -32,7 +32,8 @@ export async function deliverAlertWebhook(opts: {
     };
   }
 
-  const validated = validateAlertWebhookUrl(opts.webhookUrl);
+  // Re-resolve DNS at send time (not only at save) to block rebinding to private IPs.
+  const validated = await assertWebhookDnsSafe(opts.webhookUrl);
   if (!validated.ok) {
     return { delivered: false, error: validated.error };
   }
@@ -40,9 +41,16 @@ export async function deliverAlertWebhook(opts: {
   let lastError = "Webhook delivery failed";
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
+      // Re-check DNS each attempt in case TTL flipped mid-retry.
+      const live = await assertWebhookDnsSafe(opts.webhookUrl);
+      if (!live.ok) {
+        lastError = live.error;
+        break;
+      }
+
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
-      const res = await fetch(validated.url, {
+      const res = await fetch(live.url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

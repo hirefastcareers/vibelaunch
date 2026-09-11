@@ -473,8 +473,10 @@ model AlertPendingChange {
   @@index([trackedQueryId])
 }
 
-// ─── Legacy GEO metrics (project-scoped) ───────────────────────────────────
+// ─── Legacy GEO metrics (archive — no writers; Phase 2 uses CitationRun) ───
 
+/// Historical project-scoped citation checks. Retained so existing rows are not dropped.
+/// New writes removed in review-decisions pass; do not use for product features.
 model GeoMetric {
   id          String   @id @default(cuid())
   projectId   String

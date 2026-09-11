@@ -10,7 +10,6 @@ vi.mock("@/lib/prisma", () => ({
       update: vi.fn(),
     },
     post: { create: vi.fn(), findUnique: vi.fn() },
-    geoMetric: { findMany: vi.fn() },
   },
 }));
 
@@ -54,23 +53,7 @@ vi.mock("@/lib/media/engine", () => ({
   validateMediaUrls: vi.fn(() => ({ valid: true, errors: [] })),
 }));
 
-vi.mock("@/lib/geo/citation-tracker", () => ({
-  checkLLMCitations: vi.fn(async () => ({
-    projectId: "proj_1",
-    metrics: [],
-    checkedAt: "2026-09-08T12:00:00.000Z",
-  })),
-}));
 
-vi.mock("@/lib/geo/analytics", () => ({
-  buildGeoDashboardData: vi.fn(() => ({
-    citationScore: 33,
-    byProvider: {},
-    recentMetrics: [],
-    suggestions: [],
-  })),
-  buildCitationTrend: vi.fn(() => []),
-}));
 
 vi.mock("@/lib/env", () => ({
   getBaseUrl: () => "https://xoopa.app",
@@ -88,7 +71,6 @@ const updateProject = vi.mocked(prisma.project.update);
 const findSlug = vi.mocked(prisma.changelogEntry.findUnique);
 const createEntry = vi.mocked(prisma.changelogEntry.create);
 const createPost = vi.mocked(prisma.post.create);
-const findMetrics = vi.mocked(prisma.geoMetric.findMany);
 
 describe("deriveShipTitle", () => {
   it("keeps short updates intact", () => {
@@ -124,10 +106,9 @@ describe("shipUpdate", () => {
       mediaUrls: ["https://blob.example/captures/site.png"],
       xPostUrl: null,
     } as never);
-    findMetrics.mockResolvedValue([]);
   });
 
-  it("ships post draft, article, media, and geo in one pass", async () => {
+  it("ships post draft, article, and media; skips legacy geo", async () => {
     const result = await shipUpdate("user_1", {
       projectId: "proj_1",
       update: "X sign-in is live",
@@ -141,8 +122,7 @@ describe("shipUpdate", () => {
     expect(result.steps.post.mediaUrls).toEqual([
       "https://blob.example/captures/site.png",
     ]);
-    expect(result.steps.geo.status).toBe("ok");
-    expect(result.steps.geo.citationScore).toBe(33);
+    expect(result.steps.geo.status).toBe("skipped");
     expect(createPost).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

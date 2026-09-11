@@ -6,7 +6,6 @@ import { DataPill } from "@/components/ui/data-pill";
 import { getBaseUrl } from "@/lib/env";
 import {
   getPublicScorecardBySlug,
-  type PublicScorecardPayload,
 } from "@/lib/geo/scorecard";
 
 export const dynamic = "force-dynamic";
@@ -109,12 +108,12 @@ export default async function PublicScorecardPage({ params }: PageProps) {
         />
         <StatCard
           label="Your rank vs tracked set"
-          value={yourRankLabel(card)}
-          hint={
-            card.ranking.length <= 1
-              ? "No competitors tracked yet"
-              : `${card.ranking.length} brands in this comparison`
+          value={
+            card.anonymousRank.yourRank != null
+              ? `#${card.anonymousRank.yourRank}`
+              : "—"
           }
+          hint={card.anonymousRank.label}
         />
       </section>
 
@@ -175,44 +174,18 @@ export default async function PublicScorecardPage({ params }: PageProps) {
 
       <section className="ds-container mt-12" aria-labelledby="rank-heading">
         <h2 id="rank-heading" className="text-2xl tracking-tight">
-          Rank vs tracked competitors
+          Rank vs tracked set
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Aggregate mention rates only. Prompt lists and account details stay private.
+          Your position among brands you track. Other brand names are not shown on this
+          public page.
         </p>
-        <div className="mt-6 overflow-x-auto rounded-xl border border-border">
-          <table className="w-full min-w-[480px] text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40 text-left">
-                <th className="px-4 py-3 font-medium">Rank</th>
-                <th className="px-4 py-3 font-medium">Brand</th>
-                <th className="px-4 py-3 font-medium">Mention rate</th>
-                <th className="px-4 py-3 font-medium">Mentions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {card.ranking.map((row) => (
-                <tr
-                  key={`${row.rank}-${row.brandName}`}
-                  className="border-b border-border last:border-0"
-                >
-                  <td className="px-4 py-3 tabular-nums">{row.rank}</td>
-                  <td className="px-4 py-3 font-medium">
-                    {row.brandName}
-                    {row.brandName === card.brandName ? (
-                      <span className="ml-2 text-xs text-muted-foreground">(you)</span>
-                    ) : null}
-                  </td>
-                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
-                    {row.mentionRate}%
-                  </td>
-                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
-                    {row.mentioned}/{row.total}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-6 rounded-xl border border-border bg-card p-6">
+          <p className="text-lg font-medium tracking-tight">{card.anonymousRank.label}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Rank uses aggregate mention rates on successful citation runs. Named competitor
+            breakdowns stay on your private dashboard Compare view.
+          </p>
         </div>
       </section>
 
@@ -253,8 +226,3 @@ export default async function PublicScorecardPage({ params }: PageProps) {
   );
 }
 
-function yourRankLabel(card: PublicScorecardPayload): string {
-  const you = card.ranking.find((row) => row.brandName === card.brandName);
-  if (!you) return "—";
-  return `#${you.rank}`;
-}

@@ -5,7 +5,7 @@ vi.mock("@/lib/db", () => ({
     changelogEntry: { findFirst: vi.fn() },
     postEmbedding: { findMany: vi.fn() },
     project: { findUnique: vi.fn() },
-    geoMetric: { findMany: vi.fn() },
+    citationRun: { findMany: vi.fn() },
     testRun: { create: vi.fn() },
   },
 }));
@@ -18,8 +18,8 @@ describe("diagnostic runner", () => {
     vi.clearAllMocks();
     vi.mocked(db.changelogEntry.findFirst).mockResolvedValue(null);
     vi.mocked(db.postEmbedding.findMany).mockResolvedValue([]);
-    vi.mocked(db.project.findUnique).mockResolvedValue(null);
-    vi.mocked(db.geoMetric.findMany).mockResolvedValue([]);
+    vi.mocked(db.project.findUnique).mockResolvedValue({ userId: "u1" } as never);
+    vi.mocked(db.citationRun.findMany).mockResolvedValue([]);
     vi.mocked(db.testRun.create).mockResolvedValue({} as never);
   });
 
