@@ -10,6 +10,10 @@ import {
 import type { DomainTally } from "@/lib/geo/normalize-citation-domain";
 import type { PageFetchResult } from "@/lib/geo/fetch-page-for-analysis";
 
+function startOfUtcMonth(now = new Date()): Date {
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+}
+
 export type GapAnalysisDto = {
   id: string;
   trackedQueryId: string;
@@ -114,6 +118,16 @@ export async function getOrCreateGapAnalysis(opts: {
     focusModelLabel,
   });
 
+  const windowStart = startOfUtcMonth();
+  const existing = await prisma.citationGapAnalysis.findUnique({
+    where: { trackedQueryId: opts.trackedQueryId },
+    select: { generationCount: true, generationWindowStart: true },
+  });
+  const inWindow =
+    existing?.generationWindowStart != null &&
+    existing.generationWindowStart.getTime() >= windowStart.getTime();
+  const nextGenerationCount = inWindow ? existing!.generationCount + 1 : 1;
+
   const row = await prisma.citationGapAnalysis.upsert({
     where: { trackedQueryId: opts.trackedQueryId },
     create: {
@@ -123,12 +137,16 @@ export async function getOrCreateGapAnalysis(opts: {
       domainsFingerprint: summary.domainsFingerprint,
       analysisText,
       fetchNotes: pageFetches,
+      generationCount: 1,
+      generationWindowStart: windowStart,
     },
     update: {
       topDomains: summary.topDomains,
       domainsFingerprint: summary.domainsFingerprint,
       analysisText,
       fetchNotes: pageFetches,
+      generationCount: nextGenerationCount,
+      generationWindowStart: windowStart,
     },
   });
 

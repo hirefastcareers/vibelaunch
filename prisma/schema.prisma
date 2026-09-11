@@ -260,6 +260,8 @@ model CitationRun {
   citedUrls      String[]           @default([])
   /// Phase 5 — set only when brandMentioned=true and classifier succeeds; else null.
   sentiment      CitationSentiment?
+  /// Set when classify was attempted and failed — stops infinite backfill retries.
+  sentimentClassifyFailed Boolean           @default(false)
   /// Non-null when the provider call failed; rawResponse may still hold error context.
   error          String?
   trackedQuery   TrackedQuery       @relation(fields: [trackedQueryId], references: [id], onDelete: Cascade)
@@ -378,6 +380,9 @@ model CitationGapAnalysis {
   analysisText       String       @db.Text
   /// Per-URL fetch outcomes (ok / blocked_by_robots / failed) — honesty trail.
   fetchNotes         Json?
+  /// LLM generations in the current UTC-month window (shared suggestion quota).
+  generationCount       Int       @default(0)
+  generationWindowStart DateTime?
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
   user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)

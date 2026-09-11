@@ -34,6 +34,7 @@ export async function backfillSentimentBatch(
     where: {
       brandMentioned: true,
       sentiment: null,
+      sentimentClassifyFailed: false,
       error: null,
     },
     orderBy: { runAt: "asc" },
@@ -52,11 +53,15 @@ export async function backfillSentimentBatch(
     });
     if (!sentiment) {
       stats.brandRunsFailed += 1;
+      await prisma.citationRun.update({
+        where: { id: run.id },
+        data: { sentimentClassifyFailed: true },
+      });
       continue;
     }
     await prisma.citationRun.update({
       where: { id: run.id },
-      data: { sentiment },
+      data: { sentiment, sentimentClassifyFailed: false },
     });
     stats.brandRunsUpdated += 1;
   }
@@ -118,7 +123,12 @@ export async function backfillSentimentBatch(
   }
 
   const remainingBrand = await prisma.citationRun.count({
-    where: { brandMentioned: true, sentiment: null, error: null },
+    where: {
+      brandMentioned: true,
+      sentiment: null,
+      sentimentClassifyFailed: false,
+      error: null,
+    },
   });
   stats.done = remainingBrand === 0 && brandRuns.length < batchSize;
 

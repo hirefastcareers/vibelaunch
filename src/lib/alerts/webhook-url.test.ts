@@ -14,6 +14,17 @@ describe("validateAlertWebhookUrl", () => {
     expect(validateAlertWebhookUrl("http://192.168.1.1/hook").ok).toBe(false);
   });
 
+  it("blocks IPv4-mapped IPv6 and trailing-dot localhost", () => {
+    expect(
+      validateAlertWebhookUrl("http://[::ffff:127.0.0.1]/hook").ok
+    ).toBe(false);
+    expect(
+      validateAlertWebhookUrl("http://[::ffff:10.0.0.1]/hook").ok
+    ).toBe(false);
+    expect(validateAlertWebhookUrl("http://localhost./hook").ok).toBe(false);
+    expect(validateAlertWebhookUrl("http://[::1]/hook").ok).toBe(false);
+  });
+
   it("rejects non-http schemes", () => {
     expect(validateAlertWebhookUrl("ftp://example.com/x").ok).toBe(false);
   });

@@ -46,6 +46,7 @@ export const PLAN_LIMITS: Record<
      * Multi-brand scorecards would raise this later; today brand scope is one per user.
      */
     publicScorecards: number;
+    /**
      * Phase 12 — outbound alert webhooks.
      * Decision (flagged): email alerts available on all tiers including Free;
      * webhooks are Starter/Pro only (paid outbound HTTP surface).

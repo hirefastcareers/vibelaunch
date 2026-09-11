@@ -16,6 +16,14 @@ describe("/api/cron/diagnostics", () => {
     process.env.CRON_SECRET = "test-cron-secret";
   });
 
+
+  it("rejects when CRON_SECRET is unset (fail-closed)", async () => {
+    delete process.env.CRON_SECRET;
+    const { GET } = await import("./route");
+    const res = await GET(request("Bearer test-cron-secret"));
+    expect(res.status).toBe(401);
+  });
+
   it("rejects GET without Authorization", async () => {
     const { GET } = await import("./route");
     const res = await GET(request());

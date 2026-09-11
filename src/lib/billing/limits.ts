@@ -74,13 +74,19 @@ export async function countSuggestionGenerationsThisMonth(
       },
       _sum: { regenerationCount: true },
     }),
-    // updatedAt advances only when analysis is (re)generated, not on cache hits.
-    prisma.citationGapAnalysis.count({
-      where: { userId, updatedAt: { gte: start } },
+    // Sum generations in the current UTC-month window (includes regenerations).
+    prisma.citationGapAnalysis.aggregate({
+      where: {
+        userId,
+        generationWindowStart: { gte: start },
+      },
+      _sum: { generationCount: true },
     }),
   ]);
   return (
-    created + (regenAgg._sum.regenerationCount ?? 0) + gapAnalyses
+    created +
+    (regenAgg._sum.regenerationCount ?? 0) +
+    (gapAnalyses._sum.generationCount ?? 0)
   );
 }
 

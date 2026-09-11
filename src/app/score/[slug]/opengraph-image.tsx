@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { notFound } from "next/navigation";
 import { getLogoMarkGeometry } from "@/components/logo";
 import { getPublicScorecardBySlug } from "@/lib/geo/scorecard";
 
@@ -50,6 +51,7 @@ type ImageProps = {
 export default async function Image({ params }: ImageProps) {
   const { slug } = await params;
   const card = await getPublicScorecardBySlug(slug);
+  if (!card) notFound();
 
   const [mono, serif] = await Promise.all([
     fetch(MONO_FONT_URL)

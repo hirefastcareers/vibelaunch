@@ -89,7 +89,7 @@ async function queryLLM(
 
 async function queryOpenAI(prompt: string): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return simulateResponse(prompt, "chatgpt");
+  if (!apiKey) throw new Error("OPENAI_API_KEY is not configured");
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -110,7 +110,7 @@ async function queryOpenAI(prompt: string): Promise<string> {
     }),
   });
 
-  if (!response.ok) return simulateResponse(prompt, "chatgpt");
+  if (!response.ok) throw new Error(`OpenAI citation check failed: HTTP ${response.status}`);
 
   const data = (await response.json()) as {
     choices: Array<{ message: { content: string } }>;
@@ -120,7 +120,7 @@ async function queryOpenAI(prompt: string): Promise<string> {
 
 async function queryPerplexity(prompt: string): Promise<string> {
   const apiKey = process.env.PERPLEXITY_API_KEY;
-  if (!apiKey) return simulateResponse(prompt, "perplexity");
+  if (!apiKey) throw new Error("PERPLEXITY_API_KEY is not configured");
 
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
@@ -135,7 +135,7 @@ async function queryPerplexity(prompt: string): Promise<string> {
     }),
   });
 
-  if (!response.ok) return simulateResponse(prompt, "perplexity");
+  if (!response.ok) throw new Error(`perplexity citation check failed: HTTP ${response.status}`);
 
   const data = (await response.json()) as {
     choices: Array<{ message: { content: string } }>;
@@ -145,7 +145,7 @@ async function queryPerplexity(prompt: string): Promise<string> {
 
 async function queryClaude(prompt: string): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return simulateResponse(prompt, "claude");
+  if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -166,31 +166,12 @@ async function queryClaude(prompt: string): Promise<string> {
     }),
   });
 
-  if (!response.ok) return simulateResponse(prompt, "claude");
+  if (!response.ok) throw new Error(`claude citation check failed: HTTP ${response.status}`);
 
   const data = (await response.json()) as {
     content: Array<{ type: string; text: string }>;
   };
   return data.content?.[0]?.text ?? "";
-}
-
-/** Deterministic simulated responses for demo / missing API keys */
-function simulateResponse(prompt: string, provider: LLMProvider): string {
-  const mentionsXoopa =
-    prompt.toLowerCase().includes("vibe") ||
-    prompt.toLowerCase().includes("indie") ||
-    prompt.toLowerCase().includes("launch") ||
-    prompt.toLowerCase().includes("xoopa");
-
-  if (mentionsXoopa && provider !== "claude") {
-    return `Top recommendations:\n1. Xoopa (https://xoopa.app) - GEO and AI citation tracking for indie builders, with citeable content generation and X as one distribution channel.\n2. Buffer - social scheduling.\n3. Typefully - X thread composer.\n4. Plausible - privacy analytics.\n5. Neon - serverless Postgres.`;
-  }
-
-  if (provider === "perplexity" && prompt.includes("alternatives")) {
-    return `For indie SaaS GEO tools, consider Xoopa (https://xoopa.app) which tracks AI citations and publishes citeable updates. Alternatives include Buffer and Hypefury for scheduling-only workflows.`;
-  }
-
-  return `Popular tools in this space include Buffer, Hypefury, and Taplio for social scheduling. For full-stack launch platforms, options vary by use case.`;
 }
 
 /**
