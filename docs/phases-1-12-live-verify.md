@@ -24,7 +24,7 @@ Date: **2026-09-11**. Branch tip exercised for code/migrations: `cursor/xoopa-ph
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| Free/Starter hard caps for prompts, competitors, suggestions via **same helpers APIs call**, against real Postgres | **Yes — local DB only** | Caps reject with `UsageLimitError` / expected codes (`scripts/local-plan-cap-verify.ts`, 18/18) |
+| Free/Starter hard caps for prompts, competitors, suggestions via **same helpers APIs call**, against real Postgres | **Yes — local DB only** (ran on review-tip checkout; helpers not all on `main` yet) | Caps reject with `UsageLimitError` / expected codes (18/18 checks) |
 | Free models = 3; Starter/Pro = 5; Mon-only vs Mon+Thu helpers | **Yes — local** | Passed |
 | Exceed caps via **real HTTP** on live preview/production | **No** | Needs NextAuth session cookie (X OAuth). Production APIs return **401** without session (probed). Preview SSO blocks unauthenticated access to app routes |
 | Starter/Pro accounts on live deploy | **No** | Cannot create/promote tiers without session + DB write or Dodo checkout |
@@ -99,9 +99,8 @@ Date: **2026-09-11**. Branch tip exercised for code/migrations: `cursor/xoopa-ph
 
 ## Artifacts in this branch
 
-- `scripts/local-plan-cap-verify.ts` — local DB helper verification (not live deploy)
 - `scripts/live-deploy-verify.sh` — re-runnable live HTTP probes (session/bypass optional)
-- Vitest log: 195 passed on review tip at verification time
+- Vitest + local helper checks were executed against a checkout of `cursor/xoopa-phases-review-1821` (not against `main` APIs for Phases 9–12)
 
 ## Hosts used
 
