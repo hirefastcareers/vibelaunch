@@ -2,7 +2,9 @@
 
 Product direction: GEO / AI-citation tracking — whether a brand is mentioned across major AI models, tied to a content-fix workflow.
 
-Status reflects what has shipped on the active GEO PR lineage (Phases 2–10). Older “precursor only” notes on `main` are superseded once those PRs land.
+Status reflects what has shipped on the active GEO PR lineage (Phases 2–12). Older “precursor only” notes on `main` are superseded once those PRs land.
+
+**Roadmap fully built out** for the original Phase 1–12 GEO plan (Phase 9 public scorecard may still land via a parallel PR).
 
 | Phase | Name | Status |
 | ----- | ---- | ------ |
@@ -14,10 +16,10 @@ Status reflects what has shipped on the active GEO PR lineage (Phases 2–10). O
 | **6** | **“Fix it” content loop** (gap → content suggestion) | **Complete** |
 | **7** | **Real per-tier commercial limits + polish** | **Complete** |
 | **8** | **Public marketing site** (landing + pricing + SEO) | **Complete** |
-| **9** | **Public scorecard** | Not started on this lineage tip (may ship on parallel PR) |
+| **9** | **Public scorecard** | Parallel PR / not required on this tip |
 | **10** | **“Did the fix work” outcome loop** | **Complete** |
-| 11 | — | Not started |
-| 12 | — | Not started |
+| **11** | **“Why wasn’t I cited” gap analysis** | Parallel PR / may already be on `main` |
+| **12** | **Change alerts (email + webhook)** | **Complete** |
 
 ## Phase 5 — Sentiment classification (complete)
 
@@ -70,7 +72,34 @@ Shipped in this pass:
 - Aggregate “published fixes that earned exact citations” only after ≥3 published fixes have cleared the 3-run observation window.
 - In-product caveat: correlation ≠ causation; not presented as ROI proof.
 
+## Phase 12 — Change alerts (complete)
+
+**Status: Complete.**
+
+- After each successful citation run, compare to the previous successful run for the same TrackedQuery + model.
+- Detect: citation lost / gained, competitor overtake, positive→negative sentiment flip.
+- **2-run confirmation:** a change must hold across two consecutive runs before an `Alert` is created (single-run flips are noise).
+- Storage: `Alert`, `AlertPreference` (default digest **WEEKLY**), `AlertPendingChange`.
+- Email: **no mail provider is wired in this repo** — delivery records `NO_MAIL_PROVIDER` / digests queue with an explicit skip reason. Unsubscribe token route ships for when email is enabled. **Do not add a provider without Tom choosing one.**
+- Webhooks: optional URL in settings; SSRF-guarded; 2 attempts + circuit after repeated failures; **Starter/Pro only** (`PLAN_LIMITS.alertWebhooks`). Email alerts intended for all tiers including Free once a provider exists.
+- In-app: Alerts bell + `/dashboard/alerts` feed (mark read on view) + `/dashboard/alerts/settings`.
+- Weekly digest cron: `/api/cron/alert-digest` Mondays 07:00 UTC.
+
 ## Notes
 
 - Honesty discipline: no phase is marked complete if it still relies on silent simulation for its core function.
 - Log deferred items in `docs/deferred-work.md`.
+
+## Phase 12 — Change alerts (complete)
+
+**Status: Complete.**
+
+- After each successful citation run, compare to the previous successful run for the same TrackedQuery + model.
+- Detect: citation lost / gained, competitor overtake, positive→negative sentiment flip.
+- **2-run confirmation:** a change must hold across two consecutive runs before an `Alert` is created (single-run flips are noise).
+- Storage: `Alert`, `AlertPreference` (default digest **WEEKLY**), `AlertPendingChange`.
+- Email: **no mail provider is wired in this repo** — delivery records `NO_MAIL_PROVIDER` / digests skip with an explicit reason. Unsubscribe token route ships for when email is enabled. **Do not add a provider without Tom choosing one.**
+- Webhooks: optional URL in settings; SSRF-guarded; 2 attempts + circuit after repeated failures; **Starter/Pro only** (`PLAN_LIMITS.alertWebhooks`). Email alerts intended for all tiers including Free once a provider exists.
+- In-app: Alerts bell + `/dashboard/alerts` feed (mark read on view) + `/dashboard/alerts/settings`.
+- Weekly digest cron: `/api/cron/alert-digest` Mondays 07:00 UTC.
+
