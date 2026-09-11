@@ -4,6 +4,8 @@ Known issues that are recorded and not yet fixed. Do not silently drop them. Mov
 
 ## Open
 
+- [2026-09-11] **Phase 9 — score formula tuning.** Initial headline score is an equal-weight average of per-model mention rates (see `docs/scorecard-methodology.md`). Revisit weights / lookback windows once real production distributions exist; do not “polish” the number to look nicer without data.
+- [2026-09-11] **Phase 9 UX polish deferred:** dedicated scorecard settings page (panel lives on dashboard home); custom OG brand colours; embeddable iframe badge; historical score sparkline on the public page; multi-brand scorecards (schema is still one brand per user).
 - [2026-09-10] **Phase 8 — real testimonials / social proof.** Landing page ships an honest empty placeholder marked for Tom. Do not invent quotes, logos, or user counts. Fill once early customers consent to be named.
 - [2026-09-10] **Phase 8 — additional marketing pages deferred.** Blog and competitor comparison pages (pattern SuperX uses heavily) not built in Phase 8. Sitemap already has an extensible `marketingPages` list — add routes there when those pages ship.
 - [2026-09-10] **Phase 7 / cost validation vs live invoices.** Tier caps shipped from Phase 2/5 *list-price estimates* (~$0.04–0.12 per 5-model query sweep; sentiment ~$0.00005–0.0002/call). No production invoice lines available yet. After the first paid week, compare actual OpenAI/Anthropic/Gemini/Perplexity/xAI spend to FREE/STARTER/PRO allowances and adjust caps if margins are wrong.

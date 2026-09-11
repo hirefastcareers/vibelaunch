@@ -37,6 +37,7 @@ export interface UsageSnapshot {
   suggestionSoftCap: boolean;
   citationModels: string[];
   runsPerWeek: 1 | 2;
+  publicScorecards: number;
 }
 
 function startOfUtcMonth(now = new Date()): Date {
@@ -112,6 +113,7 @@ export async function getUsage(userId: string): Promise<UsageSnapshot> {
     suggestionSoftCap: limits.suggestionSoftCap,
     citationModels: [...limits.citationModels],
     runsPerWeek: limits.runsPerWeek,
+    publicScorecards: limits.publicScorecards,
   };
 }
 

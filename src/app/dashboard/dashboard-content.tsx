@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { EriBadge } from "@/components/eri-badge";
 import { GeoCard } from "@/components/dashboard/geo-card";
 import { CitationTrackingCard } from "@/components/dashboard/citation-tracking-card";
+import { ScorecardSharePanel } from "@/components/dashboard/scorecard-share-panel";
 import { DiagnosticCard } from "@/components/dashboard/diagnostic-card";
 import { PublishArticleCard } from "@/components/dashboard/publish-article-card";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -114,6 +115,10 @@ export default function DashboardHome({
 
       <div id="ai-citation-tracking" className="scroll-mt-8">
         <CitationTrackingCard demoMode={demoMode} defaultBrand={defaultBrand} />
+      </div>
+
+      <div id="public-scorecard" className="scroll-mt-8">
+        <ScorecardSharePanel />
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
