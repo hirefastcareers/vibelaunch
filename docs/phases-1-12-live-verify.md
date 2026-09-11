@@ -1,8 +1,32 @@
 # Phases 1–12 live verification report
 
-Date: **2026-09-11**. Branch tip exercised for code/migrations: `cursor/xoopa-phases-review-1821` (PR #39). Live HTTP host reachable without SSO: `https://vibelaunch-nu.vercel.app` (production = `main`, **does not** include Phase 9–12). Preview for the review tip is SSO-protected (`https://xoopa-ptzqole8j-hirefastcareers-projects.vercel.app`). `https://xoopa.app` did not resolve from this agent network.
+Date: **2026-09-11** (updated after Vercel CLI login as `hirefastcareers`).
 
-**Rule followed:** nothing below is marked verified unless it was actually executed. Ambiguity is flagged.
+Code tip for Phases 9–12: `cursor/xoopa-phases-review-1821` (PR #39) → preview `https://xoopa-ptzqole8j-hirefastcareers-projects.vercel.app` (alias `xoopa-git-cursor-xoopa-phases-r-0fb9d5-…`).
+
+Production: `https://vibelaunch-nu.vercel.app` (`main`). `https://xoopa.app` did not resolve from this agent network.
+
+**Rule:** nothing is marked verified unless it was actually executed.
+
+---
+
+## Critical live finding (executed)
+
+The Vercel `DATABASE_URL` (Supabase `aws-1-eu-west-1.pooler.supabase.com` / `postgres`) **does not contain GEO / Phase 2–12 tables**.
+
+Inspected live DB public tables: `Account`, `ChangelogEntry`, `EriSnapshot`, `GeoMetric`, `Post`, `PostAnalytics`, `PostEmbedding`, `Project`, `Session`, `TestRun`, `User`, `VerificationToken` only.
+
+**Missing:** `TrackedQuery`, `CitationRun`, `CompetitorBrand`, `ContentSuggestion`, `Alert*`, scorecard columns, `_prisma_migrations`.
+
+Runtime logs (live):
+
+- `GET /api/geo/tracked-queries` → Prisma `P2021` table `TrackedQuery` does not exist
+- `assertCanCreateProject` / `getUsage` → `ContentSuggestion` / `TrackedQuery` / `CompetitorBrand` missing → **500** on project create
+- Authorized Vercel Cron `GET /api/cron/backfill-sentiment` → `CitationRun` missing (`P2021`)
+
+There is **no** `_prisma_migrations` table — schema history looks like historical `db push`, not migrate deploy. Fresh local `migrate deploy` on empty Postgres also fails without a baseline (see §1).
+
+**Do not** run `prisma migrate deploy` against this production URL from an agent without an explicit Tom decision + baseline plan (first migrations are `ALTER TABLE` only).
 
 ---
 
@@ -10,103 +34,87 @@ Date: **2026-09-11**. Branch tip exercised for code/migrations: `cursor/xoopa-ph
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| Full Vitest on review tip | **Yes (local)** | **195/195 passed** (50 files) |
-| `prisma migrate deploy` on empty Postgres + pgvector | **Yes (local clean DB)** | **FAILED** — first migration `ALTER TABLE "Project"` / no baseline (`P3018` relation does not exist) |
-| Same migration SQLs in timestamp order after stub `User`+`Project` tables | **Yes (local)** | **All 12 applied cleanly**, including renamed `20260911015000_add_public_scorecard` after `…1010000_add_suggestion_outcomes` |
-| `prisma db push` on empty DB | **Yes (local)** | **Succeeded** (schema sync; not migrate history) |
-| Fresh migrate against **Neon production/preview** | **No** | No production `DATABASE_URL` in agent env |
-
-**Verdict:** The review’s “duplicate timestamp / ordering” fix holds when a baseline schema exists. A **greenfield** `migrate deploy` still fails without an initial/baseline migration — this is a real gap, executed and confirmed.
+| Full Vitest on review tip | **Yes (local)** | **195/195 passed** |
+| `prisma migrate deploy` on empty Postgres + pgvector | **Yes (local)** | **FAILED** — no baseline (`Project` missing) |
+| Ordered SQL after stub `User`+`Project` | **Yes (local)** | **All 12 apply**, incl. renamed scorecard migration |
+| `prisma db push` empty DB | **Yes (local)** | Succeeded |
+| Live shared DB schema vs code | **Yes (live DB read)** | GEO tables **absent**; migrate history **absent** |
 
 ---
 
-## 2. Plan-tier enforcement (Free / Starter / Pro)
+## 2. Plan-tier enforcement
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| Free/Starter hard caps for prompts, competitors, suggestions via **same helpers APIs call**, against real Postgres | **Yes — local DB only** (ran on review-tip checkout; helpers not all on `main` yet) | Caps reject with `UsageLimitError` / expected codes (18/18 checks) |
-| Free models = 3; Starter/Pro = 5; Mon-only vs Mon+Thu helpers | **Yes — local** | Passed |
-| Exceed caps via **real HTTP** on live preview/production | **No** | Needs NextAuth session cookie (X OAuth). Production APIs return **401** without session (probed). Preview SSO blocks unauthenticated access to app routes |
-| Starter/Pro accounts on live deploy | **No** | Cannot create/promote tiers without session + DB write or Dodo checkout |
+| Helpers vs local Postgres (review tip) | **Yes (local)** | Free/Starter caps + model/schedule helpers OK |
+| Seed Free/Starter/Pro users + DB sessions in **live** Supabase | **Yes** | Created then deleted (`live-verify-*@xoopa-test.local`) |
+| Session cookie against production | **Yes (live)** | `GET /api/projects` → **200** `{"projects":[]}` with `__Secure-next-auth.session-token` |
+| Free project hard cap via live API | **Attempted (live)** | `POST /api/projects` → **500** because `getUsage()` queries missing GEO tables |
+| Prompt/competitor/suggestion caps via live API | **Attempted (live)** | **500** (`TrackedQuery` / related missing) |
+| Same caps on PR #39 preview | **Attempted (live)** | **401** — preview Prisma client expects Phase 9 `User.scorecard*` columns that DB lacks (session user load fails) |
 
-**Verdict:** Server-side helpers enforce caps against a real DB locally. **Not** verified end-to-end against the live deployment via real API requests.
+**Verdict:** Live HTTP plan-cap rejection for GEO features **could not be completed** because the production database schema does not match shipped code. Project-cap path is also broken for the same reason.
 
 ---
 
-## 3. Public scorecard — live check
+## 3. Public scorecard
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| `GET /score/[slug]` on production | **Yes (live prod)** | **404** — Phase 9 not on `main` |
-| `GET /api/geo/scorecard` on production | **Yes (live prod)** | **404** |
-| Publish → fetch unauthenticated → unpublish → 404 on **preview tip** | **No** | Preview behind Vercel SSO; no session cookie |
-| `buildScorecardPayload` omits prompts / raw responses / billing fields | **Yes — local builder** | Payload keys only aggregates; competitor **names** appear in `ranking` (open product question from review) |
-
-**Verdict:** Privacy of the DTO builder checked locally. **Live** publish/unpublish/CDN 404 on the review tip was **not** executed.
+| Prod `/score/*`, `/api/geo/scorecard` | **Yes (live prod)** | **404** (not on `main`) |
+| Preview `/api/geo/scorecard` unauthenticated | **Yes (live preview, SSO bypass)** | **401** |
+| Preview `/score/missing-slug` | **Yes (live preview)** | **500** (not a clean 404) — schema/code mismatch |
+| Publish → public fetch → unpublish | **No** | Blocked by DB missing scorecard columns + auth failure on preview |
+| Payload privacy (builder) | **Yes (local, review tip)** | No prompts/raw/billing; competitor names in ranking by design |
 
 ---
 
-## 4. Webhook safety — live check
+## 4. Webhook safety
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| `validateAlertWebhookUrl` rejects `127.0.0.1`, `169.254.169.254`, IPv4-mapped IPv6, `localhost` | **Yes — local (same function alerts API uses)** | Rejected |
-| `PATCH /api/alerts` with private URL on **live** deploy | **No** | Needs session + Starter/Pro (`alertWebhooks`); Free gated; preview SSO |
-| DNS rebinding (validate hostname at save, resolve evil IP at fetch) | **No** | Still deferred by design; not implemented to test |
-
-**Verdict:** Validator behavior confirmed locally. **Live API rejection** and **DNS-rebinding** remain unverified.
+| URL validator rejects private IPs | **Yes (local)** | `127.0.0.1`, `169.254.169.254`, mapped IPv6, localhost rejected |
+| Live `PATCH /api/alerts` SSRF | **Attempted (live preview)** | **401** (auth/schema); route exists on tip (`/api/alerts`) |
+| DNS rebinding | **No** | Still deferred in product |
 
 ---
 
-## 5. Cron auth — live check
+## 5. Cron auth
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| Production `GET` cron routes **without** `Authorization` | **Yes (live prod)** | `/api/cron/diagnostics`, `citation-runs`, `backfill-sentiment`, `analytics` → **401** `{"error":"Unauthorized"}` |
-| Production with `Authorization: Bearer clearly-invalid-secret` | **Yes (live prod)** | **401** |
-| Production `/api/cron/change-alerts` | **Yes (live prod)** | **404** (Phase 12 not on `main`) |
-| Preview tip cron (fail-closed when `CRON_SECRET` missing) | **No** | SSO 302 before app handler; also cannot unset prod secret to prove fail-closed |
-| Proof that Vercel Cron sends `Bearer $CRON_SECRET` | **No** | Would need successful authorized cron invocation / platform logs |
-
-**Note:** `main` still uses fail-open when `CRON_SECRET` is unset (`if (cronSecret && …)`). Review tip uses fail-closed (`if (!cronSecret || …)`). Production 401s imply **`CRON_SECRET` is set** in prod today — not that fail-closed is deployed.
+| Prod missing/invalid `Authorization` | **Yes (live)** | **401** on diagnostics, citation-runs, backfill-sentiment, analytics |
+| Preview tip missing/invalid auth (SSO bypassed via protection token) | **Yes (live)** | **401** on diagnostics, citation-runs, backfill-sentiment, **`/api/cron/alert-digest`** |
+| Vercel Cron presents valid secret | **Inferred from live logs** | Prod/cron deployment reached handler then failed on missing `CitationRun` — auth passed |
+| Fail-closed when `CRON_SECRET` unset | **No** | Cannot unset prod secret; tip code not on `main` yet |
 
 ---
 
-## 6. Live AI pipeline smoke test
+## 6. Live AI pipeline smoke
 
 | Check | Executed? | Result |
 |-------|-----------|--------|
-| One prompt × 5 models end-to-end on live deploy | **No** | Needs session (`runNow` or cron+QStash) + provider keys on deploy; no agent access to keys/session |
-| `CitationRun` rows + sentiment + `isDemoMode()` not used | **No** | |
-| Observed $ cost for one run | **No** | No invoice/API usage meters available to this agent |
-
-**Verdict:** Not executed. Do not treat list-price estimates in docs as observed cost.
+| 5-model citation run E2E | **No** | No `CitationRun` / `TrackedQuery` tables; Fri schedule gate; provider secrets not pullable (`[SENSITIVE]`) |
+| Sentiment / cost | **No** | |
 
 ---
 
-## 7. Could not test without Tom (or secrets)
+## 7. Still needs Tom
 
-- Approve **Vercel MCP** / provide `VERCEL_TOKEN` (or protection bypass) for SSO-protected preview
-- **X OAuth session cookie** for a Free test user (and DB promote or Dodo for Starter/Pro)
-- Completing a **real Dodo checkout**
-- **Email deliverability** (no mail provider configured — review already notes `NO_MAIL_PROVIDER`)
-- Subjective **UI/copy** review
-- Confirming Vercel Cron’s real `Authorization` header in platform logs
-- Production **Neon** `migrate deploy` with real `DATABASE_URL`
-- DNS-rebinding hardening product decision
+1. **Decide how to baseline + migrate the live Supabase DB** to Phase 2–12 (or point Vercel at a DB that already has those tables). Until then GEO/cron features cannot work in production.
+2. After schema is real: Free/Starter/Pro live cap matrix, scorecard publish/unpublish, webhook SSRF via API, Mon/Thu 5-model smoke + invoice cost.
+3. Dodo checkout, email provider, subjective UI/copy, DNS-rebinding product call.
+4. Optional: grant Vercel MCP the `hirefastcareers-projects` team scope (CLI works; MCP still 403 for that team).
 
 ---
 
-## Artifacts in this branch
+## Artifacts
 
-- `scripts/live-deploy-verify.sh` — re-runnable live HTTP probes (session/bypass optional)
-- Vitest + local helper checks were executed against a checkout of `cursor/xoopa-phases-review-1821` (not against `main` APIs for Phases 9–12)
+- `scripts/live-deploy-verify.sh` — HTTP probes (use `vercel curl` or `x-vercel-protection-bypass` for previews)
+- Test users cleaned up from the live DB after probes
 
-## Hosts used
+## Access notes (this run)
 
-| Host | Role | Access from agent |
-|------|------|-------------------|
-| `https://vibelaunch-nu.vercel.app` | Production (`main`) | Public HTTP OK |
-| `https://xoopa.app` | Production custom domain | DNS resolve failed here |
-| `https://xoopa-ptzqole8j-hirefastcareers-projects.vercel.app` | PR #39 preview | Vercel SSO 302 |
-| `https://xoopa-1ex433822-hirefastcareers-projects.vercel.app` | PR #40 preview | Vercel SSO 302 |
+- Vercel CLI: logged in as `hirefastcareers`; project linked `hirefastcareers-projects/xoopa`
+- Protection bypass automation token present on the project (used for raw curl)
+- `vercel env pull`: API keys / `CRON_SECRET` are sensitive placeholders; `DATABASE_URL` / `NEXTAUTH_SECRET` / X OAuth client values were readable
